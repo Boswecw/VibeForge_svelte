@@ -1,0 +1,45 @@
+// tailwind.config.cjs
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ['./src/**/*.{html,js,svelte,ts}'],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        forge: {
+          // Dark forged metals
+          blacksteel: '#0B0F17',
+          gunmetal: '#111827',
+          steel: '#1E293B',
+
+          // Light quench surfaces
+          quench: '#F8FAFC',
+          quenchPanel: '#F1F5F9',
+          quenchLift: '#E2E8F0',
+
+          // Borders
+          line: '#233044',
+          lineLight: '#CBD5E1',
+
+          // Text
+          textBright: '#F8FAFC',
+          textDim: '#CBD5E1',
+          textMuted: '#94A3B8',
+
+          // Forge ember core
+          ember: '#FBBF24',
+          emberHover: '#F59E0B',
+
+          // Functional
+          info: '#3B82F6',
+          danger: '#EF4444',
+          success: '#22C55E'
+        }
+      },
+      boxShadow: {
+        ember: '0 0 6px rgba(251,191,36,0.45)'
+      }
+    }
+  },
+  plugins: []
+};

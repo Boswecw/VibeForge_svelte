@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional: global body styling using Forge theme */
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-forge-blacksteel text-forge-textBright antialiased;
+}
