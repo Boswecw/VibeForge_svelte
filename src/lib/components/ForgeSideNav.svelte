@@ -7,6 +7,7 @@ no description yet
 
   const navItems = [
     { label: 'Workbench', icon: '⚒️', href: '/' },
+    { label: 'Quick Run', icon: '⚡', href: '/quick-run' },
     { label: 'Context Library', icon: '📚', href: '/contexts' },
     { label: 'Patterns & Recipes', icon: '🧩', href: '/patterns' },
     { label: 'History', icon: '🕒', href: '/history' },
