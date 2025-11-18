@@ -4,8 +4,9 @@
   import OutputColumn from '$lib/components/OutputColumn.svelte';
 
   import { activeContexts } from '$lib/stores/contextStore';
-  import { promptState } from '$lib/stores/promptStore';
+  import { promptState, estimatedTokens } from '$lib/stores/promptStore';
   import { runState } from '$lib/stores/runStore';
+  import { theme } from '$lib/stores/themeStore';
   import type { ContextBlock } from '$lib/types/context';
   import { get } from 'svelte/store';
 
@@ -60,51 +61,76 @@
   };
 </script>
 
-<!-- Workbench header -->
-<div
-  class="border-b border-forge-line px-4 py-3 flex items-center justify-between"
->
-  <div class="flex flex-col gap-1">
-    <h1 class="text-sm font-semibold">Workbench</h1>
-    <p class="text-[11px] text-forge-textMuted">
-      Context → Prompt → Output → Compare
-    </p>
+<!-- Workbench shell with max-width constraint for comfortable viewing -->
+<div class="flex-1 flex flex-col max-w-[1920px] mx-auto w-full">
+  <!-- Workbench header: model selection and primary actions -->
+  <div
+    class={`border-b px-6 py-4 flex items-center justify-between transition-colors ${
+      $theme === 'dark'
+        ? 'border-slate-700'
+        : 'border-slate-200'
+    }`}
+  >
+    <div class="flex flex-col gap-1">
+      <h1 class={`text-base font-semibold tracking-tight ${
+        $theme === 'dark' ? 'text-slate-100' : 'text-slate-900'
+      }`}>Workbench</h1>
+      <p class={`text-xs ${
+        $theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+      }`}>
+        Context → Prompt → Output → Compare
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <select
+        class={`border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors ${
+          $theme === 'dark'
+            ? 'bg-slate-900 border-slate-700 text-slate-100'
+            : 'bg-white border-slate-300 text-slate-900'
+        }`}
+        bind:value={selectedModelId}
+      >
+        {#each models as m}
+          <option value={m.id}>{m.label}</option>
+        {/each}
+      </select>
+      <button
+        type="button"
+        class={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+          $theme === 'dark'
+            ? 'bg-amber-500 text-slate-900 hover:bg-amber-600 shadow-lg shadow-amber-500/20'
+            : 'bg-amber-500 text-slate-900 hover:bg-amber-600 shadow-md'
+        }`}
+        onclick={runPrompt}
+      >
+        Run Prompt
+      </button>
+    </div>
   </div>
-  <div class="flex items-center gap-2 text-xs">
-    <select
-      class="bg-forge-steel border border-forge-line rounded-md px-2 py-1 text-xs focus:outline-none"
-      bind:value={selectedModelId}
-    >
-      {#each models as m}
-        <option value={m.id}>{m.label}</option>
-      {/each}
-    </select>
-    <button
-      type="button"
-      class="px-3 py-1 rounded-md bg-forge-ember text-black text-xs font-semibold shadow-ember hover:bg-forge-emberHover transition"
-      onclick={runPrompt}
-    >
-      Run Prompt
-    </button>
+
+  <!-- 3-column grid: Context | Prompt (wider) | Output, with generous spacing -->
+  <div class="flex-1 px-6 py-6 overflow-auto">
+    <div class="grid grid-cols-1 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.3fr)_minmax(0,0.9fr)] gap-6 h-full">
+      <!-- Context column -->
+      <ContextColumn />
+
+      <!-- Prompt column (visually emphasized as the main workspace) -->
+      <PromptColumn />
+
+      <!-- Output column -->
+      <OutputColumn />
+    </div>
   </div>
+
+  <!-- Status bar: workspace info and metrics -->
+  <footer
+    class={`border-t text-xs px-6 py-3 flex items-center justify-between transition-colors ${
+      $theme === 'dark'
+        ? 'border-slate-700 text-slate-400'
+        : 'border-slate-200 text-slate-500'
+    }`}
+  >
+    <span>Ready • No active runs</span>
+    <span>Workspace: Default • Theme: {$theme === 'dark' ? 'Dark' : 'Light'} • Tokens: ~{$estimatedTokens}</span>
+  </footer>
 </div>
-
-<!-- Three column layout -->
-<section class="flex-1 grid grid-cols-3 gap-3 p-3 overflow-hidden">
-  <!-- Context column -->
-  <ContextColumn />
-
-  <!-- Prompt column -->
-  <PromptColumn />
-
-  <!-- Output column -->
-  <OutputColumn />
-</section>
-
-<!-- Status bar -->
-<footer
-  class="h-7 border-t border-forge-line text-[11px] text-forge-textMuted px-3 flex items-center justify-between"
->
-  <span>Ready • No active runs</span>
-  <span>Workspace: Default • Forge Theme: Dark</span>
-</footer>

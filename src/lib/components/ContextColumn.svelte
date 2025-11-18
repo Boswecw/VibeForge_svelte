@@ -1,5 +1,6 @@
 <script lang="ts">
   import { contexts, activeContexts, inactiveContexts } from '$lib/stores/contextStore';
+  import { theme } from '$lib/stores/themeStore';
   import type { ContextBlock } from '$lib/types/context';
   import { derived } from 'svelte/store';
 
@@ -34,55 +35,91 @@
   };
 </script>
 
-<div class="flex flex-col border border-forge-line rounded-lg bg-forge-gunmetal/60 overflow-hidden">
-  <header class="px-3 py-2 border-b border-forge-line flex items-center justify-between">
-    <span class="text-xs font-semibold">Context</span>
+<!-- Context Column: Manage active context blocks -->
+<section class={`flex flex-col rounded-lg border transition-colors ${
+  $theme === 'dark'
+    ? 'border-slate-700 bg-slate-900'
+    : 'border-slate-200 bg-white shadow-sm'
+}`}>
+  <header class={`px-4 py-3 border-b flex items-center justify-between ${
+    $theme === 'dark'
+      ? 'border-slate-700'
+      : 'border-slate-200'
+  }`}>
+    <h2 class={`text-sm font-semibold tracking-tight ${
+      $theme === 'dark' ? 'text-slate-100' : 'text-slate-900'
+    }`}>Context</h2>
     <a
       href="/contexts"
-      class="text-[11px] text-forge-ember hover:underline"
+      class={`text-xs hover:underline transition-colors ${
+        $theme === 'dark' ? 'text-amber-400 hover:text-amber-300' : 'text-amber-600 hover:text-amber-700'
+      }`}
     >
       Manage
     </a>
   </header>
 
-  <div class="flex-1 overflow-y-auto p-3 text-xs text-forge-textDim space-y-3">
-    <p class="text-forge-textMuted text-[11px] leading-relaxed">
-      Active context blocks are prepended or merged into your prompt. Toggle them on/off here
-      or open the Context Library to manage details.
+  <div class={`flex-1 overflow-y-auto p-4 space-y-4 ${
+    $theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+  }`}>
+    <p class={`text-xs leading-relaxed ${
+      $theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+    }`}>
+      Active context blocks are prepended to your prompt. Toggle them on/off or manage in the Context Library.
     </p>
 
     <!-- Active contexts -->
-    <section>
-      <div class="flex items-center justify-between mb-1">
-        <span class="text-[11px] font-semibold text-forge-textDim">Active</span>
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <h3 class={`text-xs font-semibold ${
+          $theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+        }`}>Active</h3>
         {#if $moreActiveCount > 0}
-          <span class="text-[10px] text-forge-textMuted">
+          <span class={`text-xs ${
+            $theme === 'dark' ? 'text-slate-500' : 'text-slate-500'
+          }`}>
             +{$moreActiveCount} more
           </span>
         {/if}
       </div>
 
       {#if $limitedActive.length === 0}
-        <div class="border border-dashed border-forge-line rounded-md p-2 text-[11px] text-forge-textMuted">
-          No active contexts. Choose at least one from below or from the Context Library.
+        <div class={`border border-dashed rounded-md p-3 text-xs ${
+          $theme === 'dark'
+            ? 'border-slate-700 text-slate-500'
+            : 'border-slate-300 text-slate-500'
+        }`}>
+          No active contexts. Choose from below or manage in the Context Library.
         </div>
       {:else}
-        <div class="space-y-1.5">
+        <div class="space-y-2">
           {#each $limitedActive as ctx}
             <button
               type="button"
-              class="w-full text-left rounded-md border border-forge-line bg-forge-steel/60 px-2 py-1.5 hover:bg-forge-steel flex flex-col gap-0.5"
+              class={`w-full text-left rounded-md border px-3 py-2 flex flex-col gap-1 transition-colors ${
+                $theme === 'dark'
+                  ? 'border-slate-700 bg-slate-950 hover:bg-slate-900'
+                  : 'border-amber-200 bg-amber-50 hover:bg-amber-100'
+              }`}
               onclick={() => toggle(ctx.id)}
             >
               <div class="flex items-center justify-between gap-2">
-                <span class="text-[11px] font-semibold text-forge-textBright truncate">
+                <span class={`text-xs font-medium truncate ${
+                  $theme === 'dark' ? 'text-slate-100' : 'text-slate-900'
+                }`}>
                   {ctx.title}
                 </span>
-                <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-forge-ember/10 text-forge-ember border border-forge-ember/40">
+                <span class={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${
+                  $theme === 'dark'
+                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                    : 'bg-amber-100 text-amber-700 border-amber-300'
+                }`}>
                   On
                 </span>
               </div>
-              <div class="flex items-center justify-between text-[10px] text-forge-textMuted">
+              <div class={`flex items-center justify-between text-[11px] ${
+                $theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+              }`}>
                 <span>{kindLabels[ctx.kind]} • {sourceLabels[ctx.source]}</span>
                 <span class="truncate max-w-[8rem]">
                   {ctx.tags.join(', ')}
@@ -92,40 +129,62 @@
           {/each}
         </div>
       {/if}
-    </section>
+    </div>
 
     <!-- Inactive contexts -->
-    <section class="pt-2 border-t border-forge-line/60">
-      <div class="flex items-center justify-between mb-1">
-        <span class="text-[11px] font-semibold text-forge-textDim">Available</span>
+    <div class={`pt-3 border-t ${
+      $theme === 'dark' ? 'border-slate-700' : 'border-slate-200'
+    }`}>
+      <div class="flex items-center justify-between mb-2">
+        <h3 class={`text-xs font-semibold ${
+          $theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+        }`}>Available</h3>
         {#if $moreInactiveCount > 0}
-          <span class="text-[10px] text-forge-textMuted">
+          <span class={`text-xs ${
+            $theme === 'dark' ? 'text-slate-500' : 'text-slate-500'
+          }`}>
             +{$moreInactiveCount} more
           </span>
         {/if}
       </div>
 
       {#if $limitedInactive.length === 0}
-        <div class="border border-dashed border-forge-line rounded-md p-2 text-[11px] text-forge-textMuted">
-          All contexts are active right now.
+        <div class={`border border-dashed rounded-md p-3 text-xs ${
+          $theme === 'dark'
+            ? 'border-slate-700 text-slate-500'
+            : 'border-slate-300 text-slate-500'
+        }`}>
+          All contexts are currently active.
         </div>
       {:else}
-        <div class="space-y-1.5">
+        <div class="space-y-2">
           {#each $limitedInactive as ctx}
             <button
               type="button"
-              class="w-full text-left rounded-md border border-forge-line bg-forge-blacksteel/40 px-2 py-1.5 hover:bg-forge-steel/40 flex flex-col gap-0.5"
+              class={`w-full text-left rounded-md border px-3 py-2 flex flex-col gap-1 transition-colors ${
+                $theme === 'dark'
+                  ? 'border-slate-700/60 bg-slate-950/50 hover:bg-slate-900/50'
+                  : 'border-slate-200 bg-slate-50 hover:bg-slate-100'
+              }`}
               onclick={() => toggle(ctx.id)}
             >
               <div class="flex items-center justify-between gap-2">
-                <span class="text-[11px] font-semibold text-forge-textDim truncate">
+                <span class={`text-xs font-medium truncate ${
+                  $theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+                }`}>
                   {ctx.title}
                 </span>
-                <span class="text-[10px] px-1.5 py-0.5 rounded-full border border-forge-line text-forge-textMuted">
+                <span class={`text-[10px] px-2 py-0.5 rounded-full border ${
+                  $theme === 'dark'
+                    ? 'border-slate-700 text-slate-500'
+                    : 'border-slate-300 text-slate-600'
+                }`}>
                   Off
                 </span>
               </div>
-              <div class="flex items-center justify-between text-[10px] text-forge-textMuted">
+              <div class={`flex items-center justify-between text-[11px] ${
+                $theme === 'dark' ? 'text-slate-500' : 'text-slate-600'
+              }`}>
                 <span>{kindLabels[ctx.kind]} • {sourceLabels[ctx.source]}</span>
                 <span class="truncate max-w-[8rem]">
                   {ctx.tags.join(', ')}
@@ -135,6 +194,6 @@
           {/each}
         </div>
       {/if}
-    </section>
+    </div>
   </div>
-</div>
+</section>

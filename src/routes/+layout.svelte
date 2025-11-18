@@ -3,9 +3,15 @@
   import ForgeTopBar from '$lib/components/ForgeTopBar.svelte';
   import ForgeSideNav from '$lib/components/ForgeSideNav.svelte';
   import WorkbenchShell from '$lib/components/WorkbenchShell.svelte';
+  import { theme } from '$lib/stores/themeStore';
 </script>
 
-<div class="min-h-screen bg-forge-blacksteel text-forge-textBright flex flex-col">
+<!-- Theme-aware root layout with smooth transitions -->
+<div class={`min-h-screen flex flex-col transition-colors ${
+  $theme === 'dark'
+    ? 'bg-slate-950 text-slate-100'
+    : 'bg-slate-50 text-slate-900'
+}`}>
   <ForgeTopBar />
   <div class="flex flex-1 overflow-hidden">
     <ForgeSideNav />
