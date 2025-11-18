@@ -437,14 +437,15 @@ Check pacing: does each beat land at expected story % mark?`,
   }
 
   ::-webkit-scrollbar-track {
-    @apply transparent;
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-slate-600;
+    border-radius: 9999px;
+    background-color: rgb(71 85 105);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-slate-500;
+    background-color: rgb(100 116 139);
   }
 </style>

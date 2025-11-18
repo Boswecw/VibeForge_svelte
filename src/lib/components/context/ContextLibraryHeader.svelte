@@ -1,39 +1,56 @@
+<!-- @component
+### Props
+- `! filteredCount` **number**
+- `! totalCount` **number**
+- `onAddDocuments` **() =► void**
+
+no description yet
+-->
 <script lang="ts">
-  import { theme } from '$lib/stores/themeStore';
+  import { theme } from "$lib/stores/themeStore";
 
   interface Props {
     totalCount: number;
     filteredCount: number;
+    onAddDocuments?: () => void;
   }
 
-  let { totalCount, filteredCount }: Props = $props();
+  let { totalCount, filteredCount, onAddDocuments }: Props = $props();
 </script>
 
 <!-- Header section with title, description, and context block counts -->
 <header class="flex flex-col gap-2">
   <div class="flex items-center justify-between">
     <div class="flex flex-col gap-1">
-      <h1 class={`text-base font-semibold tracking-tight ${
-        $theme === 'dark' ? 'text-slate-100' : 'text-slate-900'
-      }`}>
+      <h1
+        class={`text-base font-semibold tracking-tight ${
+          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+        }`}
+      >
         Context Library
       </h1>
-      <p class={`text-xs leading-relaxed ${
-        $theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
-      }`}>
-        Browse, search, and manage context blocks that shape your prompts in the Workbench
+      <p
+        class={`text-xs leading-relaxed ${
+          $theme === "dark" ? "text-slate-400" : "text-slate-500"
+        }`}
+      >
+        Browse, search, and manage context blocks that shape your prompts in the
+        Workbench
       </p>
     </div>
 
     <!-- Stats and actions -->
     <div class="flex items-center gap-3">
-      <div class={`text-xs px-3 py-1.5 rounded-md border ${
-        $theme === 'dark'
-          ? 'border-slate-700 bg-slate-900 text-slate-300'
-          : 'border-slate-200 bg-white text-slate-600'
-      }`}>
+      <div
+        class={`text-xs px-3 py-1.5 rounded-md border ${
+          $theme === "dark"
+            ? "border-slate-700 bg-slate-900 text-slate-300"
+            : "border-slate-200 bg-white text-slate-600"
+        }`}
+      >
         {#if filteredCount < totalCount}
-          <span class="font-medium">{filteredCount}</span> of <span class="font-medium">{totalCount}</span> blocks
+          <span class="font-medium">{filteredCount}</span> of
+          <span class="font-medium">{totalCount}</span> blocks
         {:else}
           <span class="font-medium">{totalCount}</span> total blocks
         {/if}
@@ -41,15 +58,15 @@
 
       <button
         type="button"
+        onclick={onAddDocuments}
         class={`px-3 py-1.5 rounded-md border text-xs transition-colors ${
-          $theme === 'dark'
-            ? 'border-slate-700 bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-slate-300'
-            : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-700'
+          $theme === "dark"
+            ? "border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:border-slate-600"
+            : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-white hover:border-slate-300"
         }`}
-        disabled
-        title="Coming soon"
+        title="Upload documents to ingest as context"
       >
-        + New Context (coming soon)
+        📄 Add Documents
       </button>
     </div>
   </div>

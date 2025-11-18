@@ -245,8 +245,8 @@
   initialWorkspace="VibeForge Dev"
   initialModels={getCurrentModels()}
   initialContextRefs={getCurrentContextRefs()}
-  onClose={() => (isSavePresetOpen = false)}
-  onSaved={handleSavePreset}
+  on:close={() => (isSavePresetOpen = false)}
+  on:saved={handleSavePreset}
 />
 
 <!-- Research & Assist drawer -->

@@ -46,7 +46,7 @@
     { tokensPerRun: number; costPerKTokens: number }
   > = {
     claude: { tokensPerRun: 150, costPerKTokens: 0.003 },
-    "gpt-5x": { tokensPerKTokens: 0.006, tokensPerRun: 200 },
+    "gpt-5x": { tokensPerRun: 200, costPerKTokens: 0.006 },
     local: { tokensPerRun: 100, costPerKTokens: 0 },
   };
 
@@ -227,6 +227,6 @@
   initialWorkspace="VibeForge Dev"
   initialModels={activeModelIds.map((id) => modelLabels[id] || id)}
   initialContextRefs={getCurrentContextRefs()}
-  onClose={() => (isSavePresetOpen = false)}
-  onSaved={handleSavePreset}
+  on:close={() => (isSavePresetOpen = false)}
+  on:saved={handleSavePreset}
 />
