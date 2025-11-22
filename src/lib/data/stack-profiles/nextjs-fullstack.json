@@ -1,0 +1,166 @@
+{
+    "id": "nextjs-fullstack",
+    "name": "nextjs-fullstack",
+    "displayName": "Next.js Full-Stack",
+    "description": "Next.js with App Router, Server Components, and API Routes. The modern full-stack React framework with built-in backend capabilities.",
+    "tagline": "React Server Components, API Routes & Edge Runtime",
+    "category": "web",
+    "version": "14.0.0",
+    "icon": "▲",
+    "color": "#000000",
+    "technologies": {
+        "frontend": [
+            {
+                "name": "Next.js",
+                "version": "14.x",
+                "category": "frontend",
+                "required": true,
+                "description": "React framework with App Router",
+                "packageName": "next"
+            },
+            {
+                "name": "React",
+                "version": "18.x",
+                "category": "frontend",
+                "required": true,
+                "description": "UI library with Server Components",
+                "packageName": "react"
+            },
+            {
+                "name": "TypeScript",
+                "version": "5.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Typed JavaScript",
+                "packageName": "typescript"
+            },
+            {
+                "name": "Tailwind CSS",
+                "version": "3.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Utility-first CSS",
+                "packageName": "tailwindcss"
+            }
+        ],
+        "backend": [
+            {
+                "name": "Next.js API Routes",
+                "version": "14.x",
+                "category": "backend",
+                "required": true,
+                "description": "Built-in API endpoints"
+            },
+            {
+                "name": "Server Actions",
+                "version": "14.x",
+                "category": "backend",
+                "required": false,
+                "description": "Server-side mutations"
+            }
+        ],
+        "database": [
+            {
+                "name": "PostgreSQL",
+                "version": "15.x",
+                "category": "database",
+                "required": false,
+                "description": "Relational database"
+            },
+            {
+                "name": "Prisma",
+                "version": "5.x",
+                "category": "database",
+                "required": false,
+                "description": "Database ORM",
+                "packageName": "prisma"
+            }
+        ],
+        "deployment": [
+            {
+                "name": "Vercel",
+                "category": "deployment",
+                "required": false,
+                "description": "Optimal Next.js hosting"
+            }
+        ]
+    },
+    "features": [
+        "React Server Components",
+        "Streaming SSR",
+        "API Routes & Server Actions",
+        "File-based routing",
+        "Image optimization",
+        "Edge Runtime support",
+        "Built-in SEO optimization",
+        "Incremental Static Regeneration"
+    ],
+    "strengths": [
+        "Best React framework for production",
+        "Excellent performance out of the box",
+        "Great developer experience",
+        "Strong SEO capabilities",
+        "Flexible rendering strategies",
+        "Built-in optimizations"
+    ],
+    "limitations": [
+        "Vercel-optimized (vendor lock-in)",
+        "Complex caching strategies",
+        "Learning curve for App Router",
+        "Can be overkill for simple sites",
+        "Server Components paradigm shift"
+    ],
+    "idealFor": [
+        "Content-heavy websites",
+        "E-commerce platforms",
+        "Marketing sites",
+        "SaaS applications",
+        "Blogs and documentation",
+        "SEO-critical applications"
+    ],
+    "notIdealFor": [
+        "Highly interactive SPAs",
+        "Real-time dashboards",
+        "Mobile apps",
+        "Non-JavaScript teams"
+    ],
+    "requirements": {
+        "complexity": "intermediate",
+        "timeToMarket": "fast",
+        "scalability": "high",
+        "teamSize": "small",
+        "budget": "low",
+        "maintenance": "low"
+    },
+    "envSchema": [
+        {
+            "key": "DATABASE_URL",
+            "description": "Database connection string",
+            "required": false,
+            "type": "url",
+            "example": "postgresql://user:password@localhost:5432/mydb"
+        },
+        {
+            "key": "NEXT_PUBLIC_API_URL",
+            "description": "Public API URL",
+            "required": false,
+            "type": "url",
+            "example": "https://api.example.com"
+        }
+    ],
+    "popularity": 98,
+    "maturity": "stable",
+    "communitySize": "massive",
+    "lastUpdated": "2025-11-22T00:00:00Z",
+    "alternatives": [
+        "t3-stack",
+        "remix-stack",
+        "gatsby"
+    ],
+    "resources": {
+        "officialDocs": "https://nextjs.org/docs",
+        "tutorials": [
+            "https://nextjs.org/learn"
+        ]
+    }
+}

@@ -173,14 +173,8 @@
 </script>
 
 <!-- Quick Run mini-workbench: lightweight, fast-iteration prompt runner -->
-<main
-  class={`flex-1 overflow-y-auto transition-colors ${
-    $theme === "dark"
-      ? "bg-slate-950 text-slate-100"
-      : "bg-slate-50 text-slate-900"
-  }`}
->
-  <div class="max-w-4xl mx-auto px-4 py-4 flex flex-col gap-4">
+<main class="flex-1 overflow-hidden flex flex-col bg-forge-blacksteel">
+  <div class="flex-1 overflow-y-auto px-8 py-6">
     <QuickRunHeader
       workspace="VibeForge Dev"
       onOpenPresets={() => (showPresetsDrawer = true)}

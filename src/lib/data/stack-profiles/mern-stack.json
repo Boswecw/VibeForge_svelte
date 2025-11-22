@@ -1,0 +1,180 @@
+{
+    "id": "mern-stack",
+    "name": "mern-stack",
+    "displayName": "MERN Stack",
+    "description": "MongoDB, Express.js, React, and Node.js - the classic full-stack JavaScript solution. One language across the entire stack.",
+    "tagline": "Full-stack JavaScript with MongoDB, Express, React & Node",
+    "category": "web",
+    "version": "1.0.0",
+    "icon": "🥞",
+    "color": "#68A063",
+    "technologies": {
+        "frontend": [
+            {
+                "name": "React",
+                "version": "18.x",
+                "category": "frontend",
+                "required": true,
+                "description": "UI library",
+                "packageName": "react"
+            },
+            {
+                "name": "React Router",
+                "version": "6.x",
+                "category": "frontend",
+                "required": true,
+                "description": "Client-side routing",
+                "packageName": "react-router-dom"
+            },
+            {
+                "name": "Axios",
+                "version": "1.x",
+                "category": "frontend",
+                "required": false,
+                "description": "HTTP client",
+                "packageName": "axios"
+            }
+        ],
+        "backend": [
+            {
+                "name": "Node.js",
+                "version": "20.x",
+                "category": "backend",
+                "required": true,
+                "description": "JavaScript runtime"
+            },
+            {
+                "name": "Express.js",
+                "version": "4.x",
+                "category": "backend",
+                "required": true,
+                "description": "Web framework",
+                "packageName": "express"
+            },
+            {
+                "name": "Mongoose",
+                "version": "8.x",
+                "category": "backend",
+                "required": true,
+                "description": "MongoDB ODM",
+                "packageName": "mongoose"
+            }
+        ],
+        "database": [
+            {
+                "name": "MongoDB",
+                "version": "7.x",
+                "category": "database",
+                "required": true,
+                "description": "NoSQL database"
+            }
+        ],
+        "deployment": [
+            {
+                "name": "Heroku",
+                "category": "deployment",
+                "required": false,
+                "description": "Platform as a service"
+            },
+            {
+                "name": "MongoDB Atlas",
+                "category": "deployment",
+                "required": false,
+                "description": "Cloud MongoDB hosting"
+            }
+        ]
+    },
+    "features": [
+        "JavaScript everywhere",
+        "JSON all the way through",
+        "Flexible NoSQL database",
+        "RESTful API architecture",
+        "Real-time capabilities",
+        "Large ecosystem",
+        "Easy to learn"
+    ],
+    "strengths": [
+        "Single language (JavaScript) across stack",
+        "Fast prototyping",
+        "Massive community support",
+        "Excellent for real-time apps",
+        "Flexible schema with MongoDB",
+        "Cost-effective hosting options"
+    ],
+    "limitations": [
+        "No type safety by default",
+        "MongoDB not ideal for complex relations",
+        "Can become messy without discipline",
+        "Callback hell without async/await",
+        "Not great for data-intensive analytics"
+    ],
+    "idealFor": [
+        "Startups and prototypes",
+        "Real-time applications",
+        "Content management systems",
+        "Social media platforms",
+        "E-commerce sites",
+        "Teams with JavaScript expertise"
+    ],
+    "notIdealFor": [
+        "Financial applications requiring ACID",
+        "Complex relational data",
+        "Enterprise applications needing strong typing",
+        "Applications requiring SQL"
+    ],
+    "requirements": {
+        "complexity": "beginner",
+        "timeToMarket": "fast",
+        "scalability": "medium",
+        "teamSize": "small",
+        "budget": "low",
+        "maintenance": "medium"
+    },
+    "envSchema": [
+        {
+            "key": "MONGODB_URI",
+            "description": "MongoDB connection string",
+            "required": true,
+            "type": "url",
+            "example": "mongodb://localhost:27017/myapp"
+        },
+        {
+            "key": "PORT",
+            "description": "Server port",
+            "required": true,
+            "type": "number",
+            "default": "5000",
+            "example": "5000"
+        },
+        {
+            "key": "JWT_SECRET",
+            "description": "Secret for JWT tokens",
+            "required": true,
+            "type": "secret",
+            "example": "your-jwt-secret-here"
+        },
+        {
+            "key": "NODE_ENV",
+            "description": "Environment mode",
+            "required": true,
+            "type": "string",
+            "default": "development",
+            "example": "production"
+        }
+    ],
+    "popularity": 85,
+    "maturity": "mature",
+    "communitySize": "massive",
+    "lastUpdated": "2025-11-22T00:00:00Z",
+    "alternatives": [
+        "t3-stack",
+        "mean-stack",
+        "nextjs-fullstack"
+    ],
+    "resources": {
+        "officialDocs": "https://www.mongodb.com/mern-stack",
+        "tutorials": [
+            "https://www.freecodecamp.org/news/mern-stack-tutorial/"
+        ]
+    }
+}

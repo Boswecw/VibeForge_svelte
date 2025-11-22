@@ -380,8 +380,8 @@ before the main instruction.`,
 </script>
 
 <!-- Context Library main layout: filters + list (left), detail panel (right) -->
-<main class="flex-1 overflow-auto">
-  <div class="max-w-7xl mx-auto px-6 py-6 flex flex-col gap-4">
+<main class="flex-1 overflow-hidden flex flex-col bg-forge-blacksteel">
+  <div class="flex-1 overflow-auto px-8 py-6 flex flex-col gap-6">
     <!-- Header with title, description, and stats -->
     <ContextLibraryHeader
       totalCount={allContextBlocks.length}
@@ -390,11 +390,9 @@ before the main instruction.`,
     />
 
     <!-- 2-column grid: left (filters + list), right (detail panel) -->
-    <div
-      class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.3fr)] gap-4"
-    >
+    <div class="grid grid-cols-[320px_1fr] gap-6 flex-1 overflow-hidden">
       <!-- LEFT SIDE: Filters and list -->
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-4 overflow-hidden">
         <!-- Filters panel -->
         <ContextFilters
           bind:searchQuery
@@ -404,18 +402,22 @@ before the main instruction.`,
         />
 
         <!-- Context list -->
-        <ContextList
-          blocks={filteredBlocks}
-          {activeContextId}
-          onSelect={selectBlock}
-        />
+        <div class="flex-1 overflow-y-auto">
+          <ContextList
+            blocks={filteredBlocks}
+            {activeContextId}
+            onSelect={selectBlock}
+          />
+        </div>
       </div>
 
       <!-- RIGHT SIDE: Detail panel -->
-      <ContextDetailPanel
-        block={activeBlock}
-        onSendToWorkbench={sendToWorkbench}
-      />
+      <div class="overflow-hidden">
+        <ContextDetailPanel
+          block={activeBlock}
+          onSendToWorkbench={sendToWorkbench}
+        />
+      </div>
     </div>
 
     <!-- Ingest Queue Panel (below library UI) -->

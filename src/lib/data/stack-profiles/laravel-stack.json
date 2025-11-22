@@ -1,0 +1,202 @@
+{
+    "id": "laravel-stack",
+    "name": "laravel-stack",
+    "displayName": "Laravel Full-Stack",
+    "description": "PHP's premier framework. Laravel with Inertia.js or Livewire for modern, reactive full-stack applications. The PHP framework for artisans.",
+    "tagline": "PHP framework with Inertia.js/Livewire & Vue/React",
+    "category": "web",
+    "version": "11.0.0",
+    "icon": "🎨",
+    "color": "#FF2D20",
+    "technologies": {
+        "frontend": [
+            {
+                "name": "Vue.js",
+                "version": "3.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Progressive JavaScript framework",
+                "packageName": "vue"
+            },
+            {
+                "name": "Inertia.js",
+                "version": "1.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Modern monolith approach",
+                "packageName": "@inertiajs/vue3"
+            },
+            {
+                "name": "Livewire",
+                "version": "3.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Full-stack framework for Laravel"
+            },
+            {
+                "name": "Tailwind CSS",
+                "version": "3.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Utility-first CSS",
+                "packageName": "tailwindcss"
+            }
+        ],
+        "backend": [
+            {
+                "name": "Laravel",
+                "version": "11.x",
+                "category": "backend",
+                "required": true,
+                "description": "PHP web framework"
+            },
+            {
+                "name": "PHP",
+                "version": "8.3.x",
+                "category": "backend",
+                "required": true,
+                "description": "Server-side language"
+            },
+            {
+                "name": "Laravel Sanctum",
+                "version": "4.x",
+                "category": "backend",
+                "required": false,
+                "description": "API authentication"
+            }
+        ],
+        "database": [
+            {
+                "name": "MySQL",
+                "version": "8.x",
+                "category": "database",
+                "required": true,
+                "description": "Relational database"
+            },
+            {
+                "name": "Redis",
+                "version": "7.x",
+                "category": "database",
+                "required": false,
+                "description": "Caching and queues"
+            }
+        ],
+        "deployment": [
+            {
+                "name": "Laravel Forge",
+                "category": "deployment",
+                "required": false,
+                "description": "Server management"
+            },
+            {
+                "name": "Laravel Vapor",
+                "category": "deployment",
+                "required": false,
+                "description": "Serverless deployment on AWS"
+            }
+        ]
+    },
+    "features": [
+        "Elegant syntax",
+        "Built-in authentication",
+        "Eloquent ORM",
+        "Queue system",
+        "Job scheduling",
+        "Real-time broadcasting",
+        "File storage abstraction",
+        "Email integration"
+    ],
+    "strengths": [
+        "Excellent developer experience",
+        "Comprehensive ecosystem",
+        "Strong community",
+        "Great documentation",
+        "Laravel Forge for easy deployment",
+        "Livewire for reactive UIs without JS",
+        "Modern PHP features"
+    ],
+    "limitations": [
+        "PHP stigma (though modern PHP is excellent)",
+        "Not ideal for microservices",
+        "Performance not as high as compiled languages",
+        "Smaller talent pool than JavaScript",
+        "Hosting can be more expensive"
+    ],
+    "idealFor": [
+        "E-commerce platforms",
+        "Content management systems",
+        "Business applications",
+        "SaaS products",
+        "API backends",
+        "Traditional web applications"
+    ],
+    "notIdealFor": [
+        "Real-time applications",
+        "Highly concurrent systems",
+        "Microservices architecture",
+        "Teams without PHP expertise"
+    ],
+    "requirements": {
+        "complexity": "intermediate",
+        "timeToMarket": "fast",
+        "scalability": "medium",
+        "teamSize": "medium",
+        "budget": "medium",
+        "maintenance": "low"
+    },
+    "envSchema": [
+        {
+            "key": "APP_KEY",
+            "description": "Application encryption key",
+            "required": true,
+            "type": "secret",
+            "example": "base64:..."
+        },
+        {
+            "key": "DB_CONNECTION",
+            "description": "Database connection type",
+            "required": true,
+            "type": "string",
+            "default": "mysql",
+            "example": "mysql"
+        },
+        {
+            "key": "DB_HOST",
+            "description": "Database host",
+            "required": true,
+            "type": "string",
+            "default": "127.0.0.1",
+            "example": "localhost"
+        },
+        {
+            "key": "DB_DATABASE",
+            "description": "Database name",
+            "required": true,
+            "type": "string",
+            "example": "myapp"
+        },
+        {
+            "key": "REDIS_HOST",
+            "description": "Redis host",
+            "required": false,
+            "type": "string",
+            "default": "127.0.0.1",
+            "example": "localhost"
+        }
+    ],
+    "popularity": 90,
+    "maturity": "mature",
+    "communitySize": "large",
+    "lastUpdated": "2025-11-22T00:00:00Z",
+    "alternatives": [
+        "django-stack",
+        "rails-stack",
+        "symfony-stack"
+    ],
+    "resources": {
+        "officialDocs": "https://laravel.com/docs",
+        "tutorials": [
+            "https://laracasts.com"
+        ]
+    }
+}

@@ -64,7 +64,10 @@ no description yet
     >
       + New Workspace
     </button>
-    <span class="text-[10px]">VibeForge • Forge Suite</span>
+    <div class="flex items-center gap-1">
+      <img src="/vibe.svg" alt="VibeForge" class="w-3 h-3" />
+      <span class="text-[10px]">VibeForge • Forge Suite</span>
+    </div>
     <span class="text-[10px]">v0.1.0 • Internal</span>
   </div>
 </nav>

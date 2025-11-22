@@ -1,0 +1,185 @@
+{
+    "id": "t3-stack",
+    "name": "t3-stack",
+    "displayName": "T3 Stack",
+    "description": "The best way to start a full-stack, typesafe Next.js app. Built by Theo, the T3 Stack is the most popular way to build modern web applications with TypeScript.",
+    "tagline": "Typesafe full-stack Next.js with tRPC, Prisma & Tailwind",
+    "category": "web",
+    "version": "7.0.0",
+    "icon": "⚡",
+    "color": "#3178C6",
+    "technologies": {
+        "frontend": [
+            {
+                "name": "Next.js",
+                "version": "14.x",
+                "category": "frontend",
+                "required": true,
+                "description": "React framework with server-side rendering",
+                "packageName": "next",
+                "documentation": "https://nextjs.org/docs"
+            },
+            {
+                "name": "React",
+                "version": "18.x",
+                "category": "frontend",
+                "required": true,
+                "description": "UI library",
+                "packageName": "react"
+            },
+            {
+                "name": "TypeScript",
+                "version": "5.x",
+                "category": "frontend",
+                "required": true,
+                "description": "Typed JavaScript",
+                "packageName": "typescript"
+            },
+            {
+                "name": "Tailwind CSS",
+                "version": "3.x",
+                "category": "frontend",
+                "required": true,
+                "description": "Utility-first CSS framework",
+                "packageName": "tailwindcss"
+            },
+            {
+                "name": "tRPC",
+                "version": "10.x",
+                "category": "frontend",
+                "required": true,
+                "description": "End-to-end typesafe APIs",
+                "packageName": "@trpc/client"
+            }
+        ],
+        "backend": [
+            {
+                "name": "tRPC",
+                "version": "10.x",
+                "category": "backend",
+                "required": true,
+                "description": "Typesafe API layer",
+                "packageName": "@trpc/server"
+            },
+            {
+                "name": "NextAuth.js",
+                "version": "4.x",
+                "category": "backend",
+                "required": false,
+                "description": "Authentication for Next.js",
+                "packageName": "next-auth"
+            }
+        ],
+        "database": [
+            {
+                "name": "Prisma",
+                "version": "5.x",
+                "category": "database",
+                "required": true,
+                "description": "Next-generation ORM",
+                "packageName": "prisma"
+            },
+            {
+                "name": "PostgreSQL",
+                "version": "15.x",
+                "category": "database",
+                "required": false,
+                "description": "Relational database"
+            }
+        ],
+        "deployment": [
+            {
+                "name": "Vercel",
+                "category": "deployment",
+                "required": false,
+                "description": "Optimal hosting for Next.js"
+            }
+        ]
+    },
+    "features": [
+        "Full-stack TypeScript",
+        "Type-safe API with tRPC",
+        "Database ORM with Prisma",
+        "Authentication ready",
+        "Tailwind CSS styling",
+        "Server-side rendering",
+        "API routes",
+        "Optimal for Vercel deployment"
+    ],
+    "strengths": [
+        "Complete type safety from DB to UI",
+        "No API layer boilerplate",
+        "Amazing developer experience",
+        "Fast development speed",
+        "Strong community and ecosystem",
+        "Excellent documentation"
+    ],
+    "limitations": [
+        "Locked into Next.js ecosystem",
+        "Learning curve for tRPC",
+        "Vercel-optimized (less flexible hosting)",
+        "Prisma can be restrictive for complex queries"
+    ],
+    "idealFor": [
+        "Startups and MVPs",
+        "TypeScript-first teams",
+        "Modern SaaS applications",
+        "Developer tools",
+        "Internal dashboards"
+    ],
+    "notIdealFor": [
+        "Non-TypeScript projects",
+        "Legacy system migrations",
+        "Projects requiring custom backend architecture",
+        "Mobile-first applications"
+    ],
+    "requirements": {
+        "complexity": "intermediate",
+        "timeToMarket": "fast",
+        "scalability": "high",
+        "teamSize": "small",
+        "budget": "low",
+        "maintenance": "low"
+    },
+    "envSchema": [
+        {
+            "key": "DATABASE_URL",
+            "description": "PostgreSQL connection string",
+            "required": true,
+            "type": "url",
+            "example": "postgresql://user:password@localhost:5432/mydb"
+        },
+        {
+            "key": "NEXTAUTH_SECRET",
+            "description": "Secret for NextAuth.js",
+            "required": false,
+            "type": "secret",
+            "example": "your-secret-here"
+        },
+        {
+            "key": "NEXTAUTH_URL",
+            "description": "Canonical URL of your site",
+            "required": false,
+            "type": "url",
+            "example": "http://localhost:3000"
+        }
+    ],
+    "popularity": 95,
+    "maturity": "stable",
+    "communitySize": "large",
+    "lastUpdated": "2025-11-22T00:00:00Z",
+    "alternatives": [
+        "mern-stack",
+        "nextjs-fullstack",
+        "remix-stack"
+    ],
+    "resources": {
+        "officialDocs": "https://create.t3.gg",
+        "tutorials": [
+            "https://www.youtube.com/watch?v=YkOSUVzOAA4"
+        ],
+        "examples": [
+            "https://github.com/t3-oss/create-t3-app"
+        ]
+    }
+}

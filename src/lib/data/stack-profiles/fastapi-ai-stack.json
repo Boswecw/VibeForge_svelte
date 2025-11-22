@@ -1,0 +1,195 @@
+{
+    "id": "fastapi-ai-stack",
+    "name": "fastapi-ai-stack",
+    "displayName": "FastAPI AI Stack",
+    "description": "Modern Python stack optimized for AI/ML applications. FastAPI with async support, Celery for background tasks, and PostgreSQL with pgvector for embeddings.",
+    "tagline": "Python async API + Celery workers + pgvector for AI apps",
+    "category": "ai",
+    "version": "1.0.0",
+    "icon": "🤖",
+    "color": "#009688",
+    "technologies": {
+        "frontend": [
+            {
+                "name": "React",
+                "version": "18.x",
+                "category": "frontend",
+                "required": false,
+                "description": "UI library for admin dashboard",
+                "packageName": "react"
+            }
+        ],
+        "backend": [
+            {
+                "name": "FastAPI",
+                "version": "0.109.x",
+                "category": "backend",
+                "required": true,
+                "description": "Modern async Python framework",
+                "packageName": "fastapi"
+            },
+            {
+                "name": "Celery",
+                "version": "5.x",
+                "category": "backend",
+                "required": true,
+                "description": "Distributed task queue",
+                "packageName": "celery"
+            },
+            {
+                "name": "LangChain",
+                "version": "0.1.x",
+                "category": "backend",
+                "required": false,
+                "description": "LLM orchestration",
+                "packageName": "langchain"
+            },
+            {
+                "name": "OpenAI SDK",
+                "version": "1.x",
+                "category": "backend",
+                "required": false,
+                "description": "OpenAI API client",
+                "packageName": "openai"
+            }
+        ],
+        "database": [
+            {
+                "name": "PostgreSQL",
+                "version": "15.x",
+                "category": "database",
+                "required": true,
+                "description": "Relational database with pgvector"
+            },
+            {
+                "name": "Redis",
+                "version": "7.x",
+                "category": "database",
+                "required": true,
+                "description": "Message broker and caching"
+            },
+            {
+                "name": "pgvector",
+                "version": "0.5.x",
+                "category": "database",
+                "required": false,
+                "description": "Vector similarity search"
+            }
+        ],
+        "infrastructure": [
+            {
+                "name": "Docker",
+                "category": "infrastructure",
+                "required": true,
+                "description": "Containerization"
+            },
+            {
+                "name": "Kubernetes",
+                "category": "infrastructure",
+                "required": false,
+                "description": "Container orchestration"
+            }
+        ]
+    },
+    "features": [
+        "Async/await support",
+        "Background task processing",
+        "Vector embeddings storage",
+        "LLM integration ready",
+        "Auto-generated API docs",
+        "Type safety with Pydantic",
+        "WebSocket support",
+        "Horizontal scaling"
+    ],
+    "strengths": [
+        "Perfect for AI/ML applications",
+        "Modern Python async capabilities",
+        "Excellent performance",
+        "Type hints and validation",
+        "Great for microservices",
+        "Active development community",
+        "Built-in OpenAPI/Swagger docs"
+    ],
+    "limitations": [
+        "Relatively new ecosystem",
+        "Fewer third-party packages than Django",
+        "Requires more manual setup",
+        "Async patterns can be complex",
+        "Not batteries-included like Django"
+    ],
+    "idealFor": [
+        "AI/ML applications",
+        "LLM-powered services",
+        "Vector search applications",
+        "Real-time APIs",
+        "Microservices",
+        "Data pipelines",
+        "RAG applications"
+    ],
+    "notIdealFor": [
+        "Traditional CRUD apps",
+        "Projects needing admin interface",
+        "Monolithic applications",
+        "Teams unfamiliar with async Python"
+    ],
+    "requirements": {
+        "complexity": "advanced",
+        "timeToMarket": "medium",
+        "scalability": "high",
+        "teamSize": "small",
+        "budget": "medium",
+        "maintenance": "medium"
+    },
+    "envSchema": [
+        {
+            "key": "DATABASE_URL",
+            "description": "PostgreSQL with pgvector",
+            "required": true,
+            "type": "url",
+            "example": "postgresql://user:password@localhost:5432/mydb"
+        },
+        {
+            "key": "REDIS_URL",
+            "description": "Redis connection string",
+            "required": true,
+            "type": "url",
+            "example": "redis://localhost:6379"
+        },
+        {
+            "key": "OPENAI_API_KEY",
+            "description": "OpenAI API key",
+            "required": false,
+            "type": "secret",
+            "example": "sk-..."
+        },
+        {
+            "key": "ANTHROPIC_API_KEY",
+            "description": "Anthropic API key",
+            "required": false,
+            "type": "secret",
+            "example": "sk-ant-..."
+        },
+        {
+            "key": "CELERY_BROKER_URL",
+            "description": "Celery broker URL",
+            "required": true,
+            "type": "url",
+            "example": "redis://localhost:6379/0"
+        }
+    ],
+    "popularity": 92,
+    "maturity": "stable",
+    "communitySize": "large",
+    "lastUpdated": "2025-11-22T00:00:00Z",
+    "alternatives": [
+        "django-stack",
+        "flask-stack",
+        "nodejs-ai-stack"
+    ],
+    "resources": {
+        "officialDocs": "https://fastapi.tiangolo.com",
+        "tutorials": [
+            "https://fastapi.tiangolo.com/tutorial/"
+        ]
+    }
+}

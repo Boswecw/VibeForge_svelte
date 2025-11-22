@@ -1,0 +1,195 @@
+{
+    "id": "sveltekit-stack",
+    "name": "sveltekit-stack",
+    "displayName": "SvelteKit Full-Stack",
+    "description": "The fastest-growing web framework. SvelteKit with truly reactive UI, minimal JavaScript, and excellent performance. Server-side rendering with ease.",
+    "tagline": "Truly reactive full-stack framework with minimal JS",
+    "category": "web",
+    "version": "2.0.0",
+    "icon": "🔥",
+    "color": "#FF3E00",
+    "technologies": {
+        "frontend": [
+            {
+                "name": "SvelteKit",
+                "version": "2.x",
+                "category": "frontend",
+                "required": true,
+                "description": "Application framework for Svelte",
+                "packageName": "@sveltejs/kit"
+            },
+            {
+                "name": "Svelte",
+                "version": "5.x",
+                "category": "frontend",
+                "required": true,
+                "description": "Reactive UI framework",
+                "packageName": "svelte"
+            },
+            {
+                "name": "TypeScript",
+                "version": "5.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Typed JavaScript",
+                "packageName": "typescript"
+            },
+            {
+                "name": "Tailwind CSS",
+                "version": "4.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Utility-first CSS",
+                "packageName": "tailwindcss"
+            }
+        ],
+        "backend": [
+            {
+                "name": "SvelteKit API Routes",
+                "version": "2.x",
+                "category": "backend",
+                "required": true,
+                "description": "Built-in API endpoints"
+            },
+            {
+                "name": "Server Hooks",
+                "version": "2.x",
+                "category": "backend",
+                "required": false,
+                "description": "Request/response middleware"
+            }
+        ],
+        "database": [
+            {
+                "name": "PostgreSQL",
+                "version": "15.x",
+                "category": "database",
+                "required": false,
+                "description": "Relational database"
+            },
+            {
+                "name": "Prisma",
+                "version": "5.x",
+                "category": "database",
+                "required": false,
+                "description": "Database ORM",
+                "packageName": "prisma"
+            },
+            {
+                "name": "Drizzle",
+                "version": "0.29.x",
+                "category": "database",
+                "required": false,
+                "description": "TypeScript ORM",
+                "packageName": "drizzle-orm"
+            }
+        ],
+        "deployment": [
+            {
+                "name": "Vercel",
+                "category": "deployment",
+                "required": false,
+                "description": "Edge deployment"
+            },
+            {
+                "name": "Cloudflare Pages",
+                "category": "deployment",
+                "required": false,
+                "description": "Global edge network"
+            },
+            {
+                "name": "Netlify",
+                "category": "deployment",
+                "required": false,
+                "description": "JAMstack hosting"
+            }
+        ]
+    },
+    "features": [
+        "True reactivity (compiler-based)",
+        "Minimal JavaScript shipped",
+        "Server-side rendering",
+        "File-based routing",
+        "Form actions",
+        "Load functions",
+        "Streaming",
+        "Excellent performance"
+    ],
+    "strengths": [
+        "Best performance of any framework",
+        "Smallest bundle sizes",
+        "Most intuitive syntax",
+        "Excellent developer experience",
+        "Built-in accessibility features",
+        "No virtual DOM overhead",
+        "Growing ecosystem"
+    ],
+    "limitations": [
+        "Smaller ecosystem than React/Vue",
+        "Fewer job opportunities",
+        "Less third-party component libraries",
+        "Newer framework (less battle-tested)",
+        "Adapter-specific deployment complexity"
+    ],
+    "idealFor": [
+        "Performance-critical applications",
+        "Interactive dashboards",
+        "Content-heavy sites",
+        "Web applications",
+        "Developer tools",
+        "Admin panels",
+        "Projects prioritizing DX"
+    ],
+    "notIdealFor": [
+        "Projects requiring extensive React ecosystem",
+        "Teams already deep in React",
+        "Enterprise apps requiring mature ecosystem",
+        "Native mobile applications"
+    ],
+    "requirements": {
+        "complexity": "intermediate",
+        "timeToMarket": "fast",
+        "scalability": "high",
+        "teamSize": "small",
+        "budget": "low",
+        "maintenance": "low"
+    },
+    "envSchema": [
+        {
+            "key": "DATABASE_URL",
+            "description": "Database connection string",
+            "required": false,
+            "type": "url",
+            "example": "postgresql://user:password@localhost:5432/mydb"
+        },
+        {
+            "key": "PUBLIC_API_URL",
+            "description": "Public API endpoint",
+            "required": false,
+            "type": "url",
+            "example": "https://api.example.com"
+        },
+        {
+            "key": "PRIVATE_API_KEY",
+            "description": "Server-side API key",
+            "required": false,
+            "type": "secret",
+            "example": "sk-..."
+        }
+    ],
+    "popularity": 88,
+    "maturity": "stable",
+    "communitySize": "medium",
+    "lastUpdated": "2025-11-22T00:00:00Z",
+    "alternatives": [
+        "nextjs-fullstack",
+        "remix-stack",
+        "astro"
+    ],
+    "resources": {
+        "officialDocs": "https://kit.svelte.dev/docs",
+        "tutorials": [
+            "https://learn.svelte.dev"
+        ]
+    }
+}

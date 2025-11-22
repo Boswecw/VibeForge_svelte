@@ -1,0 +1,232 @@
+/**
+ * VibeForge V2 - NeuroForge Client
+ *
+ * This client handles communication with NeuroForge (model router).
+ * Implements real HTTP calls to NeuroForge API with JWT authentication.
+ */
+
+import type { Model, PromptRun, ApiResponse } from "$lib/core/types";
+import { getAuthHeader } from "$lib/auth";
+
+const NEUROFORGE_BASE_URL =
+  import.meta.env.VITE_NEUROFORGE_URL || "http://localhost:8000";
+const API_VERSION = "v1";
+
+interface NeuroForgeError {
+  detail: string;
+}
+
+function getApiUrl(path: string): string {
+  return `${NEUROFORGE_BASE_URL}/api/${API_VERSION}${path}`;
+}
+
+function getHeaders(): HeadersInit {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  // Add JWT authentication
+  const authHeader = getAuthHeader();
+  if (authHeader) {
+    headers["Authorization"] = authHeader;
+  }
+
+  return headers;
+}
+
+// ============================================================================
+// MODEL OPERATIONS
+// ============================================================================
+
+export async function listModels(): Promise<ApiResponse<Model[]>> {
+  try {
+    const response = await fetch(getApiUrl("/models"), {
+      method: "GET",
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      const error: NeuroForgeError = await response.json();
+      return {
+        success: false,
+        error: {
+          code: "API_ERROR",
+          message: error.detail || "Failed to fetch models",
+        },
+      };
+    }
+
+    const models: Model[] = await response.json();
+    return {
+      success: true,
+      data: models,
+    };
+  } catch (error) {
+    console.error("Failed to list models:", error);
+    return {
+      success: false,
+      error: {
+        code: "NETWORK_ERROR",
+        message:
+          error instanceof Error ? error.message : "Network request failed",
+      },
+    };
+  }
+}
+
+export async function getModel(id: string): Promise<ApiResponse<Model>> {
+  try {
+    const response = await fetch(getApiUrl(`/models/${id}`), {
+      method: "GET",
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return {
+          success: false,
+          error: {
+            code: "MODEL_NOT_FOUND",
+            message: `Model with ID ${id} not found`,
+          },
+        };
+      }
+      const error: NeuroForgeError = await response.json();
+      return {
+        success: false,
+        error: {
+          code: "API_ERROR",
+          message: error.detail || "Failed to fetch model",
+        },
+      };
+    }
+
+    const model: Model = await response.json();
+    return {
+      success: true,
+      data: model,
+    };
+  } catch (error) {
+    console.error("Failed to get model:", error);
+    return {
+      success: false,
+      error: {
+        code: "NETWORK_ERROR",
+        message:
+          error instanceof Error ? error.message : "Network request failed",
+      },
+    };
+  }
+}
+
+// ============================================================================
+// PROVIDER STATUS
+// ============================================================================
+
+export interface ProviderInfo {
+  configured: boolean;
+  available: boolean;
+  type: "api" | "local";
+  url?: string;
+}
+
+export interface ProviderStatus {
+  openai: ProviderInfo;
+  anthropic: ProviderInfo;
+  ollama: ProviderInfo;
+}
+
+export async function getProviderStatus(): Promise<
+  ApiResponse<ProviderStatus>
+> {
+  try {
+    const response = await fetch(getApiUrl("/providers"), {
+      method: "GET",
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      const error: NeuroForgeError = await response.json();
+      return {
+        success: false,
+        error: {
+          code: "API_ERROR",
+          message: error.detail || "Failed to fetch provider status",
+        },
+      };
+    }
+
+    const status: ProviderStatus = await response.json();
+    return {
+      success: true,
+      data: status,
+    };
+  } catch (error) {
+    console.error("Failed to get provider status:", error);
+    return {
+      success: false,
+      error: {
+        code: "NETWORK_ERROR",
+        message:
+          error instanceof Error ? error.message : "Network request failed",
+      },
+    };
+  }
+}
+
+// ============================================================================
+// PROMPT EXECUTION
+// ============================================================================
+
+export interface ExecutePromptRequest {
+  workspaceId: string;
+  prompt: string;
+  contextBlocks: string[];
+  modelIds: string[];
+  stream?: boolean;
+}
+
+export async function executePrompt(
+  request: ExecutePromptRequest
+): Promise<ApiResponse<PromptRun[]>> {
+  try {
+    const response = await fetch(getApiUrl("/execute"), {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({
+        workspace_id: request.workspaceId,
+        prompt: request.prompt,
+        context_blocks: request.contextBlocks,
+        model_ids: request.modelIds,
+        stream: request.stream || false,
+      }),
+    });
+
+    if (!response.ok) {
+      const error: NeuroForgeError = await response.json();
+      return {
+        success: false,
+        error: {
+          code: "EXECUTION_ERROR",
+          message: error.detail || "Failed to execute prompt",
+        },
+      };
+    }
+
+    const runs: PromptRun[] = await response.json();
+    return {
+      success: true,
+      data: runs,
+    };
+  } catch (error) {
+    console.error("Failed to execute prompt:", error);
+    return {
+      success: false,
+      error: {
+        code: "NETWORK_ERROR",
+        message:
+          error instanceof Error ? error.message : "Network request failed",
+      },
+    };
+  }
+}

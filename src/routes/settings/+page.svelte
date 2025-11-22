@@ -8,38 +8,26 @@
 </script>
 
 <!-- Settings: workspace defaults, appearance, model config, and data/privacy placeholders -->
-<div class="flex-1 flex flex-col max-w-[1920px] mx-auto w-full">
-  <div
-    class={`border-b px-6 py-4 transition-colors ${
-      $theme === "dark" ? "border-slate-700" : "border-slate-200"
-    }`}
-  >
+<main class="flex-1 overflow-hidden flex flex-col bg-forge-blacksteel">
+  <div class="border-b px-8 py-6 border-forge-gunmetal">
     <div class="flex flex-col gap-1">
-      <h1
-        class={`text-base font-semibold tracking-tight ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
-        }`}
-      >
+      <h1 class="text-base font-semibold tracking-tight text-slate-100">
         Settings
       </h1>
-      <p
-        class={`text-xs ${
-          $theme === "dark" ? "text-slate-400" : "text-slate-500"
-        }`}
-      >
+      <p class="text-xs text-slate-400">
         Manage workspace defaults, appearance, models, and data preferences
       </p>
     </div>
   </div>
 
   <!-- Main settings content -->
-  <main class="flex-1 overflow-y-auto">
-    <div class="max-w-4xl mx-auto px-4 py-6 flex flex-col gap-4">
+  <div class="flex-1 overflow-y-auto px-8 py-6">
+    <div class="max-w-4xl flex flex-col gap-6">
       <SettingsHeader />
       <WorkspaceSettingsSection />
       <AppearanceSettingsSection />
       <ModelSettingsSection />
       <DataSettingsSection />
     </div>
-  </main>
-</div>
+  </div>
+</main>

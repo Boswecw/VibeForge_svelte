@@ -1,0 +1,211 @@
+{
+    "id": "solidstart-stack",
+    "name": "solidstart-stack",
+    "displayName": "SolidStart Stack",
+    "description": "The next-generation reactive framework. SolidJS with SolidStart for full-stack applications. Fine-grained reactivity without a virtual DOM, delivering exceptional performance.",
+    "tagline": "Fine-grained reactivity with SolidJS & SolidStart",
+    "category": "web",
+    "version": "0.4.0",
+    "icon": "⚛️",
+    "color": "#2C4F7C",
+    "technologies": {
+        "frontend": [
+            {
+                "name": "SolidJS",
+                "version": "1.8.x",
+                "category": "frontend",
+                "required": true,
+                "description": "Declarative, efficient reactive JavaScript library",
+                "packageName": "solid-js"
+            },
+            {
+                "name": "SolidStart",
+                "version": "0.4.x",
+                "category": "frontend",
+                "required": true,
+                "description": "Meta-framework for SolidJS",
+                "packageName": "@solidjs/start"
+            },
+            {
+                "name": "TypeScript",
+                "version": "5.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Typed JavaScript",
+                "packageName": "typescript"
+            },
+            {
+                "name": "Tailwind CSS",
+                "version": "4.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Utility-first CSS framework",
+                "packageName": "tailwindcss"
+            },
+            {
+                "name": "Solid Router",
+                "version": "0.10.x",
+                "category": "frontend",
+                "required": true,
+                "description": "Universal router for SolidJS",
+                "packageName": "@solidjs/router"
+            }
+        ],
+        "backend": [
+            {
+                "name": "Vinxi",
+                "version": "0.3.x",
+                "category": "backend",
+                "required": true,
+                "description": "JavaScript server framework powering SolidStart",
+                "packageName": "vinxi"
+            },
+            {
+                "name": "Server Functions",
+                "version": "0.4.x",
+                "category": "backend",
+                "required": true,
+                "description": "Type-safe server functions"
+            }
+        ],
+        "database": [
+            {
+                "name": "PostgreSQL",
+                "version": "15.x",
+                "category": "database",
+                "required": false,
+                "description": "Relational database"
+            },
+            {
+                "name": "Drizzle ORM",
+                "version": "0.29.x",
+                "category": "database",
+                "required": false,
+                "description": "TypeScript ORM",
+                "packageName": "drizzle-orm"
+            },
+            {
+                "name": "Prisma",
+                "version": "5.x",
+                "category": "database",
+                "required": false,
+                "description": "Database toolkit",
+                "packageName": "prisma"
+            }
+        ],
+        "deployment": [
+            {
+                "name": "Vercel",
+                "category": "deployment",
+                "required": false,
+                "description": "Edge deployment platform"
+            },
+            {
+                "name": "Netlify",
+                "category": "deployment",
+                "required": false,
+                "description": "Modern hosting platform"
+            },
+            {
+                "name": "Cloudflare Pages",
+                "category": "deployment",
+                "required": false,
+                "description": "Global edge network"
+            }
+        ]
+    },
+    "features": [
+        "Fine-grained reactivity",
+        "No virtual DOM overhead",
+        "Server-side rendering",
+        "Streaming SSR",
+        "Islands architecture",
+        "Server functions",
+        "File-based routing",
+        "Exceptional performance"
+    ],
+    "strengths": [
+        "Fastest reactive framework",
+        "True fine-grained reactivity",
+        "Smallest bundle sizes",
+        "JSX without virtual DOM",
+        "Predictable performance",
+        "Excellent TypeScript support",
+        "Modern developer experience",
+        "React-like syntax familiarity"
+    ],
+    "limitations": [
+        "Smaller ecosystem than React/Vue",
+        "SolidStart still in beta",
+        "Fewer component libraries",
+        "Smaller community",
+        "Less mature tooling",
+        "Different mental model from React",
+        "Fewer job opportunities"
+    ],
+    "idealFor": [
+        "Performance-critical applications",
+        "Real-time dashboards",
+        "Interactive web apps",
+        "Data visualization",
+        "Single-page applications",
+        "Teams wanting React-like DX with better performance",
+        "Modern web applications"
+    ],
+    "notIdealFor": [
+        "Projects requiring extensive React ecosystem",
+        "Large teams needing battle-tested solutions",
+        "Enterprise apps requiring mature tooling",
+        "Projects with tight deadlines requiring many third-party libs",
+        "Native mobile applications"
+    ],
+    "requirements": {
+        "complexity": "intermediate",
+        "timeToMarket": "medium",
+        "scalability": "high",
+        "teamSize": "small",
+        "budget": "low",
+        "maintenance": "low"
+    },
+    "envSchema": [
+        {
+            "key": "DATABASE_URL",
+            "description": "Database connection string",
+            "required": false,
+            "type": "url",
+            "example": "postgresql://user:password@localhost:5432/mydb"
+        },
+        {
+            "key": "VITE_API_URL",
+            "description": "Client-side API URL",
+            "required": false,
+            "type": "url",
+            "example": "https://api.example.com"
+        },
+        {
+            "key": "SESSION_SECRET",
+            "description": "Secret for session management",
+            "required": false,
+            "type": "secret",
+            "example": "your-secret-here"
+        }
+    ],
+    "popularity": 78,
+    "maturity": "emerging",
+    "communitySize": "medium",
+    "lastUpdated": "2025-11-22T00:00:00Z",
+    "alternatives": [
+        "sveltekit-stack",
+        "nextjs-fullstack",
+        "remix-stack"
+    ],
+    "resources": {
+        "officialDocs": "https://start.solidjs.com",
+        "tutorials": [
+            "https://www.solidjs.com/tutorial"
+        ],
+        "examples": [
+            "https://github.com/solidjs/solid-start"
+        ]
+    }
+}

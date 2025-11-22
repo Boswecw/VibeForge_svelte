@@ -216,25 +216,13 @@
 </script>
 
 <!-- Evaluations: left = sessions list with filters, right = comparison workspace -->
-<div class="flex-1 flex flex-col max-w-[1920px] mx-auto w-full">
-  <div
-    class={`border-b px-6 py-4 transition-colors ${
-      $theme === "dark" ? "border-slate-700" : "border-slate-200"
-    }`}
-  >
+<div class="flex-1 flex flex-col bg-forge-blacksteel overflow-hidden">
+  <div class={`border-b border-slate-800 px-8 py-4 shrink-0`}>
     <div class="flex flex-col gap-1">
-      <h1
-        class={`text-base font-semibold tracking-tight ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
-        }`}
-      >
+      <h1 class="text-lg font-semibold tracking-tight text-slate-100">
         Evaluations
       </h1>
-      <p
-        class={`text-xs ${
-          $theme === "dark" ? "text-slate-400" : "text-slate-500"
-        }`}
-      >
+      <p class="text-sm text-slate-400">
         Compare and score model outputs for systematic evaluation
       </p>
     </div>
@@ -242,15 +230,13 @@
 
   <!-- Main content: header + two-column layout -->
   <main class="flex-1 overflow-hidden flex flex-col">
-    <div
-      class="max-w-7xl mx-auto px-4 py-4 w-full flex flex-col gap-4 h-full overflow-hidden"
-    >
+    <div class="px-8 py-6 flex flex-col gap-6 h-full overflow-hidden">
       <EvaluationsHeader />
 
       <!-- Two-column layout: filters+list on left, detail on right -->
       <div
-        class="grid gap-4 flex-1 overflow-hidden"
-        style="grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.5fr);"
+        class="grid gap-6 flex-1 overflow-hidden"
+        style="grid-template-columns: 320px 1fr;"
       >
         <!-- LEFT SIDE: Filters + Evaluations List -->
         <div class="flex flex-col gap-4 overflow-hidden">
@@ -267,13 +253,15 @@
             onDateRangeChange={() => {}}
           />
 
-          <EvaluationsList
-            evaluations={filteredEvaluations}
-            {activeEvaluationId}
-            onSelectEvaluation={(id) => {
-              activeEvaluationId = id;
-            }}
-          />
+          <div class="flex-1 overflow-y-auto">
+            <EvaluationsList
+              evaluations={filteredEvaluations}
+              {activeEvaluationId}
+              onSelectEvaluation={(id) => {
+                activeEvaluationId = id;
+              }}
+            />
+          </div>
         </div>
 
         <!-- RIGHT SIDE: Evaluation Detail -->

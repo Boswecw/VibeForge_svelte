@@ -1,0 +1,179 @@
+{
+    "id": "golang-cloud-native",
+    "name": "golang-cloud-native",
+    "displayName": "Go Cloud-Native Stack",
+    "description": "High-performance Go backend with Gin or Fiber, PostgreSQL, and cloud-native deployment. Built for speed, concurrency, and scalability.",
+    "tagline": "Go backend optimized for cloud-native microservices",
+    "category": "api",
+    "version": "1.0.0",
+    "icon": "🐹",
+    "color": "#00ADD8",
+    "technologies": {
+        "backend": [
+            {
+                "name": "Go",
+                "version": "1.21.x",
+                "category": "backend",
+                "required": true,
+                "description": "Systems programming language"
+            },
+            {
+                "name": "Gin",
+                "version": "1.9.x",
+                "category": "backend",
+                "required": false,
+                "description": "Web framework",
+                "packageName": "github.com/gin-gonic/gin"
+            },
+            {
+                "name": "Fiber",
+                "version": "2.x",
+                "category": "backend",
+                "required": false,
+                "description": "Express-inspired framework",
+                "packageName": "github.com/gofiber/fiber/v2"
+            },
+            {
+                "name": "GORM",
+                "version": "1.25.x",
+                "category": "backend",
+                "required": false,
+                "description": "ORM library",
+                "packageName": "gorm.io/gorm"
+            }
+        ],
+        "database": [
+            {
+                "name": "PostgreSQL",
+                "version": "15.x",
+                "category": "database",
+                "required": true,
+                "description": "Relational database"
+            },
+            {
+                "name": "Redis",
+                "version": "7.x",
+                "category": "database",
+                "required": false,
+                "description": "Caching layer"
+            }
+        ],
+        "infrastructure": [
+            {
+                "name": "Docker",
+                "category": "infrastructure",
+                "required": true,
+                "description": "Containerization"
+            },
+            {
+                "name": "Kubernetes",
+                "category": "infrastructure",
+                "required": false,
+                "description": "Container orchestration"
+            },
+            {
+                "name": "Prometheus",
+                "category": "infrastructure",
+                "required": false,
+                "description": "Monitoring and metrics"
+            }
+        ]
+    },
+    "features": [
+        "Exceptional performance",
+        "Built-in concurrency",
+        "Small binary sizes",
+        "Cross-compilation",
+        "Strong standard library",
+        "Static typing",
+        "Fast compilation",
+        "Memory safety"
+    ],
+    "strengths": [
+        "Best performance for high-throughput APIs",
+        "Excellent for microservices",
+        "Low memory footprint",
+        "Native concurrency with goroutines",
+        "Simple deployment (single binary)",
+        "Great for cloud-native applications",
+        "Strong tooling ecosystem"
+    ],
+    "limitations": [
+        "Verbose error handling",
+        "Less flexible than dynamic languages",
+        "Smaller ecosystem than Node/Python",
+        "Learning curve for Go idioms",
+        "Limited generics (though improving)",
+        "Not ideal for rapid prototyping"
+    ],
+    "idealFor": [
+        "Microservices architectures",
+        "High-performance APIs",
+        "Cloud-native applications",
+        "CLI tools",
+        "DevOps tooling",
+        "System utilities",
+        "Financial systems"
+    ],
+    "notIdealFor": [
+        "Rapid prototyping",
+        "Full-stack web applications",
+        "Projects requiring extensive third-party libraries",
+        "Teams without systems programming experience"
+    ],
+    "requirements": {
+        "complexity": "advanced",
+        "timeToMarket": "medium",
+        "scalability": "high",
+        "teamSize": "medium",
+        "budget": "medium",
+        "maintenance": "low"
+    },
+    "envSchema": [
+        {
+            "key": "DATABASE_URL",
+            "description": "PostgreSQL connection string",
+            "required": true,
+            "type": "url",
+            "example": "postgresql://user:password@localhost:5432/mydb"
+        },
+        {
+            "key": "REDIS_URL",
+            "description": "Redis connection string",
+            "required": false,
+            "type": "url",
+            "example": "redis://localhost:6379"
+        },
+        {
+            "key": "PORT",
+            "description": "Server port",
+            "required": true,
+            "type": "number",
+            "default": "8080",
+            "example": "8080"
+        },
+        {
+            "key": "ENV",
+            "description": "Environment mode",
+            "required": true,
+            "type": "string",
+            "default": "development",
+            "example": "production"
+        }
+    ],
+    "popularity": 82,
+    "maturity": "stable",
+    "communitySize": "large",
+    "lastUpdated": "2025-11-22T00:00:00Z",
+    "alternatives": [
+        "rust-native-stack",
+        "fastapi-stack",
+        "spring-boot"
+    ],
+    "resources": {
+        "officialDocs": "https://go.dev/doc/",
+        "tutorials": [
+            "https://go.dev/tour/"
+        ]
+    }
+}

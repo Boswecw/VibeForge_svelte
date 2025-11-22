@@ -1,7 +1,9 @@
+<!-- @component
+no description yet
+-->
 <script lang="ts">
   import { accessibility, type FontSize } from '$lib/stores/accessibilityStore';
   import { theme } from '$lib/stores/themeStore';
-  import vibeIcon from '$lib/assets/vibe.avif';
 
   let showFontMenu = $state(false);
 
@@ -48,22 +50,28 @@
 <!-- Theme-aware top bar with dynamic styling based on theme -->
 <header
   class={`flex items-center justify-between px-4 py-3 border-b transition-colors ${
-    $theme === 'dark'
-      ? 'border-forge-line bg-forge-gunmetal/80 backdrop-blur'
-      : 'border-slate-200 bg-white/95 backdrop-blur'
+    $theme === "dark"
+      ? "border-forge-line bg-forge-gunmetal/80 backdrop-blur"
+      : "border-slate-200 bg-white/95 backdrop-blur"
   }`}
 >
   <div class="flex items-center gap-3">
-    <div class="h-10 w-10 rounded-md overflow-hidden flex items-center justify-center bg-white p-1">
-      <img src={vibeIcon} alt="VibeForge" class="h-full w-full object-contain" />
-    </div>
+    <img
+      src="/vibe.svg"
+      alt="VibeForge logo"
+      class="size-8 rounded-xl shrink-0"
+    />
     <div class="flex flex-col">
-      <span class={`text-sm font-semibold tracking-wide ${
-        $theme === 'dark' ? 'text-forge-textBright' : 'text-slate-900'
-      }`}>VibeForge</span>
-      <span class={`text-xs ${
-        $theme === 'dark' ? 'text-forge-textMuted' : 'text-slate-500'
-      }`}>Prompt Workbench</span>
+      <span
+        class="text-sm font-semibold tracking-tight text-pink-500 drop-shadow-[0_0_4px_#ff33cc]"
+      >
+        VibeForge
+      </span>
+      <span
+        class={`text-xs ${
+          $theme === "dark" ? "text-forge-textMuted" : "text-slate-500"
+        }`}>Prompt Workbench</span
+      >
     </div>
   </div>
 
@@ -71,9 +79,9 @@
     <button
       type="button"
       class={`px-2.5 py-1 rounded-md border transition ${
-        $theme === 'dark'
-          ? 'border-forge-line bg-forge-steel/60 hover:bg-forge-steel text-forge-textDim'
-          : 'border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700'
+        $theme === "dark"
+          ? "border-forge-line bg-forge-steel/60 hover:bg-forge-steel text-forge-textDim"
+          : "border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700"
       }`}
     >
       Workspace: Default
@@ -84,11 +92,11 @@
       <button
         type="button"
         class={`px-2.5 py-1 rounded-md border transition flex items-center gap-1 ${
-          $theme === 'dark'
-            ? 'border-forge-line bg-forge-steel/60 hover:bg-forge-steel text-forge-textDim'
-            : 'border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700'
+          $theme === "dark"
+            ? "border-forge-line bg-forge-steel/60 hover:bg-forge-steel text-forge-textDim"
+            : "border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700"
         }`}
-        onclick={() => showFontMenu = !showFontMenu}
+        onclick={() => (showFontMenu = !showFontMenu)}
         title="Font Size (Accessibility)"
       >
         <span class="text-sm">A</span>
@@ -96,30 +104,36 @@
       </button>
 
       {#if showFontMenu}
-        <div class={`absolute right-0 mt-1 w-32 border rounded-md shadow-lg z-50 animate-fadeIn ${
-          $theme === 'dark'
-            ? 'bg-forge-gunmetal border-forge-line'
-            : 'bg-white border-slate-200'
-        }`}>
+        <div
+          class={`absolute right-0 mt-1 w-32 border rounded-md shadow-lg z-50 animate-fadeIn ${
+            $theme === "dark"
+              ? "bg-forge-gunmetal border-forge-line"
+              : "bg-white border-slate-200"
+          }`}
+        >
           {#each fontSizes as { value, label }}
             <button
               type="button"
               class={`w-full px-3 py-2 text-left text-xs transition flex items-center justify-between first:rounded-t-md last:rounded-b-md ${
-                $theme === 'dark'
-                  ? 'hover:bg-forge-steel text-forge-textDim'
-                  : 'hover:bg-slate-50 text-slate-700'
+                $theme === "dark"
+                  ? "hover:bg-forge-steel text-forge-textDim"
+                  : "hover:bg-slate-50 text-slate-700"
               } ${
                 $accessibility.fontSize === value
-                  ? $theme === 'dark'
-                    ? 'bg-forge-steel text-forge-ember'
-                    : 'bg-amber-50 text-amber-600'
-                  : ''
+                  ? $theme === "dark"
+                    ? "bg-forge-steel text-forge-ember"
+                    : "bg-amber-50 text-amber-600"
+                  : ""
               }`}
               onclick={() => setFontSize(value)}
             >
               {label}
               {#if $accessibility.fontSize === value}
-                <span class={$theme === 'dark' ? 'text-forge-ember' : 'text-amber-600'}>✓</span>
+                <span
+                  class={$theme === "dark"
+                    ? "text-forge-ember"
+                    : "text-amber-600"}>✓</span
+                >
               {/if}
             </button>
           {/each}
@@ -131,14 +145,14 @@
     <button
       type="button"
       class={`px-2.5 py-1 rounded-md border transition flex items-center gap-1.5 ${
-        $theme === 'dark'
-          ? 'border-forge-line bg-forge-steel/60 hover:bg-forge-steel text-forge-textDim'
-          : 'border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700'
+        $theme === "dark"
+          ? "border-forge-line bg-forge-steel/60 hover:bg-forge-steel text-forge-textDim"
+          : "border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700"
       }`}
       onclick={() => theme.toggle()}
       title="Toggle theme"
     >
-      {#if $theme === 'dark'}
+      {#if $theme === "dark"}
         <span class="text-sm">🌙</span>
         <span>Dark</span>
       {:else}
@@ -148,9 +162,9 @@
     </button>
     <div
       class={`h-8 w-8 rounded-full flex items-center justify-center text-[10px] font-semibold ${
-        $theme === 'dark'
-          ? 'bg-forge-steel text-forge-textDim'
-          : 'bg-slate-200 text-slate-700'
+        $theme === "dark"
+          ? "bg-forge-steel text-forge-textDim"
+          : "bg-slate-200 text-slate-700"
       }`}
     >
       CB

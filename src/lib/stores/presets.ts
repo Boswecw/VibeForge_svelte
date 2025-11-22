@@ -1,4 +1,6 @@
 import { writable, derived } from "svelte/store";
+import * as promptsClient from "$lib/core/api/promptsClient";
+import type { Prompt as ApiPrompt } from "$lib/core/api/promptsClient";
 
 export type PresetCategory =
   | "coding"
@@ -177,45 +179,182 @@ Be quantitative. Reference specific data points.`,
   },
 ];
 
+// Helper to convert API prompt to Preset format
+function apiPromptToPreset(apiPrompt: ApiPrompt): Preset {
+  return {
+    id: apiPrompt.id,
+    name: apiPrompt.name,
+    description: apiPrompt.description || "",
+    category: (apiPrompt.category as PresetCategory) || "other",
+    workspace: apiPrompt.workspace,
+    tags: apiPrompt.tags,
+    basePrompt: apiPrompt.basePrompt,
+    contextRefs: apiPrompt.contextRefs.map((ref) => ({ id: ref, label: ref })),
+    models: apiPrompt.models,
+    pinned: apiPrompt.pinned,
+    updatedAt: new Date(apiPrompt.updatedAt).toLocaleDateString(),
+  };
+}
+
 // Create writable store
 function createPresetsStore() {
-  const { subscribe, set, update } = writable<Preset[]>(mockPresets);
+  const { subscribe, set, update } = writable<Preset[]>([]);
+  const { subscribe: subscribeSelected, set: setSelected } =
+    writable<Preset | null>(null);
+  let isLoading = false;
 
   return {
     subscribe,
 
-    togglePinned: (id: string) => {
+    // Selected preset management
+    selectedPreset: {
+      subscribe: subscribeSelected,
+      set: setSelected,
+      clear: () => setSelected(null),
+    },
+
+    // Load all prompts from API
+    load: async (workspace?: string) => {
+      if (isLoading) return;
+      isLoading = true;
+
+      const result = await promptsClient.listPrompts({
+        workspace,
+        pageSize: 100,
+      });
+
+      if (result.success && result.data) {
+        const presets = result.data.prompts.map(apiPromptToPreset);
+        set(presets);
+      } else {
+        console.error("Failed to load prompts:", result.error);
+        // Fallback to mock data if API fails
+        set(mockPresets);
+      }
+
+      isLoading = false;
+    },
+
+    togglePinned: async (id: string) => {
+      // Optimistic update
       update((presets) =>
-        presets.map((p) =>
-          p.id === id ? { ...p, pinned: !p.pinned, updatedAt: "now" } : p
-        )
+        presets.map((p) => (p.id === id ? { ...p, pinned: !p.pinned } : p))
       );
-      // TODO: Persist to backend
+
+      // Get current state
+      let preset: Preset | undefined;
+      subscribe((presets) => {
+        preset = presets.find((p) => p.id === id);
+      })();
+
+      if (!preset) return;
+
+      // Persist to API
+      const result = await promptsClient.updatePrompt(id, {
+        pinned: preset.pinned,
+      });
+
+      if (!result.success) {
+        console.error("Failed to toggle pin:", result.error);
+        // Revert on failure
+        update((presets) =>
+          presets.map((p) => (p.id === id ? { ...p, pinned: !p.pinned } : p))
+        );
+      }
     },
 
-    updatePreset: (updated: Preset) => {
+    updatePreset: async (updated: Preset) => {
+      // Optimistic update
       update((presets) =>
-        presets.map((p) =>
-          p.id === updated.id ? { ...updated, updatedAt: "now" } : p
-        )
+        presets.map((p) => (p.id === updated.id ? updated : p))
       );
-      // TODO: Persist to backend
+
+      // Persist to API
+      const result = await promptsClient.updatePrompt(updated.id, {
+        name: updated.name,
+        description: updated.description,
+        category: updated.category,
+        workspace: updated.workspace,
+        tags: updated.tags,
+        basePrompt: updated.basePrompt,
+        contextRefs: updated.contextRefs.map((ref) => ref.id),
+        models: updated.models,
+        pinned: updated.pinned,
+      });
+
+      if (!result.success) {
+        console.error("Failed to update preset:", result.error);
+        // Reload on failure
+        const reloadResult = await promptsClient.listPrompts({
+          workspace: updated.workspace,
+        });
+        if (reloadResult.success && reloadResult.data) {
+          set(reloadResult.data.prompts.map(apiPromptToPreset));
+        }
+      }
     },
 
-    createPreset: (preset: Omit<Preset, "id" | "updatedAt">) => {
-      const newPreset: Preset = {
-        ...preset,
-        id: `preset-${Date.now()}`,
-        updatedAt: "now",
-      };
-      update((presets) => [...presets, newPreset]);
-      // TODO: Persist to backend
-      return newPreset;
+    createPreset: async (preset: Omit<Preset, "id" | "updatedAt">) => {
+      // Create via API
+      const result = await promptsClient.createPrompt({
+        name: preset.name,
+        description: preset.description,
+        category: preset.category,
+        workspace: preset.workspace,
+        tags: preset.tags,
+        basePrompt: preset.basePrompt,
+        contextRefs: preset.contextRefs.map((ref) => ref.id),
+        models: preset.models,
+        pinned: preset.pinned,
+      });
+
+      if (result.success && result.data) {
+        const newPreset = apiPromptToPreset(result.data);
+        update((presets) => [...presets, newPreset]);
+        return newPreset;
+      } else {
+        console.error("Failed to create preset:", result.error);
+        throw new Error(result.error?.message || "Failed to create preset");
+      }
     },
 
-    deletePreset: (id: string) => {
+    deletePreset: async (id: string) => {
+      // Optimistic delete
       update((presets) => presets.filter((p) => p.id !== id));
-      // TODO: Persist to backend
+
+      // Persist to API
+      const result = await promptsClient.deletePrompt(id);
+
+      if (!result.success) {
+        console.error("Failed to delete preset:", result.error);
+        // Reload on failure
+        const reloadResult = await promptsClient.listPrompts();
+        if (reloadResult.success && reloadResult.data) {
+          set(reloadResult.data.prompts.map(apiPromptToPreset));
+        }
+      }
+    },
+
+    duplicatePreset: async (id: string) => {
+      // Get the preset to duplicate
+      let presetToDuplicate: Preset | undefined;
+      subscribe((presets) => {
+        presetToDuplicate = presets.find((p) => p.id === id);
+      })();
+
+      if (!presetToDuplicate) {
+        console.error("Preset not found:", id);
+        return null;
+      }
+
+      // Create a copy with modified name
+      const duplicate = await this.createPreset({
+        ...presetToDuplicate,
+        name: `${presetToDuplicate.name} (Copy)`,
+        pinned: false,
+      });
+
+      return duplicate;
     },
   };
 }

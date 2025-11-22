@@ -1,0 +1,172 @@
+{
+    "id": "react-native-expo",
+    "name": "react-native-expo",
+    "displayName": "React Native + Expo",
+    "description": "Cross-platform mobile development with React Native and Expo. Write once, deploy to iOS and Android with native performance.",
+    "tagline": "Cross-platform mobile with React Native & Expo",
+    "category": "mobile",
+    "version": "50.0.0",
+    "icon": "📱",
+    "color": "#61DAFB",
+    "technologies": {
+        "frontend": [
+            {
+                "name": "React Native",
+                "version": "0.73.x",
+                "category": "frontend",
+                "required": true,
+                "description": "Mobile UI framework",
+                "packageName": "react-native"
+            },
+            {
+                "name": "Expo",
+                "version": "50.x",
+                "category": "frontend",
+                "required": true,
+                "description": "Development platform",
+                "packageName": "expo"
+            },
+            {
+                "name": "React Navigation",
+                "version": "6.x",
+                "category": "frontend",
+                "required": true,
+                "description": "Routing and navigation",
+                "packageName": "@react-navigation/native"
+            },
+            {
+                "name": "NativeWind",
+                "version": "4.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Tailwind for React Native",
+                "packageName": "nativewind"
+            }
+        ],
+        "backend": [
+            {
+                "name": "Firebase",
+                "version": "10.x",
+                "category": "backend",
+                "required": false,
+                "description": "Backend as a service",
+                "packageName": "firebase"
+            },
+            {
+                "name": "Supabase",
+                "version": "2.x",
+                "category": "backend",
+                "required": false,
+                "description": "Open source Firebase alternative",
+                "packageName": "@supabase/supabase-js"
+            }
+        ],
+        "infrastructure": [
+            {
+                "name": "EAS Build",
+                "category": "infrastructure",
+                "required": false,
+                "description": "Expo Application Services for builds"
+            },
+            {
+                "name": "EAS Submit",
+                "category": "infrastructure",
+                "required": false,
+                "description": "App store submission"
+            }
+        ]
+    },
+    "features": [
+        "Cross-platform development",
+        "Hot reload",
+        "Over-the-air updates",
+        "Native API access",
+        "Push notifications",
+        "Camera and media",
+        "Geolocation",
+        "Easy deployment"
+    ],
+    "strengths": [
+        "Write once, run on iOS and Android",
+        "React knowledge transfers directly",
+        "Expo makes setup trivial",
+        "Great developer experience",
+        "Large component ecosystem",
+        "OTA updates without app store review",
+        "Cost-effective development"
+    ],
+    "limitations": [
+        "Performance not quite native",
+        "Large app bundle sizes",
+        "Some native features require custom modules",
+        "Debugging can be challenging",
+        "Expo limitations (though solvable with custom dev client)"
+    ],
+    "idealFor": [
+        "Cross-platform mobile apps",
+        "MVPs and prototypes",
+        "Consumer apps",
+        "Social media apps",
+        "E-commerce mobile apps",
+        "Teams with React expertise"
+    ],
+    "notIdealFor": [
+        "Performance-critical apps (games, AR/VR)",
+        "Apps requiring extensive native code",
+        "Complex platform-specific UIs",
+        "Apps with strict bundle size requirements"
+    ],
+    "requirements": {
+        "complexity": "intermediate",
+        "timeToMarket": "fast",
+        "scalability": "medium",
+        "teamSize": "small",
+        "budget": "low",
+        "maintenance": "medium"
+    },
+    "envSchema": [
+        {
+            "key": "EXPO_PUBLIC_API_URL",
+            "description": "Backend API URL",
+            "required": true,
+            "type": "url",
+            "example": "https://api.example.com"
+        },
+        {
+            "key": "EXPO_PUBLIC_FIREBASE_API_KEY",
+            "description": "Firebase API key",
+            "required": false,
+            "type": "secret",
+            "example": "AIza..."
+        },
+        {
+            "key": "EXPO_PUBLIC_SUPABASE_URL",
+            "description": "Supabase project URL",
+            "required": false,
+            "type": "url",
+            "example": "https://xxx.supabase.co"
+        },
+        {
+            "key": "EXPO_PUBLIC_SUPABASE_ANON_KEY",
+            "description": "Supabase anon key",
+            "required": false,
+            "type": "secret",
+            "example": "eyJ..."
+        }
+    ],
+    "popularity": 93,
+    "maturity": "stable",
+    "communitySize": "large",
+    "lastUpdated": "2025-11-22T00:00:00Z",
+    "alternatives": [
+        "flutter",
+        "ionic",
+        "native-ios-android"
+    ],
+    "resources": {
+        "officialDocs": "https://docs.expo.dev",
+        "tutorials": [
+            "https://reactnative.dev/docs/tutorial"
+        ]
+    }
+}

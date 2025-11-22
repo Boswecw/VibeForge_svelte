@@ -1,0 +1,195 @@
+{
+    "id": "django-stack",
+    "name": "django-stack",
+    "displayName": "Django Full-Stack",
+    "description": "Python's most popular web framework. Batteries-included framework for building robust, scalable web applications with an admin panel out of the box.",
+    "tagline": "Python web framework with admin, ORM & security built-in",
+    "category": "web",
+    "version": "5.0.0",
+    "icon": "🐍",
+    "color": "#092E20",
+    "technologies": {
+        "frontend": [
+            {
+                "name": "Django Templates",
+                "version": "5.x",
+                "category": "frontend",
+                "required": true,
+                "description": "Built-in templating engine"
+            },
+            {
+                "name": "HTMX",
+                "version": "2.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Modern interactivity without JavaScript",
+                "packageName": "htmx"
+            },
+            {
+                "name": "Alpine.js",
+                "version": "3.x",
+                "category": "frontend",
+                "required": false,
+                "description": "Lightweight JavaScript framework"
+            }
+        ],
+        "backend": [
+            {
+                "name": "Django",
+                "version": "5.x",
+                "category": "backend",
+                "required": true,
+                "description": "Python web framework",
+                "packageName": "Django"
+            },
+            {
+                "name": "Django REST Framework",
+                "version": "3.x",
+                "category": "backend",
+                "required": false,
+                "description": "API toolkit",
+                "packageName": "djangorestframework"
+            },
+            {
+                "name": "Celery",
+                "version": "5.x",
+                "category": "backend",
+                "required": false,
+                "description": "Distributed task queue",
+                "packageName": "celery"
+            }
+        ],
+        "database": [
+            {
+                "name": "PostgreSQL",
+                "version": "15.x",
+                "category": "database",
+                "required": true,
+                "description": "Relational database"
+            },
+            {
+                "name": "Redis",
+                "version": "7.x",
+                "category": "database",
+                "required": false,
+                "description": "Caching and task queue"
+            }
+        ],
+        "deployment": [
+            {
+                "name": "Gunicorn",
+                "category": "deployment",
+                "required": true,
+                "description": "WSGI HTTP server",
+                "packageName": "gunicorn"
+            },
+            {
+                "name": "Nginx",
+                "category": "deployment",
+                "required": false,
+                "description": "Reverse proxy and static files"
+            }
+        ]
+    },
+    "features": [
+        "Built-in admin interface",
+        "Powerful ORM",
+        "Authentication system",
+        "Security features built-in",
+        "Database migrations",
+        "Form handling",
+        "Internationalization",
+        "Scalable architecture"
+    ],
+    "strengths": [
+        "Batteries included - minimal setup needed",
+        "Excellent documentation",
+        "Strong security by default",
+        "Mature and stable",
+        "Great for data-driven applications",
+        "Admin panel saves development time",
+        "Large ecosystem of packages"
+    ],
+    "limitations": [
+        "Monolithic architecture can feel heavy",
+        "Not ideal for microservices",
+        "Learning curve for Django ORM",
+        "Template language less popular than modern JS frameworks",
+        "Synchronous by default (async support added recently)"
+    ],
+    "idealFor": [
+        "Content management systems",
+        "E-commerce platforms",
+        "Internal business applications",
+        "Data-driven web apps",
+        "MVP development",
+        "Applications requiring admin interface"
+    ],
+    "notIdealFor": [
+        "Real-time applications",
+        "Microservices architecture",
+        "Single-page applications",
+        "Projects requiring heavy frontend interactivity"
+    ],
+    "requirements": {
+        "complexity": "intermediate",
+        "timeToMarket": "fast",
+        "scalability": "high",
+        "teamSize": "medium",
+        "budget": "medium",
+        "maintenance": "low"
+    },
+    "envSchema": [
+        {
+            "key": "SECRET_KEY",
+            "description": "Django secret key",
+            "required": true,
+            "type": "secret",
+            "example": "django-insecure-example-key"
+        },
+        {
+            "key": "DATABASE_URL",
+            "description": "PostgreSQL connection string",
+            "required": true,
+            "type": "url",
+            "example": "postgresql://user:password@localhost:5432/mydb"
+        },
+        {
+            "key": "DEBUG",
+            "description": "Debug mode",
+            "required": true,
+            "type": "boolean",
+            "default": "False",
+            "example": "False"
+        },
+        {
+            "key": "ALLOWED_HOSTS",
+            "description": "Allowed hostnames",
+            "required": true,
+            "type": "string",
+            "example": "localhost,example.com"
+        },
+        {
+            "key": "REDIS_URL",
+            "description": "Redis connection string",
+            "required": false,
+            "type": "url",
+            "example": "redis://localhost:6379"
+        }
+    ],
+    "popularity": 88,
+    "maturity": "mature",
+    "communitySize": "large",
+    "lastUpdated": "2025-11-22T00:00:00Z",
+    "alternatives": [
+        "flask-stack",
+        "fastapi-stack",
+        "laravel-stack"
+    ],
+    "resources": {
+        "officialDocs": "https://docs.djangoproject.com",
+        "tutorials": [
+            "https://docs.djangoproject.com/en/5.0/intro/tutorial01/"
+        ]
+    }
+}

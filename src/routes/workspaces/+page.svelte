@@ -165,44 +165,42 @@
 </script>
 
 <!-- Workspace management: list (left), details + actions (right), drawer for create/edit -->
-<main
-  class={`flex-1 overflow-y-auto transition-colors ${
-    $theme === "dark"
-      ? "bg-slate-950 text-slate-100"
-      : "bg-slate-50 text-slate-900"
-  }`}
->
-  <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-4">
+<main class="flex-1 overflow-hidden flex flex-col bg-forge-blacksteel">
+  <div class="px-8 py-6 flex flex-col gap-6 h-full overflow-hidden">
     <WorkspacesHeader />
 
     <!-- Two-column layout: list (left) + detail (right) -->
     <div
-      class="grid gap-4 md:gap-4"
-      style="grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);"
+      class="grid gap-6 flex-1 overflow-hidden"
+      style="grid-template-columns: 320px 1fr;"
     >
       <!-- Left: Workspaces list -->
-      <WorkspacesList
-        {workspaces}
-        {activeWorkspaceId}
-        onSelectWorkspace={setActiveWorkspace}
-        onCreateWorkspace={openCreateWorkspace}
-      />
+      <div class="overflow-y-auto">
+        <WorkspacesList
+          {workspaces}
+          {activeWorkspaceId}
+          onSelectWorkspace={setActiveWorkspace}
+          onCreateWorkspace={openCreateWorkspace}
+        />
+      </div>
 
       <!-- Right: Workspace detail panel -->
-      <WorkspaceDetailPanel
-        workspace={activeWorkspace}
-        onEdit={openEditWorkspace}
-        onToggleArchive={toggleArchive}
-        onSetDefault={setDefaultWorkspace}
-        onOpenInWorkbench={(id) => {
-          // TODO: Navigate to workbench with selected workspace
-          console.log("Open workbench with workspace:", id);
-        }}
-        onViewHistory={(id) => {
-          // TODO: Navigate to history filtered by workspace
-          console.log("View history for workspace:", id);
-        }}
-      />
+      <div class="overflow-y-auto">
+        <WorkspaceDetailPanel
+          workspace={activeWorkspace}
+          onEdit={openEditWorkspace}
+          onToggleArchive={toggleArchive}
+          onSetDefault={setDefaultWorkspace}
+          onOpenInWorkbench={(id) => {
+            // TODO: Navigate to workbench with selected workspace
+            console.log("Open workbench with workspace:", id);
+          }}
+          onViewHistory={(id) => {
+            // TODO: Navigate to history filtered by workspace
+            console.log("View history for workspace:", id);
+          }}
+        />
+      </div>
     </div>
   </div>
 </main>
