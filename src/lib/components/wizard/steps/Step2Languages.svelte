@@ -14,6 +14,11 @@ no description yet
     recommendLanguages,
     type LanguageRecommendationResponse,
   } from "$lib/core/api/languagesClient";
+  import { 
+    checkRuntimes, 
+    checkLanguageRequirements,
+    type RuntimeCheckResult
+  } from "$lib/api/runtimeClient";
 
   $: selectedLanguages = $wizardStore.selectedLanguages;
   $: projectType = $wizardStore.intent.projectType;
@@ -25,6 +30,11 @@ no description yet
   let apiError = false;
   let recommendations: LanguageRecommendationResponse | null = null;
   let loadingRecommendations = false;
+  
+  // Runtime check state
+  let runtimeCheck: RuntimeCheckResult | null = null;
+  let runtimeWarnings: string[] = [];
+  let containerOnlyLanguages: string[] = [];
   
   // Learning-based recommendations
   $: preferences = $userPreferences;
@@ -59,10 +69,18 @@ no description yet
 
   onMount(async () => {
     await loadLanguages();
+    await loadRuntimeCheck();
     if (projectType) {
       await loadRecommendations();
     }
   });
+  
+  // Check runtime requirements when selected languages change
+  $: if (runtimeCheck && selectedLanguages.length > 0) {
+    const requirements = checkLanguageRequirements(runtimeCheck, selectedLanguages);
+    runtimeWarnings = requirements.missing.map(r => r.name);
+    containerOnlyLanguages = requirements.containerOnly.map(r => r.name);
+  }
 
   async function loadLanguages() {
     try {
@@ -93,6 +111,15 @@ no description yet
       recommendations = null;
     } finally {
       loadingRecommendations = false;
+    }
+  }
+  
+  async function loadRuntimeCheck() {
+    try {
+      runtimeCheck = await checkRuntimes();
+    } catch (error) {
+      console.error("Failed to check runtimes:", error);
+      runtimeCheck = null;
     }
   }
 
@@ -445,6 +472,57 @@ no description yet
               <li class="text-sm text-blue-800">{warning}</li>
             {/each}
           </ul>
+        </div>
+      </div>
+    </div>
+  {/if}
+
+  <!-- Runtime Warnings -->
+  {#if runtimeWarnings.length > 0}
+    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-red-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+        <div class="flex-1">
+          <h4 class="font-medium text-red-900 mb-2">⚠️ Missing Required Runtimes</h4>
+          <p class="text-sm text-red-800 mb-2">
+            The following language runtimes are not installed on your system:
+          </p>
+          <ul class="space-y-1 mb-3">
+            {#each runtimeWarnings as runtime}
+              <li class="text-sm text-red-800 font-mono">• {runtime}</li>
+            {/each}
+          </ul>
+          <a 
+            href="/dev-environment" 
+            class="inline-flex items-center text-sm font-medium text-red-700 hover:text-red-900 underline"
+          >
+            View Installation Instructions →
+          </a>
+        </div>
+      </div>
+    </div>
+  {/if}
+
+  <!-- Container-Only Languages Info -->
+  {#if containerOnlyLanguages.length > 0}
+    <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">🐳</span>
+        <div class="flex-1">
+          <h4 class="font-medium text-blue-900 mb-2">Dev-Container Required</h4>
+          <p class="text-sm text-blue-800 mb-2">
+            The following languages require a Dev-Container setup:
+          </p>
+          <ul class="space-y-1 mb-3">
+            {#each containerOnlyLanguages as runtime}
+              <li class="text-sm text-blue-800 font-mono">• {runtime}</li>
+            {/each}
+          </ul>
+          <p class="text-sm text-blue-700">
+            Don't worry! We'll automatically generate a Dev-Container configuration for you in Step 5.
+          </p>
         </div>
       </div>
     </div>

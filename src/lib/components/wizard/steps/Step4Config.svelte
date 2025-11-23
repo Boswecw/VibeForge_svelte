@@ -7,12 +7,22 @@ no description yet
   import { learningStore } from "$lib/stores/learning";
   import { ALL_STACKS } from "$lib/data/stack-profiles/index";
   import type { StackProfile } from "$lib/core/types/stack-profiles";
+  import { 
+    checkRuntimes, 
+    checkLanguageRequirements,
+    type RuntimeCheckResult
+  } from "$lib/api/runtimeClient";
 
   $: configuration = $wizardStore.configuration;
   $: selectedStackId = $wizardStore.selectedStackId;
   $: selectedStack = selectedStackId
     ? ALL_STACKS.find((s) => s.id === selectedStackId)
     : null;
+  $: selectedLanguages = $wizardStore.selectedLanguages;
+  
+  // Runtime check state
+  let runtimeCheck: RuntimeCheckResult | null = null;
+  let runtimeReady = false;
 
   // Smart defaults based on stack
   let envTemplates: Record<string, string> = {};
@@ -20,11 +30,25 @@ no description yet
   let recommendedDb: string | null = null;
   let recommendedDeployment: string | null = null;
 
-  onMount(() => {
+  onMount(async () => {
     applySmartDefaults();
+    await loadRuntimeCheck();
     // Track step completion
     learningStore.trackStepCompleted(4);
   });
+  
+  async function loadRuntimeCheck() {
+    try {
+      runtimeCheck = await checkRuntimes();
+      if (runtimeCheck && selectedLanguages.length > 0) {
+        const requirements = checkLanguageRequirements(runtimeCheck, selectedLanguages);
+        runtimeReady = requirements.allMet;
+      }
+    } catch (error) {
+      console.error("Failed to check runtimes:", error);
+      runtimeCheck = null;
+    }
+  }
 
   $: if (selectedStackId) {
     applySmartDefaults();
@@ -295,6 +319,35 @@ no description yet
       Optional settings to customize your project setup
     </p>
   </div>
+
+  <!-- Runtime Status Summary -->
+  {#if runtimeCheck}
+    <div class="mb-6 p-4 rounded-lg border-2 {runtimeReady ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">{runtimeReady ? '✅' : '⚠️'}</span>
+        <div class="flex-1">
+          <h4 class="font-medium {runtimeReady ? 'text-green-900' : 'text-amber-900'}">
+            Development Environment Status
+          </h4>
+          {#if runtimeReady}
+            <p class="text-sm {runtimeReady ? 'text-green-800' : 'text-amber-800'} mt-1">
+              All required language runtimes are installed and ready.
+            </p>
+          {:else}
+            <p class="text-sm text-amber-800 mt-1">
+              Some required runtimes are missing. Your project will still be generated, but you'll need to install them before running it.
+            </p>
+            <a 
+              href="/dev-environment" 
+              class="inline-flex items-center text-sm font-medium text-amber-700 hover:text-amber-900 underline mt-2"
+            >
+              Check Runtime Status →
+            </a>
+          {/if}
+        </div>
+      </div>
+    </div>
+  {/if}
 
   <!-- Database Selection -->
   <div class="mb-8">
