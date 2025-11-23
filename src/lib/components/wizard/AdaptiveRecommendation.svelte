@@ -3,6 +3,8 @@ no description yet
 -->
 <script lang="ts">
   import { onMount } from "svelte";
+  import { learningStore, stackSuccessRates, userPreferences } from "$lib/stores/learning";
+  import { ALL_STACKS } from "$lib/data/stack-profiles";
 
   // Props
   export let userId: number | null = null;
@@ -36,6 +38,10 @@ no description yet
   let error: string | null = null;
   let showReasoningFor: string | null = null;
 
+  // Subscribe to learning store
+  $: successRates = $stackSuccessRates;
+  $: preferences = $userPreferences;
+
   // Fetch adaptive recommendations
   async function fetchRecommendations() {
     if (selectedLanguages.length === 0) {
@@ -47,33 +53,122 @@ no description yet
     error = null;
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/v1/stacks/recommend-adaptive`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_id: userId,
-            project_type: projectType,
-            selected_languages: selectedLanguages,
-          }),
+      // First, try to use learning store data
+      await learningStore.refreshAnalytics(userId || undefined);
+      
+      // Generate recommendations from learning data
+      recommendations = generateLearningBasedRecommendations();
+      
+      // If no learning data, try backend API
+      if (recommendations.length === 0) {
+        try {
+          const response = await fetch(
+            `http://localhost:8000/api/v1/stacks/recommend-adaptive`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                user_id: userId,
+                project_type: projectType,
+                selected_languages: selectedLanguages,
+              }),
+            }
+          );
+
+          if (response.ok) {
+            recommendations = await response.json();
+          } else {
+            throw new Error("Backend unavailable");
+          }
+        } catch (apiErr) {
+          console.warn("Backend API unavailable, using fallback recommendations");
+          recommendations = generateMockRecommendations();
         }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-
-      recommendations = await response.json();
     } catch (err) {
       console.error("Error fetching adaptive recommendations:", err);
       error = "Unable to load personalized recommendations. Using defaults.";
-
-      // Graceful fallback: use mock data if backend is unavailable
       recommendations = generateMockRecommendations();
     } finally {
       loading = false;
     }
+  }
+
+  // Generate recommendations from learning store data
+  function generateLearningBasedRecommendations(): Recommendation[] {
+    if (!successRates || successRates.length === 0) {
+      return [];
+    }
+
+    const recs: Recommendation[] = [];
+
+    // Filter stacks by selected languages
+    const compatibleStacks = ALL_STACKS.filter(stack => {
+      return selectedLanguages.some(langId => {
+        const lang = stack.languages.find(l => l.toLowerCase().includes(langId.toLowerCase()));
+        return !!lang;
+      });
+    });
+
+    // Match with success rate data
+    for (const stack of compatibleStacks) {
+      const successData = successRates.find(sr => 
+        sr.stack_id.toLowerCase() === stack.id.toLowerCase() || 
+        sr.stack_id.toLowerCase().includes(stack.id.toLowerCase())
+      );
+
+      if (successData) {
+        const reasoning: string[] = [];
+        const basedOn = {
+          user_experience: false,
+          language_match: true,
+          project_type_match: projectType === stack.category,
+          global_success: successData.success_rate >= 0.7,
+        };
+
+        // Build reasoning
+        reasoning.push(`${Math.round(successData.success_rate * 100)}% success rate across ${successData.total_uses} projects`);
+        
+        if (successData.avg_build_time) {
+          const buildTime = successData.avg_build_time < 3600 
+            ? `${Math.round(successData.avg_build_time / 60)} minutes` 
+            : `${Math.round(successData.avg_build_time / 3600)} hours`;
+          reasoning.push(`Average setup time: ${buildTime}`);
+        }
+        
+        if (successData.avg_test_pass_rate) {
+          reasoning.push(`${Math.round(successData.avg_test_pass_rate * 100)}% average test pass rate`);
+        }
+        
+        if (successData.avg_satisfaction) {
+          reasoning.push(`User satisfaction: ${successData.avg_satisfaction.toFixed(1)}/5 stars`);
+        }
+
+        reasoning.push(`Matches your selected languages: ${selectedLanguages.join(", ")}`);
+
+        // Calculate confidence
+        let confidence = successData.success_rate * 0.6; // 60% weight on success rate
+        if (basedOn.project_type_match) confidence += 0.2;
+        if (basedOn.language_match) confidence += 0.15;
+        if (successData.avg_satisfaction && successData.avg_satisfaction >= 4) confidence += 0.05;
+
+        recs.push({
+          stack_id: stack.id,
+          stack_name: stack.name,
+          confidence: Math.min(confidence, 0.99),
+          reasoning,
+          based_on: basedOn,
+          metrics: {
+            global_success_rate: successData.success_rate,
+            user_times_used: successData.total_uses,
+            avg_satisfaction: successData.avg_satisfaction,
+          },
+        });
+      }
+    }
+
+    // Sort by confidence and return top 3
+    return recs.sort((a, b) => b.confidence - a.confidence).slice(0, 3);
   }
 
   // Generate mock recommendations

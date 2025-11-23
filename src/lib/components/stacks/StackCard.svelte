@@ -2,12 +2,44 @@
 no description yet
 -->
 <script lang="ts">
+  import { onMount } from "svelte";
   import type { StackProfile } from "$lib/data/stack-profiles";
+  import { learningStore, stackSuccessRates } from "$lib/stores/learning";
+  import type { StackSuccessRate } from "$lib/types/learning";
 
   export let stack: StackProfile;
   export let selected = false;
   export let compact = false;
   export let onClick: (() => void) | undefined = undefined;
+
+  // Success prediction data
+  let successData: StackSuccessRate | null = null;
+  $: successRates = $stackSuccessRates;
+  
+  // Find success data for this stack
+  $: {
+    successData = successRates.find(sr => 
+      sr.stack_id.toLowerCase() === stack.id.toLowerCase() || 
+      sr.stack_id.toLowerCase().includes(stack.id.toLowerCase())
+    ) || null;
+  }
+
+  function getSuccessColor(rate: number): string {
+    if (rate >= 0.8) return "text-green-600 bg-green-100 border-green-300";
+    if (rate >= 0.6) return "text-yellow-600 bg-yellow-100 border-yellow-300";
+    return "text-red-600 bg-red-100 border-red-300";
+  }
+
+  function formatPercentage(value: number): string {
+    return `${Math.round(value * 100)}%`;
+  }
+
+  function formatTime(seconds: number | undefined): string {
+    if (!seconds) return "N/A";
+    if (seconds < 60) return `${seconds}s`;
+    if (seconds < 3600) return `${Math.round(seconds / 60)}m`;
+    return `${Math.round(seconds / 3600)}h`;
+  }
 
   const categoryColors = {
     web: "bg-blue-500",
@@ -112,7 +144,43 @@ no description yet
       >
         {stack.maturity}
       </span>
+      
+      <!-- Success Prediction Badge -->
+      {#if successData}
+        <span
+          class="px-2 py-1 text-xs font-bold rounded border {getSuccessColor(successData.success_rate)}"
+          title="Historical success rate based on {successData.total_uses} projects"
+        >
+          ✨ {formatPercentage(successData.success_rate)} Success
+        </span>
+      {/if}
     </div>
+
+    <!-- Success Metrics (if available) -->
+    {#if successData && !compact}
+      <div class="mb-3 p-2 bg-gray-50 rounded-lg border border-gray-200">
+        <div class="grid grid-cols-3 gap-2 text-xs">
+          {#if successData.avg_build_time}
+            <div class="text-center">
+              <div class="text-gray-600 font-medium">Build Time</div>
+              <div class="text-gray-900 font-semibold">{formatTime(successData.avg_build_time)}</div>
+            </div>
+          {/if}
+          {#if successData.avg_test_pass_rate}
+            <div class="text-center">
+              <div class="text-gray-600 font-medium">Test Pass</div>
+              <div class="text-gray-900 font-semibold">{formatPercentage(successData.avg_test_pass_rate)}</div>
+            </div>
+          {/if}
+          {#if successData.avg_satisfaction}
+            <div class="text-center">
+              <div class="text-gray-600 font-medium">Satisfaction</div>
+              <div class="text-gray-900 font-semibold">{successData.avg_satisfaction.toFixed(1)}/5</div>
+            </div>
+          {/if}
+        </div>
+      </div>
+    {/if}
 
     <!-- Technologies (compact view) -->
     {#if !compact}

@@ -6,7 +6,7 @@ no description yet
   import LanguageSelector from "$lib/components/languages/LanguageSelector.svelte";
   import HistoricalInsights from "$lib/components/wizard/HistoricalInsights.svelte";
   import { wizardStore, isStep2Valid } from "$lib/stores/wizard";
-  import { learningStore } from "$lib/stores/learning";
+  import { learningStore, userPreferences } from "$lib/stores/learning";
   import type { Language, LanguageCategory } from "$lib/data/languages";
   import { LANGUAGES } from "$lib/data/languages";
   import {
@@ -25,6 +25,10 @@ no description yet
   let apiError = false;
   let recommendations: LanguageRecommendationResponse | null = null;
   let loadingRecommendations = false;
+  
+  // Learning-based recommendations
+  $: preferences = $userPreferences;
+  $: learningRecommendations = generateLearningRecommendations(preferences, projectType);
 
   // UI state
   let searchQuery = "";
@@ -90,6 +94,37 @@ no description yet
     } finally {
       loadingRecommendations = false;
     }
+  }
+
+  function generateLearningRecommendations(prefs: typeof preferences, projType: string): Language[] {
+    if (!prefs || !prefs.favorite_languages || prefs.favorite_languages.length === 0) {
+      return [];
+    }
+
+    // Get languages from preferences that match project type
+    const recommended: Language[] = [];
+    
+    for (const favLang of prefs.favorite_languages) {
+      const lang = languages.find(l => 
+        l.id === favLang || 
+        l.name.toLowerCase() === favLang.toLowerCase()
+      );
+      
+      if (lang) {
+        // Filter by project type relevance
+        if (projType === "web" && (lang.category === "frontend" || lang.category === "backend")) {
+          recommended.push(lang);
+        } else if (projType === "mobile" && lang.category === "mobile") {
+          recommended.push(lang);
+        } else if (projType === "api" && lang.category === "backend") {
+          recommended.push(lang);
+        } else if (!projType) {
+          recommended.push(lang);
+        }
+      }
+    }
+    
+    return recommended.slice(0, 3); // Top 3
   }
 
   function filterLanguages(
@@ -243,6 +278,54 @@ no description yet
       selectedLanguages={selectedLanguages}
     />
   </div>
+
+  <!-- Learning-Based Recommendations -->
+  {#if learningRecommendations.length > 0 && preferences}
+    <div class="mb-6 p-5 bg-linear-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="p-2 bg-purple-600 rounded-lg">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-bold text-gray-900 mb-1">Your Favorite Languages</h3>
+          <p class="text-sm text-gray-600">
+            Based on your {preferences.total_projects} completed projects with {Math.round(preferences.completion_rate * 100)}% success rate
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {#each learningRecommendations as lang}
+          <button
+            class="p-4 bg-white border-2 rounded-lg text-left transition-all hover:shadow-md"
+            class:border-purple-600={selectedLanguages.includes(lang.id)}
+            class:bg-purple-50={selectedLanguages.includes(lang.id)}
+            class:border-gray-200={!selectedLanguages.includes(lang.id)}
+            on:click={() => {
+              if (selectedLanguages.includes(lang.id)) {
+                handleLanguageDeselect({ detail: { language: lang.id } } as CustomEvent);
+              } else {
+                handleLanguageSelect({ detail: { language: lang.id } } as CustomEvent);
+              }
+            }}
+          >
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl">{lang.icon}</span>
+              {#if selectedLanguages.includes(lang.id)}
+                <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+              {/if}
+            </div>
+            <h4 class="font-bold text-gray-900 mb-1">{lang.name}</h4>
+            <p class="text-xs text-gray-600 line-clamp-2">{lang.description}</p>
+          </button>
+        {/each}
+      </div>
+    </div>
+  {/if}
 
   <!-- AI Recommendations -->
   {#if recommendations && recommendations.recommended.length > 0}
