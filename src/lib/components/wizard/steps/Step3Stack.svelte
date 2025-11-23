@@ -7,6 +7,7 @@ no description yet
   import StackComparison from "$lib/components/stacks/StackComparison.svelte";
   import AdaptiveRecommendation from "$lib/components/wizard/AdaptiveRecommendation.svelte";
   import { wizardStore, isStep3Valid } from "$lib/stores/wizard";
+  import { learningStore } from "$lib/stores/learning";
   import type { StackProfile } from "$lib/core/types/stack-profiles";
   import { ALL_STACKS } from "$lib/data/stack-profiles";
   import { LANGUAGES } from "$lib/data/languages";
@@ -115,7 +116,12 @@ no description yet
   }
 
   function handleStackSelect(event: CustomEvent<{ stackId: string }>) {
-    wizardStore.setStack(event.detail.stackId);
+    const stackId = event.detail.stackId;
+    wizardStore.setStack(stackId);
+    
+    // Track learning data
+    learningStore.trackStackViewed(stackId);
+    learningStore.syncSession();
   }
 
   function toggleComparisonSelection(stackId: string) {
@@ -124,6 +130,8 @@ no description yet
     } else {
       if (selectedForComparison.size < 3) {
         selectedForComparison.add(stackId);
+        // Track stack comparison
+        learningStore.trackStackCompared(stackId);
       }
     }
     selectedForComparison = selectedForComparison; // Trigger reactivity
@@ -135,8 +143,19 @@ no description yet
         .map(id => ALL_STACKS.find(s => s.id === id))
         .filter((s): s is StackProfile => s !== undefined);
       showComparisonModal = true;
+      
+      // Track comparison action
+      comparisonStacks.forEach(stack => {
+        learningStore.trackStackCompared(stack.id);
+      });
+      learningStore.syncSession();
     }
   }
+  
+  // Track step completion
+  onMount(() => {
+    learningStore.trackStepCompleted(3);
+  });
 
   function closeComparisonModal() {
     showComparisonModal = false;

@@ -6,6 +6,7 @@ no description yet
   import LanguageSelector from "$lib/components/languages/LanguageSelector.svelte";
   import HistoricalInsights from "$lib/components/wizard/HistoricalInsights.svelte";
   import { wizardStore, isStep2Valid } from "$lib/stores/wizard";
+  import { learningStore } from "$lib/stores/learning";
   import type { Language, LanguageCategory } from "$lib/data/languages";
   import { LANGUAGES } from "$lib/data/languages";
   import {
@@ -200,12 +201,23 @@ no description yet
   }
 
   function handleLanguageSelect(event: CustomEvent<{ language: string }>) {
-    wizardStore.addLanguage(event.detail.language);
+    const languageId = event.detail.language;
+    wizardStore.addLanguage(languageId);
+    
+    // Track learning data
+    learningStore.trackLanguageConsidered(languageId);
+    learningStore.syncSession();
   }
 
   function handleLanguageDeselect(event: CustomEvent<{ language: string }>) {
     wizardStore.removeLanguage(event.detail.language);
+    learningStore.syncSession();
   }
+  
+  // Track step completion
+  onMount(() => {
+    learningStore.trackStepCompleted(2);
+  });
 </script>
 
 <div class="step-content">

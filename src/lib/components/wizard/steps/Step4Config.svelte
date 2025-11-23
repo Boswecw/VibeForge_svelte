@@ -4,6 +4,7 @@ no description yet
 <script lang="ts">
   import { onMount } from "svelte";
   import { wizardStore } from "$lib/stores/wizard";
+  import { learningStore } from "$lib/stores/learning";
   import { ALL_STACKS } from "$lib/data/stack-profiles/index";
   import type { StackProfile } from "$lib/core/types/stack-profiles";
 
@@ -21,6 +22,8 @@ no description yet
 
   onMount(() => {
     applySmartDefaults();
+    // Track step completion
+    learningStore.trackStepCompleted(4);
   });
 
   $: if (selectedStackId) {

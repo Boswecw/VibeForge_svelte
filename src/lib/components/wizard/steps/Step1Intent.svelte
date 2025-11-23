@@ -2,13 +2,20 @@
 no description yet
 -->
 <script lang="ts">
+  import { onMount } from "svelte";
   import { wizardStore, isStep1Valid } from "$lib/stores/wizard";
+  import { learningStore } from "$lib/stores/learning";
   import type { StackCategory } from "$lib/core/types/stack-profiles";
   import TemplateSelector from "$lib/components/wizard/TemplateSelector.svelte";
   import type { ProjectTemplate } from "$lib/data/project-templates";
 
   $: intent = $wizardStore.intent;
   $: isValid = $isStep1Valid;
+
+  // Track step completion
+  onMount(() => {
+    learningStore.trackStepCompleted(1);
+  });
 
   let useTemplate = false;
   let selectedTemplate: ProjectTemplate | null = null;

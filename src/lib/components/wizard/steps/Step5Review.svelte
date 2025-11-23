@@ -3,9 +3,11 @@ no description yet
 -->
 <script lang="ts">
   import { wizardStore } from "$lib/stores/wizard";
+  import { learningStore, isLearningActive } from "$lib/stores/learning";
   import { onMount } from "svelte";
 
   $: state = $wizardStore;
+  $: learningActive = $isLearningActive;
 
   // Historical context for success prediction
   let predictedSuccessRate = 0;
@@ -20,6 +22,19 @@ no description yet
 
   // Fetch stack details when component mounts
   onMount(async () => {
+    // Track step completion
+    learningStore.trackStepCompleted(5);
+
+    // Initialize project and session if not already done
+    if (
+      !learningActive &&
+      state.intent.name &&
+      state.selectedLanguages.length > 0 &&
+      state.selectedStackId
+    ) {
+      await initializeLearningSession();
+    }
+
     if (state.selectedStackId) {
       try {
         const response = await fetch(
@@ -36,6 +51,54 @@ no description yet
     // Calculate predicted success rate based on historical data
     calculateSuccessPrediction();
   });
+
+  async function initializeLearningSession() {
+    try {
+      // Create project
+      const project = await learningStore.startProject({
+        project_name: state.intent.name,
+        project_type: state.intent.projectType || "web",
+        description: state.intent.description || undefined,
+        selected_languages: state.selectedLanguages,
+        selected_stack: state.selectedStackId || "",
+        intent_description: state.intent.description || undefined,
+        team_size: getTeamSizeNumber(state.intent.teamSize),
+        timeline_estimate: state.intent.timeline,
+        complexity_score: calculateComplexityScore(),
+      });
+
+      if (project) {
+        // Create session
+        await learningStore.startSession(project.id);
+      }
+    } catch (error) {
+      console.error("Failed to initialize learning session:", error);
+    }
+  }
+
+  function getTeamSizeNumber(size: string): number {
+    const sizeMap: Record<string, number> = {
+      solo: 1,
+      small: 3,
+      medium: 10,
+      large: 50,
+    };
+    return sizeMap[size] || 1;
+  }
+
+  function calculateComplexityScore(): number {
+    // Simple complexity calculation based on selections
+    let score = 3; // Base score
+    if (state.selectedLanguages.length > 2) score += 1;
+    if (state.configuration.database && state.configuration.database !== "none")
+      score += 1;
+    if (
+      state.configuration.authentication &&
+      state.configuration.authentication !== "none"
+    )
+      score += 1;
+    return Math.min(score, 10);
+  }
 
   async function calculateSuccessPrediction() {
     const hasSelectedLanguages = state.selectedLanguages.length > 0;
@@ -106,6 +169,14 @@ no description yet
     for (let i = 0; i < steps.length; i++) {
       await new Promise((resolve) => setTimeout(resolve, steps[i].duration));
       generationProgress = ((i + 1) / steps.length) * 100;
+    }
+
+    // Complete the learning session
+    if (learningActive) {
+      await learningStore.completeSession(
+        state.selectedLanguages,
+        state.selectedStackId || ""
+      );
     }
 
     generating = false;
