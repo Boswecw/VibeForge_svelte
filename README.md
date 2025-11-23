@@ -3,10 +3,27 @@
   
   # VibeForge
   
-  **A Professional Prompt Engineering Workbench for AI Developers**
+  **AI-Powered Project Automation Platform**
 </div>
 
-VibeForge is a structured workspace for crafting, testing, and refining prompts for large language models. Built with SvelteKit, TypeScript, and Tailwind CSS, it provides a professional 3-column layout designed for low cognitive load and efficient workflows.
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Beta-blue" alt="Beta">
+  <img src="https://img.shields.io/badge/License-Freeware-purple" alt="Freeware">
+  <img src="https://img.shields.io/badge/Backend-Commercial-red" alt="Commercial Backend">
+  <img src="https://img.shields.io/badge/SvelteKit-5-orange" alt="SvelteKit 5">
+</p>
+
+---
+
+> **📄 License (Freeware With Restrictions)**  
+> VibeForge is released as **freeware** by Boswell Digital Solutions LLC.  
+> Free to download and use, but with modification and redistribution restrictions.  
+> Backend services (NeuroForge + DataForge) remain commercial.  
+> See [License section](#-license-freeware-with-restrictions) for full terms.
+
+---
+
+VibeForge is an intelligent project creation platform with AI-powered recommendations, adaptive learning, and success prediction. It guides developers through multi-step project setup with 15 programming languages, 10 production-ready stack profiles, and learning-based insights. Built with SvelteKit 5, TypeScript, and Tailwind CSS, it provides a professional wizard interface optimized for efficiency and low cognitive load.
 
 ---
 
@@ -28,25 +45,35 @@ pnpm dev
 
 ## 📋 What is VibeForge?
 
-VibeForge is **not a chat interface**—it's a professional tool for AI engineers who need to:
+VibeForge is a **freeware entry product** to the Forge Ecosystem—an intelligent project creation wizard that helps developers:
 
-- **Compose complex prompts** with reusable context blocks
-- **Test multiple models** side-by-side with the same prompt
-- **Track execution history** with full audit trails
-- **Evaluate model outputs** systematically
-- **Organize work** across multiple workspaces
+- **Create AI-optimized projects** with adaptive stack recommendations
+- **Select from 15 languages** across 4 categories (Frontend, Backend, Mobile, Systems)
+- **Choose production-ready stacks** from 10 professionally configured profiles
+- **Learn from experience** with historical insights and success prediction
+- **Get personalized recommendations** based on your project history
+- **Predict project success** with ML-powered forecasting
 
 ### Core Features
 
-✅ **3-Column Workbench** - Context | Prompt | Output layout
-✅ **Context Library** - Reusable prompt components with search
-✅ **Document Ingestion** - Upload and process documents into contexts
-✅ **Research Assistant** - Notes, snippets, and suggestions panel
-✅ **Multi-Model Execution** - Run prompts across multiple models
-✅ **History & Replay** - Complete execution audit trail
-✅ **Evaluations** - Systematic model comparison
-✅ **Workspaces** - Multi-workspace organization
-✅ **Dark/Light Theme** - Professional dark-first design
+✅ **Multi-Step Wizard** - Intelligent project creation flow
+✅ **15 Programming Languages** - Frontend, Backend, Mobile, Systems categories
+✅ **10 Stack Profiles** - Production-ready configurations (T3, MERN, Next.js, FastAPI AI, etc.)
+✅ **Adaptive Learning** - Historical insights and personalized recommendations  
+✅ **Success Prediction** - ML-powered project outcome forecasting  
+✅ **Experience Tracking** - User preference learning and pattern detection
+✅ **Smart Recommendations** - Language + stack compatibility validation
+✅ **Timeline Estimation** - Complexity scoring and milestone suggestions
+✅ **Template Library** - 10 professional project templates
+✅ **Dark/Light Theme** - Professional design optimized for developers
+
+### Backend Integration (Commercial)
+
+VibeForge connects to commercial Forge backend services:
+
+- **NeuroForge** - AI orchestration and model routing
+- **DataForge** - Learning data persistence and analytics
+- **Note:** Backend services are proprietary and not included in freeware distribution
 
 ---
 
@@ -75,29 +102,32 @@ VibeForge is **not a chat interface**—it's a professional tool for AI engineer
 
 ## 🎯 Project Status
 
-**Version:** 0.0.1 (MVP Phase)
-**Status:** ✅ Production-Ready with Active Development
+**Version:** 0.1.0 (Beta)  
+**Status:** 🔵 Beta - Feature Complete, Active Testing  
+**License:** Freeware with Restrictions
 
-### Completed Features
+### Completed Features (Phase 3.2 & 3.3)
 
-- [x] Main Workbench (3-column layout)
-- [x] Context Library with search
-- [x] Document Ingestion system
-- [x] Research & Assist panel
-- [x] Quick Run mode
-- [x] Run History
-- [x] Prompt Patterns library
-- [x] Presets management
-- [x] Evaluations dashboard
-- [x] Workspaces
-- [x] Settings panel
+- [x] Multi-step project creation wizard
+- [x] 15 programming languages with metadata
+- [x] 10 production-ready stack profiles
+- [x] Adaptive learning layer (backend + frontend)
+- [x] Historical insights dashboard
+- [x] Success prediction with ML
+- [x] Language compatibility validation
+- [x] Stack recommendations engine
+- [x] Timeline estimation system
+- [x] Template library (10 templates)
 - [x] Dark/Light theme system
+- [x] Full backend API integration ✅
 
 ### In Progress
 
-- [ ] Backend API integration
-- [ ] Real file storage
+- [ ] Runtime environment detection (Phase 2.7)
+- [ ] Dev-Container auto-generation
 - [ ] User authentication
+- [ ] Project outcome tracking (Phase 3.4)
+- [ ] Feedback collection system
 - [ ] Cloud deployment
 
 ---
@@ -231,9 +261,54 @@ We welcome contributions! Please see [DEVELOPMENT.md](./DEVELOPMENT.md) for:
 
 ---
 
-## 📄 License
+## 📄 License (Freeware With Restrictions)
 
-[Add your license here]
+VibeForge is released as **freeware** by Boswell Digital Solutions LLC.
+
+### You May:
+
+- ✅ Download and use the official unmodified binaries for free
+- ✅ Redistribute the exact binaries
+- ✅ Use the software for personal, academic, or commercial development
+
+### You May Not:
+
+- ❌ Modify, decompile, reverse engineer, or extract code
+- ❌ Redistribute modified versions
+- ❌ Bundle VibeForge into SaaS or commercial tools
+- ❌ Use its design or workflow to create competing products
+- ❌ Train AI models on VibeForge's UI, workflows, or logic
+
+### Backend Services (Commercial)
+
+All backend orchestration (NeuroForge) and data engines (DataForge) remain **commercial property** of Boswell Digital Solutions LLC. VibeForge connects to these commercial services for:
+
+- AI-powered recommendations
+- Learning data persistence
+- Success prediction analytics
+- Historical insights aggregation
+
+**© 2025 Boswell Digital Solutions LLC — All Rights Reserved.**
+
+### Why Freeware?
+
+VibeForge serves as the **entry product** to the Forge Ecosystem. It's free to use and introduces developers to:
+
+- Professional project automation
+- AI-powered development workflows
+- The power of adaptive learning systems
+- Integration with commercial Forge products (AuthorForge, TradeForge, etc.)
+
+### Commercial Products
+
+For advanced features, consider:
+
+- **AuthorForge** (Commercial) - Genre-aware creative writing platform
+- **TradeForge** (Commercial) - Market intelligence and financial analysis
+- **DataForge** (Commercial) - Enterprise data engine with compliance automation
+- **NeuroForge** (Commercial) - Advanced LLM orchestration with champion selection
+
+**Contact:** charlesboswell@boswelldigitalsolutions.com
 
 ---
 
