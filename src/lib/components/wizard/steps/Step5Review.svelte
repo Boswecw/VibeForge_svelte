@@ -11,6 +11,7 @@ no description yet
     type RuntimeCheckResult,
     type RuntimeStatus
   } from "$lib/api/runtimeClient";
+  import { generateDevContainerFiles } from "$lib/services/devcontainer";
 
   $: state = $wizardStore;
   $: learningActive = $isLearningActive;
@@ -180,6 +181,35 @@ no description yet
     } catch (error) {
       console.error("Failed to check runtime requirements:", error);
     }
+  }
+  
+  function handleGenerateDevContainer() {
+    const files = generateDevContainerFiles(
+      state.selectedLanguages,
+      state.selectedStackId || undefined,
+      state.intent.name || 'my-project'
+    );
+    
+    // Create downloadable content
+    let content = '';
+    for (const [filename, fileContent] of Object.entries(files)) {
+      content += `${'='.repeat(60)}\n`;
+      content += `FILE: .devcontainer/${filename}\n`;
+      content += `${'='.repeat(60)}\n\n`;
+      content += fileContent;
+      content += '\n\n\n';
+    }
+    
+    // Trigger download
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${state.intent.name || 'project'}-devcontainer.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   async function generateProject() {
@@ -505,6 +535,7 @@ no description yet
 
               {#if runtimeRequirements.containerOnly.length > 0}
                 <button
+                  onclick={handleGenerateDevContainer}
                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
                 >
                   🐳 Generate Dev-Container
