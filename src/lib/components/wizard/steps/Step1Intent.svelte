@@ -7,6 +7,7 @@ no description yet
   import { learningStore } from "$lib/stores/learning";
   import type { StackCategory } from "$lib/core/types/stack-profiles";
   import TemplateSelector from "$lib/components/wizard/TemplateSelector.svelte";
+  import AnalysisModal from "$lib/components/wizard/AnalysisModal.svelte";
   import type { ProjectTemplate } from "$lib/data/project-templates";
 
   $: intent = $wizardStore.intent;
@@ -19,6 +20,7 @@ no description yet
 
   let useTemplate = false;
   let selectedTemplate: ProjectTemplate | null = null;
+  let showAnalysisModal = false;
 
   // Smart validation state
   let nameCheckResult: "checking" | "available" | "taken" | null = null;
@@ -323,10 +325,10 @@ no description yet
     </p>
   </div>
 
-  <!-- Template Toggle -->
-  <div class="mb-6 flex gap-2">
+  <!-- Template/Analysis Toggle -->
+  <div class="mb-6 grid grid-cols-3 gap-2">
     <button
-      class="flex-1 px-4 py-3 rounded-lg font-medium transition-all"
+      class="px-4 py-3 rounded-lg font-medium transition-all"
       class:bg-indigo-600={!useTemplate}
       class:text-white={!useTemplate}
       class:bg-gray-100={useTemplate}
@@ -337,7 +339,7 @@ no description yet
       Start from Scratch
     </button>
     <button
-      class="flex-1 px-4 py-3 rounded-lg font-medium transition-all"
+      class="px-4 py-3 rounded-lg font-medium transition-all"
       class:bg-indigo-600={useTemplate}
       class:text-white={useTemplate}
       class:bg-gray-100={!useTemplate}
@@ -346,6 +348,13 @@ no description yet
     >
       <span class="mr-2">📦</span>
       Use a Template
+    </button>
+    <button
+      class="px-4 py-3 rounded-lg font-medium transition-all bg-gray-100 hover:bg-gray-200 text-gray-700"
+      on:click={() => (showAnalysisModal = true)}
+    >
+      <span class="mr-2">📁</span>
+      Analyze Existing
     </button>
   </div>
 
@@ -771,6 +780,9 @@ no description yet
     {/if}
   {/if}
 </div>
+
+<!-- Analysis Modal -->
+<AnalysisModal bind:isOpen={showAnalysisModal} />
 
 <style>
   .step-content {
