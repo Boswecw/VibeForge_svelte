@@ -5,9 +5,24 @@ no description yet
   import { wizardStore } from "$lib/stores/wizard";
   import { learningStore, isLearningActive } from "$lib/stores/learning";
   import { onMount } from "svelte";
+  import { 
+    checkRuntimes, 
+    checkLanguageRequirements,
+    type RuntimeCheckResult,
+    type RuntimeStatus
+  } from "$lib/api/runtimeClient";
 
   $: state = $wizardStore;
   $: learningActive = $isLearningActive;
+  
+  // Runtime check state
+  let runtimeCheck: RuntimeCheckResult | null = null;
+  let runtimeRequirements: {
+    allMet: boolean;
+    missing: RuntimeStatus[];
+    containerOnly: RuntimeStatus[];
+  } | null = null;
+  let showRuntimeDetails = false;
 
   // Historical context for success prediction
   let predictedSuccessRate = 0;
@@ -47,6 +62,9 @@ no description yet
         console.error("Failed to fetch stack details:", error);
       }
     }
+    
+    // Check runtime requirements
+    await loadRuntimeRequirements();
 
     // Calculate predicted success rate based on historical data
     calculateSuccessPrediction();
@@ -151,6 +169,17 @@ no description yet
 
   function editSection(step: number) {
     wizardStore.goToStep(step);
+  }
+  
+  async function loadRuntimeRequirements() {
+    try {
+      runtimeCheck = await checkRuntimes();
+      if (runtimeCheck && state.selectedLanguages.length > 0) {
+        runtimeRequirements = checkLanguageRequirements(runtimeCheck, state.selectedLanguages);
+      }
+    } catch (error) {
+      console.error("Failed to check runtime requirements:", error);
+    }
   }
 
   async function generateProject() {
@@ -335,6 +364,156 @@ no description yet
           </div>
         </div>
       </div>
+    </div>
+  {/if}
+
+  <!-- Runtime Environment Status -->
+  {#if runtimeRequirements}
+    <div
+      class="mb-6 rounded-lg border-2 {runtimeRequirements.allMet
+        ? 'bg-green-50 border-green-300'
+        : runtimeRequirements.containerOnly.length > 0
+        ? 'bg-blue-50 border-blue-300'
+        : 'bg-amber-50 border-amber-300'}"
+    >
+      <button
+        onclick={() => (showRuntimeDetails = !showRuntimeDetails)}
+        class="w-full px-6 py-4 flex items-center justify-between hover:opacity-80 transition-opacity"
+      >
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">
+            {#if runtimeRequirements.allMet}
+              ✅
+            {:else if runtimeRequirements.containerOnly.length > 0}
+              🐳
+            {:else}
+              ⚠️
+            {/if}
+          </span>
+          <div class="text-left">
+            <h3
+              class="text-lg font-semibold {runtimeRequirements.allMet
+                ? 'text-green-900'
+                : runtimeRequirements.containerOnly.length > 0
+                ? 'text-blue-900'
+                : 'text-amber-900'}"
+            >
+              Development Environment
+            </h3>
+            <p
+              class="text-sm {runtimeRequirements.allMet
+                ? 'text-green-700'
+                : runtimeRequirements.containerOnly.length > 0
+                ? 'text-blue-700'
+                : 'text-amber-700'}"
+            >
+              {#if runtimeRequirements.allMet && runtimeRequirements.containerOnly.length === 0}
+                All required runtimes installed and ready
+              {:else if runtimeRequirements.containerOnly.length > 0}
+                {runtimeRequirements.containerOnly.length} language(s) require Dev-Container
+              {:else}
+                {runtimeRequirements.missing.length} missing runtime(s)
+              {/if}
+            </p>
+          </div>
+        </div>
+        <svg
+          class="w-5 h-5 text-gray-500 transition-transform {showRuntimeDetails
+            ? 'rotate-180'
+            : ''}"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+
+      {#if showRuntimeDetails}
+        <div
+          class="px-6 pb-4 border-t {runtimeRequirements.allMet
+            ? 'border-green-200'
+            : runtimeRequirements.containerOnly.length > 0
+            ? 'border-blue-200'
+            : 'border-amber-200'}"
+        >
+          <div class="pt-4 space-y-3">
+            {#if runtimeRequirements.missing.length > 0}
+              <div>
+                <h4 class="font-medium text-red-900 mb-2">
+                  ❌ Missing Runtimes:
+                </h4>
+                <ul class="space-y-1">
+                  {#each runtimeRequirements.missing as runtime}
+                    <li
+                      class="text-sm text-red-800 font-mono flex items-center gap-2"
+                    >
+                      <span>•</span>
+                      {runtime.name}
+                      {#if runtime.version}
+                        <span class="text-xs text-red-600"
+                          >(requires version check)</span
+                        >
+                      {/if}
+                    </li>
+                  {/each}
+                </ul>
+              </div>
+            {/if}
+
+            {#if runtimeRequirements.containerOnly.length > 0}
+              <div>
+                <h4 class="font-medium text-blue-900 mb-2">
+                  🐳 Container-Only Languages:
+                </h4>
+                <ul class="space-y-1 mb-2">
+                  {#each runtimeRequirements.containerOnly as runtime}
+                    <li class="text-sm text-blue-800 font-mono">
+                      • {runtime.name}
+                    </li>
+                  {/each}
+                </ul>
+                <p class="text-sm text-blue-700">
+                  These languages will be available via Dev-Container. You can
+                  generate the configuration below.
+                </p>
+              </div>
+            {/if}
+
+            {#if runtimeRequirements.allMet && runtimeRequirements.containerOnly.length === 0}
+              <p class="text-sm text-green-700">
+                ✅ Your system has all required runtimes installed. You're ready
+                to generate and run your project!
+              </p>
+            {/if}
+
+            <div class="pt-2 flex gap-3">
+              <a
+                href="/dev-environment"
+                target="_blank"
+                class="inline-flex items-center px-4 py-2 bg-white border-2 {runtimeRequirements.allMet
+                  ? 'border-green-600 text-green-700 hover:bg-green-50'
+                  : 'border-amber-600 text-amber-700 hover:bg-amber-50'} rounded-lg text-sm font-medium transition-colors"
+              >
+                View Full Environment Status →
+              </a>
+
+              {#if runtimeRequirements.containerOnly.length > 0}
+                <button
+                  class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                >
+                  🐳 Generate Dev-Container
+                </button>
+              {/if}
+            </div>
+          </div>
+        </div>
+      {/if}
     </div>
   {/if}
 
