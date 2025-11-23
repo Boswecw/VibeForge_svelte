@@ -17,7 +17,7 @@ Phase 4 transforms VibeForge into an **intelligent AI-powered development assist
 🎯 **Intelligent Recommendations**: AI-powered stack selection with explanations  
 🎯 **Code Analysis**: Analyze existing projects to generate profiles  
 🎯 **Smart Routing**: Automatically select optimal model for each task  
-🎯 **Predictive Analytics**: Forecast project success and technology trends  
+🎯 **Predictive Analytics**: Forecast project success and technology trends
 
 ---
 
@@ -98,6 +98,7 @@ Phase 4 transforms VibeForge into an **intelligent AI-powered development assist
 - `CustomProvider.ts` - Generic HTTP provider
 
 **Features**:
+
 - Unified API: `chat()`, `stream()`, `countTokens()`, `getModels()`
 - Automatic retry with exponential backoff
 - Token counting (tiktoken for OpenAI, custom for others)
@@ -127,6 +128,7 @@ interface LLMConfig {
 - Test connection button with real API call
 
 **Deliverables**:
+
 - ✅ 5 provider implementations
 - ✅ Provider factory pattern
 - ✅ Configuration persistence (localStorage + backend)
@@ -157,6 +159,7 @@ final_score = (
 #### LLM Prompt Engineering
 
 **System Prompt Template**:
+
 ```
 You are a senior software architect helping developers choose the best technology stack.
 
@@ -179,6 +182,7 @@ Format: JSON with fields: stackId, score, strengths[], concerns[], bestFor
 ```
 
 **Chain-of-Thought Reasoning**:
+
 ```
 Step 1: Analyze project requirements
 Step 2: Consider team constraints
@@ -190,6 +194,7 @@ Step 5: Generate explanations
 #### Components
 
 **Backend** (`app/services/stack_advisor_llm.py`):
+
 - `LLMStackAdvisor` class
 - Prompt builder with context injection
 - Response parser (JSON extraction)
@@ -197,6 +202,7 @@ Step 5: Generate explanations
 - Token usage logging
 
 **Frontend** (`Step3StackSelection.svelte`):
+
 - "🤖 AI Recommendations" section
 - Expandable explanations per stack
 - Confidence indicators (High/Medium/Low)
@@ -204,6 +210,7 @@ Step 5: Generate explanations
 - Model badge (e.g., "Powered by GPT-4")
 
 **Deliverables**:
+
 - ✅ LLM-powered recommendation endpoint
 - ✅ Prompt templates with few-shot examples
 - ✅ Response parsing with validation
@@ -254,6 +261,7 @@ Step 5: Generate explanations
    - Import graph depth
 
 **Output Format**:
+
 ```rust
 struct ProjectAnalysis {
   languages: Vec<LanguageInfo>,      // Detected with %
@@ -271,6 +279,7 @@ struct ProjectAnalysis {
 **New Page**: `/analyze`
 
 **Flow**:
+
 1. User selects folder (via Tauri file dialog)
 2. Backend analyzes project (progress indicator)
 3. Display detailed report:
@@ -282,6 +291,7 @@ struct ProjectAnalysis {
 4. "Create Similar Project" button → Pre-fill wizard
 
 **Deliverables**:
+
 - ✅ Rust analyzer service with tree-sitter
 - ✅ Framework detection logic (10+ frameworks)
 - ✅ Tauri command: `analyze_project(path)`
@@ -299,11 +309,12 @@ struct ProjectAnalysis {
 #### Intelligent Router
 
 **Task Classification**:
+
 ```typescript
 enum TaskComplexity {
-  SIMPLE,    // FAQ, simple questions → Fast/cheap models
-  MODERATE,  // Recommendations, comparisons → Mid-tier models
-  COMPLEX,   // Architecture design, analysis → Premium models
+  SIMPLE, // FAQ, simple questions → Fast/cheap models
+  MODERATE, // Recommendations, comparisons → Mid-tier models
+  COMPLEX, // Architecture design, analysis → Premium models
 }
 
 interface RoutingDecision {
@@ -316,32 +327,34 @@ interface RoutingDecision {
 ```
 
 **Routing Algorithm**:
+
 ```
 function selectModel(task: Task, constraints: Constraints): Model {
   // Classify task complexity
   complexity = classifyTask(task);
-  
+
   // Get performance history
   history = getModelPerformance(task.type);
-  
+
   // Filter by constraints
-  candidates = models.filter(m => 
+  candidates = models.filter(m =>
     m.cost <= constraints.maxCost &&
     m.latency <= constraints.maxLatency
   );
-  
+
   // Score candidates
-  scores = candidates.map(m => 
+  scores = candidates.map(m =>
     (history[m].accuracy * 0.6) +
     (1 / m.cost * 0.2) +
     (1 / m.latency * 0.2)
   );
-  
+
   return candidates[argmax(scores)];
 }
 ```
 
 **Model Performance Tracking**:
+
 - Response time (p50, p95, p99)
 - Token efficiency (output tokens / input tokens)
 - User satisfaction (implicit: acceptance rate)
@@ -351,6 +364,7 @@ function selectModel(task: Task, constraints: Constraints): Model {
 #### A/B Testing Framework
 
 **Schema** (DataForge):
+
 ```sql
 CREATE TABLE ab_tests (
   id UUID PRIMARY KEY,
@@ -378,11 +392,13 @@ CREATE TABLE ab_test_events (
 ```
 
 **API**:
+
 - `POST /api/v1/ab-tests` - Create test
 - `GET /api/v1/ab-tests/:id/results` - Get results
 - `POST /api/v1/ab-tests/:id/declare-winner` - End test
 
 **Deliverables**:
+
 - ✅ Model router with task classification
 - ✅ Performance tracking system
 - ✅ A/B testing framework (DB + API)
@@ -402,6 +418,7 @@ CREATE TABLE ab_test_events (
 **1. Project Success Prediction**
 
 **Input Features**:
+
 - Selected stack
 - Team size
 - Timeline
@@ -412,7 +429,8 @@ CREATE TABLE ab_test_events (
 
 **Output**: Success probability (0-100%) with confidence interval
 
-**UI**: 
+**UI**:
+
 - Gauge chart showing prediction
 - Factors contributing to score
 - Similar projects comparison
@@ -420,12 +438,14 @@ CREATE TABLE ab_test_events (
 **2. Technology Trend Analysis**
 
 **Metrics**:
+
 - Language selection frequency over time
 - Stack popularity trends
 - Emerging technology adoption rate
 - Recommendation acceptance rate per stack
 
 **Visualizations**:
+
 - Line charts (time series)
 - Heatmaps (correlations)
 - Bar charts (rankings)
@@ -433,12 +453,14 @@ CREATE TABLE ab_test_events (
 **3. Recommendation Accuracy**
 
 **Tracking**:
+
 - Precision: % of accepted recommendations
 - Recall: % of eventually-used stacks that were recommended
 - F1 Score
 - Mean Reciprocal Rank (MRR)
 
 **Dashboard Widgets**:
+
 - Model performance over time
 - Per-stack accuracy
 - Provider comparison
@@ -446,6 +468,7 @@ CREATE TABLE ab_test_events (
 #### Implementation
 
 **Backend** (`app/services/analytics_service.py`):
+
 ```python
 class AnalyticsService:
   async def get_technology_trends(
@@ -454,14 +477,14 @@ class AnalyticsService:
   ) -> TechnologyTrends:
     # Query DataForge for aggregated stats
     pass
-  
+
   async def predict_project_success(
     self,
     project_profile: ProjectProfile
   ) -> SuccessPrediction:
     # Load ML model, run inference
     pass
-  
+
   async def get_recommendation_metrics(
     self,
     model: str,
@@ -472,12 +495,14 @@ class AnalyticsService:
 ```
 
 **Frontend** (`src/routes/analytics/+page.svelte`):
+
 - Dashboard layout with 4-6 widgets
 - Date range selector
 - Filter by provider/model
 - Export as PDF/CSV
 
 **Deliverables**:
+
 - ✅ Analytics API endpoints (5-7 endpoints)
 - ✅ Prediction model training pipeline
 - ✅ Analytics dashboard page
@@ -549,6 +574,7 @@ class AnalyticsService:
    - Prediction model details
 
 **Deliverables**:
+
 - ✅ 50+ unit tests
 - ✅ 20+ integration tests
 - ✅ Performance benchmarks
@@ -563,21 +589,25 @@ class AnalyticsService:
 ### Phase 4 KPIs
 
 **Feature Adoption**:
+
 - ✅ 80%+ users try AI recommendations
 - ✅ 60%+ accept at least one AI suggestion
 - ✅ 40%+ use code analysis feature
 
 **Quality**:
+
 - ✅ 90%+ test coverage
 - ✅ <2s LLM response time (p95)
 - ✅ <10s code analysis for medium projects
 
 **Accuracy**:
+
 - ✅ 70%+ recommendation acceptance rate
 - ✅ 85%+ framework detection accuracy
 - ✅ 60%+ success prediction accuracy (within 20% error)
 
 **Performance**:
+
 - ✅ <$0.10 average LLM cost per wizard session
 - ✅ <5s analyzer startup time
 - ✅ <200ms dashboard load time
@@ -589,20 +619,24 @@ class AnalyticsService:
 ### New Technologies
 
 **LLM SDKs**:
+
 - `openai` (Python SDK)
 - `anthropic` (Python SDK)
 - `ollama` (HTTP client)
 
 **Code Analysis**:
+
 - `tree-sitter` (Rust) - Syntax tree parsing
 - `ignore` (Rust) - Gitignore-aware traversal
 
 **Analytics**:
+
 - `scikit-learn` (Python) - ML models
 - `pandas` (Python) - Data processing
 - `Chart.js` (TypeScript) - Visualizations
 
 **Testing**:
+
 - `vitest` (TypeScript unit tests)
 - `pytest` (Python tests)
 - `mockito` (Rust mocks)
@@ -614,22 +648,27 @@ class AnalyticsService:
 ### Identified Risks
 
 **1. LLM Costs**
+
 - **Risk**: High API costs with GPT-4
 - **Mitigation**: Use cheaper models for simple tasks, implement caching, set budget limits
 
 **2. LLM Latency**
+
 - **Risk**: Slow responses impact UX
 - **Mitigation**: Streaming responses, skeleton loaders, async processing, local fallbacks
 
 **3. Analysis Accuracy**
+
 - **Risk**: Incorrect framework detection
 - **Mitigation**: Multiple detection methods, confidence scoring, user override option
 
 **4. Model Availability**
+
 - **Risk**: Provider outages
 - **Mitigation**: Multiple provider support, graceful degradation, fallback to rule-based
 
 **5. Privacy Concerns**
+
 - **Risk**: Users uncomfortable sending code to LLMs
 - **Mitigation**: Local analysis only, opt-in AI features, clear data usage policy
 
@@ -653,6 +692,7 @@ Week 6: Milestone 4.6 (Testing & Docs)
 ## Next Steps
 
 **Immediate** (Milestone 4.1):
+
 1. Create `src/lib/services/llm/` directory structure
 2. Implement `BaseLLMProvider` interface
 3. Build `OpenAIProvider` with chat + streaming
@@ -660,17 +700,20 @@ Week 6: Milestone 4.6 (Testing & Docs)
 5. Test with real API calls
 
 **Short-term** (Week 1-2):
+
 1. Complete all provider implementations
 2. Build stack recommendation endpoint
 3. Design prompt templates
 4. Integrate into Step 3 of wizard
 
 **Medium-term** (Week 3-4):
+
 1. Build Rust code analyzer
 2. Implement model router
 3. Create A/B testing framework
 
 **Long-term** (Week 5-6):
+
 1. Build analytics dashboard
 2. Train prediction models
 3. Write comprehensive documentation
