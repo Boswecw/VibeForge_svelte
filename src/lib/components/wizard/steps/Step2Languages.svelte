@@ -4,6 +4,7 @@ no description yet
 <script lang="ts">
   import { onMount } from "svelte";
   import LanguageSelector from "$lib/components/languages/LanguageSelector.svelte";
+  import HistoricalInsights from "$lib/components/wizard/HistoricalInsights.svelte";
   import { wizardStore, isStep2Valid } from "$lib/stores/wizard";
   import type { Language, LanguageCategory } from "$lib/data/languages";
   import { LANGUAGES } from "$lib/data/languages";
@@ -220,6 +221,15 @@ no description yet
         ⚠️ Using offline language data (API unavailable)
       </p>
     {/if}
+  </div>
+
+  <!-- Historical Insights Panel -->
+  <div class="mb-6">
+    <HistoricalInsights 
+      userId={null}
+      projectType={projectType}
+      selectedLanguages={selectedLanguages}
+    />
   </div>
 
   <!-- AI Recommendations -->

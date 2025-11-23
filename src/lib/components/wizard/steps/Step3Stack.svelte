@@ -5,6 +5,7 @@ no description yet
   import { onMount } from "svelte";
   import StackSelector from "$lib/components/stacks/StackSelector.svelte";
   import StackComparison from "$lib/components/stacks/StackComparison.svelte";
+  import AdaptiveRecommendation from "$lib/components/wizard/AdaptiveRecommendation.svelte";
   import { wizardStore, isStep3Valid } from "$lib/stores/wizard";
   import type { StackProfile } from "$lib/core/types/stack-profiles";
   import { ALL_STACKS } from "$lib/data/stack-profiles";
@@ -166,6 +167,16 @@ no description yet
         Select a pre-configured technology stack for your {projectType || "project"}
       {/if}
     </p>
+  </div>
+
+  <!-- Adaptive Recommendations (Learning-Based) -->
+  <div class="mb-6">
+    <AdaptiveRecommendation
+      userId={null}
+      projectType={projectType}
+      selectedLanguages={selectedLanguages}
+      stackId={selectedStackId || ''}
+    />
   </div>
 
   <!-- Recommendations Section -->

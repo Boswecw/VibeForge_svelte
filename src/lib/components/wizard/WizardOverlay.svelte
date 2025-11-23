@@ -19,27 +19,34 @@ no description yet
       close();
     }
   }
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (e.key === "Escape") {
+      close();
+    }
+  }
 </script>
 
 {#if visible}
+  <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
   <div
     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
-    on:click={handleBackdropClick}
-    on:keydown={(e) => e.key === "Escape" && close()}
+    onclick={handleBackdropClick}
+    onkeydown={handleKeydown}
     role="dialog"
     aria-modal="true"
     tabindex="-1"
   >
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div
       class="relative w-full max-w-6xl h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden"
-      on:click|stopPropagation
-      on:keydown|stopPropagation
-      role="document"
+      onclick={(e) => e.stopPropagation()}
+      onkeydown={(e) => e.stopPropagation()}
     >
       <!-- Close Button -->
       <button
         class="absolute top-4 right-4 z-10 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-        on:click={close}
+        onclick={close}
         aria-label="Close wizard"
       >
         <svg
