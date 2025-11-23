@@ -18,7 +18,7 @@ Phase 2.7 delivers a **comprehensive development environment detection and confi
 ✅ **Visual environment status** with actionable install guidance  
 ✅ **Wizard integration** showing real-time runtime requirements  
 ✅ **Dev-Container generation** with 6 pre-built templates  
-✅ **One-click configuration** for mobile/full-stack projects  
+✅ **One-click configuration** for mobile/full-stack projects
 
 ---
 
@@ -80,6 +80,7 @@ Phase 2.7 delivers a **comprehensive development environment detection and confi
 ### Data Flow
 
 1. **Runtime Detection Flow**:
+
    ```
    User Opens Wizard → Step2 onMount
    → checkRuntimes() (Tauri command)
@@ -115,21 +116,21 @@ Phase 2.7 delivers a **comprehensive development environment detection and confi
 
 - `check_all_runtimes() -> RuntimeCheckResult`  
   Detects 15 languages: Node.js, Python, Go, Rust, Java, C/C++, PHP, Ruby, .NET, Bash, SQL (PostgreSQL/MySQL), Dart, Kotlin, Swift
-  
 - `detect_toolchains() -> Vec<Toolchain>`  
   PATH scanning, version extraction via `--version` commands, error handling
 
 **Supported Languages**:
 
-| Category | Languages | Detection Method |
-|----------|-----------|------------------|
-| **Core** | Node.js, Python, Go, Rust | `node --version`, `python3 --version`, etc. |
-| **Compiled** | Java, C/C++, .NET | `javac --version`, `gcc --version`, `dotnet --version` |
-| **Scripting** | PHP, Ruby, Bash | `php --version`, `ruby --version`, `bash --version` |
-| **Databases** | PostgreSQL, MySQL | `psql --version`, `mysql --version` |
-| **Mobile** | Dart, Kotlin, Swift | `dart --version`, `kotlinc -version`, `swift --version` |
+| Category      | Languages                 | Detection Method                                        |
+| ------------- | ------------------------- | ------------------------------------------------------- |
+| **Core**      | Node.js, Python, Go, Rust | `node --version`, `python3 --version`, etc.             |
+| **Compiled**  | Java, C/C++, .NET         | `javac --version`, `gcc --version`, `dotnet --version`  |
+| **Scripting** | PHP, Ruby, Bash           | `php --version`, `ruby --version`, `bash --version`     |
+| **Databases** | PostgreSQL, MySQL         | `psql --version`, `mysql --version`                     |
+| **Mobile**    | Dart, Kotlin, Swift       | `dart --version`, `kotlinc -version`, `swift --version` |
 
 **Technical Details**:
+
 - **Async/Non-blocking**: Uses `tokio::process::Command` for parallel execution
 - **Timeout Protection**: 5-second timeout per runtime check
 - **Error Resilience**: Individual failures don't crash entire check
@@ -137,6 +138,7 @@ Phase 2.7 delivers a **comprehensive development environment detection and confi
 - **Cross-platform**: Works on Windows, macOS, Linux
 
 **Example Response**:
+
 ```json
 {
   "timestamp": "2025-01-15T10:30:00Z",
@@ -166,9 +168,11 @@ Phase 2.7 delivers a **comprehensive development environment detection and confi
 **Components Created**:
 
 #### 1. **DevEnvironmentPanel.svelte**
+
 Main container panel accessible via `/dev-environment` route
 
 **Features**:
+
 - Real-time runtime status display
 - Refresh button for re-checking
 - Links to ToolchainsConfig and Dev-Container generator
@@ -176,6 +180,7 @@ Main container panel accessible via `/dev-environment` route
 - Error handling with retry
 
 **State Management**:
+
 ```typescript
 let runtimeCheck: RuntimeCheckResult | null = $state(null);
 let loading = $state(false);
@@ -183,9 +188,11 @@ let error = $state<string | null>(null);
 ```
 
 #### 2. **RuntimeStatusTable.svelte**
+
 Visual table showing all 15 languages
 
 **Columns**:
+
 - **Language**: Name + icon
 - **Status**: ✅ Installed / ❌ Not Installed / ⚠️ Version Mismatch
 - **Detected Version**: Parsed from `--version` output
@@ -193,11 +200,13 @@ Visual table showing all 15 languages
 - **Actions**: Install links, documentation, configure button
 
 **Color Coding**:
+
 - Green: All requirements met
 - Yellow: Installed but version outdated
 - Red: Not installed
 
 **Example Row**:
+
 ```svelte
 <tr class="hover:bg-gray-50">
   <td class="px-4 py-3">
@@ -220,15 +229,18 @@ Visual table showing all 15 languages
 ```
 
 #### 3. **ToolchainsConfig.svelte**
+
 Manual configuration panel for custom paths
 
 **Features**:
+
 - User-defined PATH overrides
 - Save to local storage
 - Validation on save
 - Reset to system defaults
 
 **Use Cases**:
+
 - Custom Python virtual environments
 - Multiple Java versions (JAVA_HOME switching)
 - Non-standard installation locations
@@ -239,6 +251,7 @@ Manual configuration panel for custom paths
 ### ✅ Milestone 2.7.3 - Wizard Runtime Integration
 
 **Files Modified**:
+
 - `Step2Languages.svelte` (+120 LOC)
 - `Step4Config.svelte` (+80 LOC)
 - `Step5Review.svelte` (+179 LOC)
@@ -246,12 +259,14 @@ Manual configuration panel for custom paths
 #### **Step 2 - Languages Selection**
 
 **Added Features**:
+
 - ⚠️ Warning badges on language cards if runtime missing
 - Inline "Install" links below each missing language
 - "Container-only" badge for mobile languages (Dart/Kotlin/Swift)
 - Tooltip explaining Dev-Container option
 
 **Example Warning**:
+
 ```svelte
 {#if !isRuntimeInstalled(lang.id)}
   <div class="mt-2 flex items-center gap-2 text-amber-600 text-sm">
@@ -265,12 +280,14 @@ Manual configuration panel for custom paths
 #### **Step 4 - Configuration**
 
 **Added Features**:
+
 - Environment readiness indicator at top
 - Color-coded summary: "✅ All Ready" / "⚠️ X Missing"
 - Link to `/dev-environment` for detailed view
 - Stack-specific requirement checks
 
 **Example Indicator**:
+
 ```svelte
 <div class="border rounded-lg p-4 {readinessColor}">
   <div class="flex items-center justify-between">
@@ -288,6 +305,7 @@ Manual configuration panel for custom paths
 #### **Step 5 - Review & Generate**
 
 **Added Features** (Commit 2683a66):
+
 - **Complete Runtime Checklist Panel** (collapsible)
 - **Color-Coded Status Header**:
   - Green: All runtimes installed (✅ All Requirements Met)
@@ -299,6 +317,7 @@ Manual configuration panel for custom paths
 - **"Generate Dev-Container" Button**: Only shown when container languages present
 
 **Code Snippet**:
+
 ```svelte
 {#if runtimeRequirements}
   <div class="border rounded-lg p-4 {getStatusColor(runtimeRequirements)}">
@@ -357,17 +376,20 @@ Manual configuration panel for custom paths
 #### **Template Catalog**
 
 ##### **1. BASE_CONTAINER** (Default)
+
 **Use Case**: Standard web projects (Node.js + Python + Rust)
 
 **Image**: `mcr.microsoft.com/devcontainers/typescript-node:20-bookworm`
 
 **Pre-installed**:
+
 - Node.js 20.x
 - Python 3.11
 - Rust (via rustup)
 - Git, Docker-in-Docker
 
 **VS Code Extensions**:
+
 - ESLint, Prettier
 - Python, Pylance
 - rust-analyzer
@@ -380,11 +402,13 @@ Manual configuration panel for custom paths
 ---
 
 ##### **2. MOBILE_CONTAINER**
+
 **Use Case**: Flutter/Dart + Kotlin + Swift mobile projects
 
 **Image**: `cirrusci/flutter:stable`
 
 **Custom Dockerfile**:
+
 ```dockerfile
 FROM cirrusci/flutter:stable
 
@@ -403,6 +427,7 @@ WORKDIR /workspace
 ```
 
 **VS Code Extensions**:
+
 - Dart-Code.dart-code
 - Dart-Code.flutter
 - fwcd.kotlin
@@ -415,11 +440,13 @@ WORKDIR /workspace
 ---
 
 ##### **3. FULLSTACK_CONTAINER**
+
 **Use Case**: Projects using 5+ languages (Python + Node + Go + Rust + Java + C/C++)
 
 **Base**: Ubuntu 22.04 (custom Dockerfile)
 
 **Custom Dockerfile** (75 lines):
+
 ```dockerfile
 FROM ubuntu:22.04
 
@@ -483,11 +510,13 @@ WORKDIR /workspace
 ---
 
 ##### **4. T3_STACK_CONTAINER**
+
 **Use Case**: Next.js + tRPC + Tailwind + Prisma projects
 
 **Image**: `mcr.microsoft.com/devcontainers/typescript-node:20-bookworm`
 
 **Features**:
+
 - Node 20, Git, Docker-in-Docker, PostgreSQL client
 - Extensions: Prisma, tRPC snippets, Tailwind IntelliSense
 - Ports: 3000, 5555 (Prisma Studio)
@@ -496,11 +525,13 @@ WORKDIR /workspace
 ---
 
 ##### **5. MERN_STACK_CONTAINER**
+
 **Use Case**: MongoDB + Express + React + Node.js
 
 **Image**: `mcr.microsoft.com/devcontainers/javascript-node:20-bookworm`
 
 **Features**:
+
 - MongoDB installed, Node 20, Git, Docker-in-Docker
 - Extensions: MongoDB for VS Code, ES7+ snippets, ESLint
 - Ports: 3000, 27017 (MongoDB)
@@ -509,11 +540,13 @@ WORKDIR /workspace
 ---
 
 ##### **6. FASTAPI_AI_CONTAINER**
+
 **Use Case**: Python 3.11 + FastAPI + ML/AI libraries
 
 **Image**: `mcr.microsoft.com/devcontainers/python:3.11-bookworm`
 
 **Features**:
+
 - Python 3.11, Poetry, uv
 - ML Libraries: `torch`, `transformers`, `scikit-learn`, `pandas`, `numpy`
 - Extensions: Python, Pylance, Jupyter
@@ -527,6 +560,7 @@ WORKDIR /workspace
 **Location**: `generateDevContainer(languages: string[], stackId?: string)`
 
 **Logic**:
+
 ```typescript
 export function generateDevContainer(
   languages: string[],
@@ -562,6 +596,7 @@ export function generateDevContainer(
 **Function**: `generateDevContainerFiles(languages, stackId, projectName)`
 
 **Returns**:
+
 ```typescript
 {
   "devcontainer.json": string,  // VS Code configuration
@@ -571,6 +606,7 @@ export function generateDevContainer(
 ```
 
 **Example `devcontainer.json`**:
+
 ```json
 {
   "name": "myproject-devcontainer",
@@ -606,21 +642,25 @@ export function generateDevContainer(
 ```
 
 **Example `README.md`**:
+
 ```markdown
 # Development Container Setup
 
 This Dev-Container configuration provides a complete development environment for your project.
 
 ## Languages Supported
+
 - Node.js (v20.x)
 - Python (3.11)
 - Rust (latest stable)
 
 ## Prerequisites
+
 1. Install Docker Desktop
 2. Install VS Code with "Dev Containers" extension
 
 ## Setup Steps
+
 1. Extract this archive to `.devcontainer/` folder in your project root
 2. Open your project in VS Code
 3. Press F1 → "Dev Containers: Reopen in Container"
@@ -628,11 +668,13 @@ This Dev-Container configuration provides a complete development environment for
 5. Open integrated terminal and start coding!
 
 ## Troubleshooting
+
 - **Build fails**: Check Docker daemon is running
 - **Extensions not loading**: Restart VS Code after container build
 - **Port already in use**: Change ports in devcontainer.json
 
 ## Learn More
+
 - [VS Code Dev Containers Docs](https://code.visualstudio.com/docs/devcontainers/containers)
 ```
 
@@ -643,6 +685,7 @@ This Dev-Container configuration provides a complete development environment for
 **Location**: `Step5Review.svelte` → `handleGenerateDevContainer()`
 
 **Flow**:
+
 ```typescript
 async function handleGenerateDevContainer() {
   const files = generateDevContainerFiles(
@@ -655,12 +698,12 @@ async function handleGenerateDevContainer() {
   let content = "";
   content += "=== devcontainer.json ===\n\n";
   content += files["devcontainer.json"] + "\n\n";
-  
+
   if (files["Dockerfile"]) {
     content += "=== Dockerfile ===\n\n";
     content += files["Dockerfile"] + "\n\n";
   }
-  
+
   content += "=== README.md ===\n\n";
   content += files["README.md"];
 
@@ -678,6 +721,7 @@ async function handleGenerateDevContainer() {
 ```
 
 **User Workflow**:
+
 1. Select Dart + Kotlin + Swift in Step 2
 2. Wizard detects container-only languages
 3. Step 5 shows "🐳 Generate Dev-Container" button
@@ -701,6 +745,7 @@ async function handleGenerateDevContainer() {
 **Tauri Command**: `check_all_runtimes`
 
 **Invocation** (TypeScript):
+
 ```typescript
 import { invoke } from "@tauri-apps/api/core";
 
@@ -716,6 +761,7 @@ export async function checkRuntimes(): Promise<RuntimeCheckResult> {
 ```
 
 **Backend Handler** (Rust):
+
 ```rust
 #[tauri::command]
 pub async fn check_all_runtimes() -> Result<RuntimeCheckResult, String> {
@@ -796,7 +842,7 @@ Step5Review.svelte
 async fn test_check_all_runtimes_success() {
     let service = RuntimeService::new();
     let result = service.check_all_runtimes().await;
-    
+
     assert!(result.is_ok());
     let check = result.unwrap();
     assert!(check.toolchains.len() >= 15);
@@ -808,7 +854,7 @@ async fn test_detect_missing_runtime() {
     // Mock environment without Dart
     let service = RuntimeService::new();
     let result = service.check_all_runtimes().await.unwrap();
-    
+
     let dart = result.toolchains.iter().find(|t| t.name == "Dart");
     if let Some(dart_toolchain) = dart {
         assert!(!dart_toolchain.installed);
@@ -821,7 +867,10 @@ async fn test_detect_missing_runtime() {
 
 ```typescript
 import { describe, it, expect } from "vitest";
-import { generateDevContainer, generateDevContainerFiles } from "$lib/services/devcontainer";
+import {
+  generateDevContainer,
+  generateDevContainerFiles,
+} from "$lib/services/devcontainer";
 
 describe("Dev-Container Template Selection", () => {
   it("should select MOBILE_CONTAINER for Dart projects", () => {
@@ -845,13 +894,23 @@ describe("Dev-Container Template Selection", () => {
 
 describe("Dev-Container File Generation", () => {
   it("should generate devcontainer.json for BASE template", () => {
-    const files = generateDevContainerFiles(["node", "python"], undefined, "testproject");
-    expect(files["devcontainer.json"]).toContain("mcr.microsoft.com/devcontainers/typescript-node");
+    const files = generateDevContainerFiles(
+      ["node", "python"],
+      undefined,
+      "testproject"
+    );
+    expect(files["devcontainer.json"]).toContain(
+      "mcr.microsoft.com/devcontainers/typescript-node"
+    );
     expect(files["devcontainer.json"]).toContain("python");
   });
 
   it("should include Dockerfile for MOBILE template", () => {
-    const files = generateDevContainerFiles(["dart", "kotlin"], undefined, "mobileapp");
+    const files = generateDevContainerFiles(
+      ["dart", "kotlin"],
+      undefined,
+      "mobileapp"
+    );
     expect(files["Dockerfile"]).toBeTruthy();
     expect(files["Dockerfile"]).toContain("cirrusci/flutter");
   });
@@ -873,6 +932,7 @@ describe("Dev-Container File Generation", () => {
 #### 1. **Check Your Environment**
 
 Before starting a project:
+
 1. Open VibeForge
 2. Navigate to **Dev Environment** tab (or `/dev-environment` route)
 3. Click "**Refresh**" to check all runtimes
@@ -886,16 +946,19 @@ Before starting a project:
 When creating a new project via wizard:
 
 **Step 2 - Languages**:
+
 - Select your desired languages
 - If a runtime is missing, you'll see ⚠️ warning badge
 - Click "Install guide" to learn how to install
 - Container-only languages (Dart/Kotlin/Swift) show 🐳 badge
 
 **Step 4 - Configuration**:
+
 - Check the "Environment Readiness" indicator at the top
 - If missing runtimes, click "View Details" to see full list
 
 **Step 5 - Review**:
+
 - Expand "Runtime Requirements" panel
 - See complete checklist of installed/missing runtimes
 - If container-only languages selected, click "🐳 Generate Dev-Container"
@@ -933,9 +996,9 @@ async fn check_new_language(&self) -> Result<Toolchain, RuntimeError> {
         .arg("--version")
         .output()
         .await?;
-    
+
     let version = parse_version_from_output(&output.stdout)?;
-    
+
     Ok(Toolchain {
         name: "NewLanguage".to_string(),
         installed: true,
@@ -1023,7 +1086,7 @@ export function generateDevContainer(
   if (hasSpecialLanguage) {
     return MY_NEW_CONTAINER;
   }
-  
+
   // ...existing logic
 }
 ```
@@ -1034,29 +1097,29 @@ export function generateDevContainer(
 
 ### Runtime Detection Performance
 
-| Operation | Duration | Notes |
-|-----------|----------|-------|
-| Single runtime check | ~50-200ms | Depends on command execution |
-| All 15 runtimes (parallel) | ~500-800ms | Tokio parallel execution |
-| Cold start (no cache) | ~800ms | First check after app launch |
-| Cached result | ~5ms | Returns cached result (5min TTL) |
+| Operation                  | Duration   | Notes                            |
+| -------------------------- | ---------- | -------------------------------- |
+| Single runtime check       | ~50-200ms  | Depends on command execution     |
+| All 15 runtimes (parallel) | ~500-800ms | Tokio parallel execution         |
+| Cold start (no cache)      | ~800ms     | First check after app launch     |
+| Cached result              | ~5ms       | Returns cached result (5min TTL) |
 
 ### Dev-Container Generation Performance
 
-| Operation | Duration | Notes |
-|-----------|----------|-------|
-| Template selection | <1ms | Pure JavaScript logic |
-| File generation | ~5-10ms | String concatenation + JSON stringify |
-| Download trigger | ~10-20ms | Blob creation + DOM manipulation |
-| Total user wait | ~20-30ms | Instantaneous from user perspective |
+| Operation          | Duration | Notes                                 |
+| ------------------ | -------- | ------------------------------------- |
+| Template selection | <1ms     | Pure JavaScript logic                 |
+| File generation    | ~5-10ms  | String concatenation + JSON stringify |
+| Download trigger   | ~10-20ms | Blob creation + DOM manipulation      |
+| Total user wait    | ~20-30ms | Instantaneous from user perspective   |
 
 ### Docker Build Performance
 
-| Container Type | First Build | Subsequent Builds |
-|----------------|-------------|-------------------|
-| BASE_CONTAINER | ~2-3 min | ~30 sec (cached layers) |
-| MOBILE_CONTAINER | ~8-10 min | ~1-2 min (Android SDK download) |
-| FULLSTACK_CONTAINER | ~12-15 min | ~2-3 min (multiple languages) |
+| Container Type      | First Build | Subsequent Builds               |
+| ------------------- | ----------- | ------------------------------- |
+| BASE_CONTAINER      | ~2-3 min    | ~30 sec (cached layers)         |
+| MOBILE_CONTAINER    | ~8-10 min   | ~1-2 min (Android SDK download) |
+| FULLSTACK_CONTAINER | ~12-15 min  | ~2-3 min (multiple languages)   |
 
 ---
 
@@ -1093,12 +1156,12 @@ export function generateDevContainer(
 
 ## Commit History
 
-| Commit | Date | Description | Files Changed | LOC |
-|--------|------|-------------|---------------|-----|
-| `a7f9d23` | Session 1 | Initial Tauri runtime service | `runtime_service.rs` | +312 |
-| `1b4c3e8` | Session 2 | Dev Environment Panel UI | `DevEnvironmentPanel.svelte`, `RuntimeStatusTable.svelte`, `ToolchainsConfig.svelte` | +487 |
-| `2683a66` | Session 3 | Wizard runtime integration (Step 5) | `Step5Review.svelte` | +179 |
-| `cedd8ea` | Session 3 | Dev-Container template generator | `devcontainer.ts`, `Step5Review.svelte` | +509 |
+| Commit    | Date      | Description                         | Files Changed                                                                        | LOC  |
+| --------- | --------- | ----------------------------------- | ------------------------------------------------------------------------------------ | ---- |
+| `a7f9d23` | Session 1 | Initial Tauri runtime service       | `runtime_service.rs`                                                                 | +312 |
+| `1b4c3e8` | Session 2 | Dev Environment Panel UI            | `DevEnvironmentPanel.svelte`, `RuntimeStatusTable.svelte`, `ToolchainsConfig.svelte` | +487 |
+| `2683a66` | Session 3 | Wizard runtime integration (Step 5) | `Step5Review.svelte`                                                                 | +179 |
+| `cedd8ea` | Session 3 | Dev-Container template generator    | `devcontainer.ts`, `Step5Review.svelte`                                              | +509 |
 
 **Total**: 4 commits, ~1,487 LOC added
 
@@ -1111,7 +1174,7 @@ export function generateDevContainer(
 ✅ **3 wizard steps** integrated with runtime validation  
 ✅ **100% wizard coverage** for environment checks  
 ✅ **One-click generation** for Dev-Container configurations  
-✅ **Zero manual edits** required for standard templates  
+✅ **Zero manual edits** required for standard templates
 
 ---
 
@@ -1123,6 +1186,6 @@ Next Phase: **Phase 4 - Advanced Intelligence** (LLM Integration, Code Analysis)
 
 ---
 
-*Generated by: Phase 2.7 Implementation Team*  
-*Last Updated: January 2025*  
-*Version: 1.0.0*
+_Generated by: Phase 2.7 Implementation Team_  
+_Last Updated: January 2025_  
+_Version: 1.0.0_
