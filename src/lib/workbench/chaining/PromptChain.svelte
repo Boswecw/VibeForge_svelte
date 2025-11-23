@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { toastStore } from "$lib/core/stores/toastStore";
+  import { toastStore } from "$lib/stores/toast.svelte";
   import * as chainClient from "$lib/core/api/chainClient";
   import type { ChainExecutionResult } from "$lib/core/api/chainClient";
 
