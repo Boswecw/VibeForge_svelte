@@ -6,11 +6,15 @@ no description yet
   import StackSelector from "$lib/components/stacks/StackSelector.svelte";
   import StackComparison from "$lib/components/stacks/StackComparison.svelte";
   import AdaptiveRecommendation from "$lib/components/wizard/AdaptiveRecommendation.svelte";
+  import AIRecommendations from "$lib/components/wizard/AIRecommendations.svelte";
+  import StackExplanationModal from "$lib/components/wizard/StackExplanationModal.svelte";
   import { wizardStore, isStep3Valid } from "$lib/stores/wizard";
   import { learningStore } from "$lib/stores/learning";
   import type { StackProfile } from "$lib/core/types/stack-profiles";
   import { ALL_STACKS } from "$lib/data/stack-profiles";
   import { LANGUAGES } from "$lib/data/languages";
+  import { stackRecommendationService, type RecommendationResult, type EmpiricalData } from "$lib/services/recommendations";
+  import { llmClient } from "$lib/services/llm/client";
 
   $: selectedStackId = $wizardStore.selectedStackId;
   $: selectedLanguages = $wizardStore.selectedLanguages;
@@ -26,6 +30,12 @@ no description yet
   let showDetailsModal = false;
   let detailsStack: StackProfile | null = null;
 
+  // AI Recommendation state
+  let aiRecommendations: RecommendationResult | null = null;
+  let loadingAIRecommendations = false;
+  let showExplanationModal = false;
+  let explanationStack = { name: "", id: "" };
+
   // Reactive filtering and recommendations
   $: {
     filterAndRecommendStacks(selectedLanguages, projectType);
@@ -34,8 +44,18 @@ no description yet
     }
   }
 
+  // Load AI recommendations when languages or project type change
+  $: if (selectedLanguages.length > 0 && projectType) {
+    loadAIRecommendations();
+  }
+
   onMount(() => {
     filterAndRecommendStacks(selectedLanguages, projectType);
+    // Initialize LLM client with saved config
+    const savedConfig = llmClient.getConfig();
+    if (savedConfig) {
+      llmClient.initialize(savedConfig).catch(console.error);
+    }
   });
 
   function filterAndRecommendStacks(languages: string[], projType: string) {
@@ -174,6 +194,71 @@ no description yet
   function closeDetailsModal() {
     showDetailsModal = false;
   }
+
+  async function loadAIRecommendations() {
+    if (!selectedLanguages.length || !projectType) {
+      aiRecommendations = null;
+      return;
+    }
+
+    loadingAIRecommendations = true;
+    try {
+      // Build empirical data from historical project outcomes
+      const empiricalData: EmpiricalData[] = filteredStacks.map(stack => {
+        // Mock empirical data - in production, fetch from DataForge API
+        const isPopular = ["t3-stack", "nextjs-fullstack", "mern-stack"].includes(stack.id);
+        const matchesType = stack.categories.includes(projectType);
+        
+        return {
+          stackId: stack.id,
+          successRate: isPopular ? 0.85 : 0.70,
+          popularityScore: isPopular ? 0.90 : 0.60,
+          userFamiliarity: 0.5,
+          projectTypeMatch: matchesType ? 0.95 : 0.50
+        };
+      });
+
+      // Call recommendation service
+      aiRecommendations = await stackRecommendationService.getRecommendations(
+        {
+          projectType,
+          projectName: $wizardStore.intent.name,
+          projectDescription: $wizardStore.intent.description,
+          selectedLanguages,
+          teamSize: $wizardStore.intent.teamSize,
+          timeline: $wizardStore.intent.timeline,
+          complexity: "intermediate", // Could be derived from other factors
+          availableStacks: filteredStacks.map(s => ({ id: s.id, name: s.name })),
+          historicalData: {
+            userPastProjects: [],
+            popularStacks: ["t3-stack", "nextjs-fullstack", "mern-stack"],
+            stackSuccessRates: {}
+          }
+        },
+        empiricalData
+      );
+    } catch (error) {
+      console.error("Failed to load AI recommendations:", error);
+      aiRecommendations = null;
+    } finally {
+      loadingAIRecommendations = false;
+    }
+  }
+
+  function handleAIStackSelect(event: CustomEvent<{ stackId: string }>) {
+    wizardStore.setStack(event.detail.stackId);
+    learningStore.trackStackViewed(event.detail.stackId);
+    learningStore.syncSession();
+  }
+
+  function handleExplainStack(event: CustomEvent<{ stackName: string; stackId: string }>) {
+    explanationStack = event.detail;
+    showExplanationModal = true;
+  }
+
+  function closeExplanationModal() {
+    showExplanationModal = false;
+  }
 </script>
 
 <div class="step-content">
@@ -197,6 +282,19 @@ no description yet
       stackId={selectedStackId || ''}
     />
   </div>
+
+  <!-- AI-Powered Recommendations -->
+  {#if aiRecommendations}
+    <AIRecommendations
+      recommendations={aiRecommendations.recommendations}
+      confidence={aiRecommendations.confidence}
+      summary={aiRecommendations.summary}
+      usedLLM={aiRecommendations.usedLLM}
+      loading={loadingAIRecommendations}
+      on:selectStack={handleAIStackSelect}
+      on:explainStack={handleExplainStack}
+    />
+  {/if}
 
   <!-- Recommendations Section -->
   {#if recommendedStacks.length > 0}
@@ -689,6 +787,15 @@ no description yet
     </div>
   </div>
 {/if}
+
+<!-- Stack Explanation Modal -->
+<StackExplanationModal
+  isOpen={showExplanationModal}
+  stackName={explanationStack.name}
+  projectType={projectType}
+  languages={selectedLanguages}
+  on:close={closeExplanationModal}
+/>
 
 <style>
   .step-content {
