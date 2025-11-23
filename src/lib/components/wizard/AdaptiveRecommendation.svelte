@@ -3,7 +3,11 @@ no description yet
 -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { learningStore, stackSuccessRates, userPreferences } from "$lib/stores/learning";
+  import {
+    learningStore,
+    stackSuccessRates,
+    userPreferences,
+  } from "$lib/stores/learning";
   import { ALL_STACKS } from "$lib/data/stack-profiles";
 
   // Props
@@ -55,10 +59,10 @@ no description yet
     try {
       // First, try to use learning store data
       await learningStore.refreshAnalytics(userId || undefined);
-      
+
       // Generate recommendations from learning data
       recommendations = generateLearningBasedRecommendations();
-      
+
       // If no learning data, try backend API
       if (recommendations.length === 0) {
         try {
@@ -81,7 +85,9 @@ no description yet
             throw new Error("Backend unavailable");
           }
         } catch (apiErr) {
-          console.warn("Backend API unavailable, using fallback recommendations");
+          console.warn(
+            "Backend API unavailable, using fallback recommendations"
+          );
           recommendations = generateMockRecommendations();
         }
       }
@@ -103,18 +109,21 @@ no description yet
     const recs: Recommendation[] = [];
 
     // Filter stacks by selected languages
-    const compatibleStacks = ALL_STACKS.filter(stack => {
-      return selectedLanguages.some(langId => {
-        const lang = stack.languages.find(l => l.toLowerCase().includes(langId.toLowerCase()));
+    const compatibleStacks = ALL_STACKS.filter((stack) => {
+      return selectedLanguages.some((langId) => {
+        const lang = stack.languages.find((l) =>
+          l.toLowerCase().includes(langId.toLowerCase())
+        );
         return !!lang;
       });
     });
 
     // Match with success rate data
     for (const stack of compatibleStacks) {
-      const successData = successRates.find(sr => 
-        sr.stack_id.toLowerCase() === stack.id.toLowerCase() || 
-        sr.stack_id.toLowerCase().includes(stack.id.toLowerCase())
+      const successData = successRates.find(
+        (sr) =>
+          sr.stack_id.toLowerCase() === stack.id.toLowerCase() ||
+          sr.stack_id.toLowerCase().includes(stack.id.toLowerCase())
       );
 
       if (successData) {
@@ -127,30 +136,46 @@ no description yet
         };
 
         // Build reasoning
-        reasoning.push(`${Math.round(successData.success_rate * 100)}% success rate across ${successData.total_uses} projects`);
-        
+        reasoning.push(
+          `${Math.round(successData.success_rate * 100)}% success rate across ${
+            successData.total_uses
+          } projects`
+        );
+
         if (successData.avg_build_time) {
-          const buildTime = successData.avg_build_time < 3600 
-            ? `${Math.round(successData.avg_build_time / 60)} minutes` 
-            : `${Math.round(successData.avg_build_time / 3600)} hours`;
+          const buildTime =
+            successData.avg_build_time < 3600
+              ? `${Math.round(successData.avg_build_time / 60)} minutes`
+              : `${Math.round(successData.avg_build_time / 3600)} hours`;
           reasoning.push(`Average setup time: ${buildTime}`);
         }
-        
+
         if (successData.avg_test_pass_rate) {
-          reasoning.push(`${Math.round(successData.avg_test_pass_rate * 100)}% average test pass rate`);
-        }
-        
-        if (successData.avg_satisfaction) {
-          reasoning.push(`User satisfaction: ${successData.avg_satisfaction.toFixed(1)}/5 stars`);
+          reasoning.push(
+            `${Math.round(
+              successData.avg_test_pass_rate * 100
+            )}% average test pass rate`
+          );
         }
 
-        reasoning.push(`Matches your selected languages: ${selectedLanguages.join(", ")}`);
+        if (successData.avg_satisfaction) {
+          reasoning.push(
+            `User satisfaction: ${successData.avg_satisfaction.toFixed(
+              1
+            )}/5 stars`
+          );
+        }
+
+        reasoning.push(
+          `Matches your selected languages: ${selectedLanguages.join(", ")}`
+        );
 
         // Calculate confidence
         let confidence = successData.success_rate * 0.6; // 60% weight on success rate
         if (basedOn.project_type_match) confidence += 0.2;
         if (basedOn.language_match) confidence += 0.15;
-        if (successData.avg_satisfaction && successData.avg_satisfaction >= 4) confidence += 0.05;
+        if (successData.avg_satisfaction && successData.avg_satisfaction >= 4)
+          confidence += 0.05;
 
         recs.push({
           stack_id: stack.id,

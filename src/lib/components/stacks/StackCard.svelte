@@ -15,13 +15,15 @@ no description yet
   // Success prediction data
   let successData: StackSuccessRate | null = null;
   $: successRates = $stackSuccessRates;
-  
+
   // Find success data for this stack
   $: {
-    successData = successRates.find(sr => 
-      sr.stack_id.toLowerCase() === stack.id.toLowerCase() || 
-      sr.stack_id.toLowerCase().includes(stack.id.toLowerCase())
-    ) || null;
+    successData =
+      successRates.find(
+        (sr) =>
+          sr.stack_id.toLowerCase() === stack.id.toLowerCase() ||
+          sr.stack_id.toLowerCase().includes(stack.id.toLowerCase())
+      ) || null;
   }
 
   function getSuccessColor(rate: number): string {
@@ -144,11 +146,13 @@ no description yet
       >
         {stack.maturity}
       </span>
-      
+
       <!-- Success Prediction Badge -->
       {#if successData}
         <span
-          class="px-2 py-1 text-xs font-bold rounded border {getSuccessColor(successData.success_rate)}"
+          class="px-2 py-1 text-xs font-bold rounded border {getSuccessColor(
+            successData.success_rate
+          )}"
           title="Historical success rate based on {successData.total_uses} projects"
         >
           ✨ {formatPercentage(successData.success_rate)} Success
@@ -163,19 +167,25 @@ no description yet
           {#if successData.avg_build_time}
             <div class="text-center">
               <div class="text-gray-600 font-medium">Build Time</div>
-              <div class="text-gray-900 font-semibold">{formatTime(successData.avg_build_time)}</div>
+              <div class="text-gray-900 font-semibold">
+                {formatTime(successData.avg_build_time)}
+              </div>
             </div>
           {/if}
           {#if successData.avg_test_pass_rate}
             <div class="text-center">
               <div class="text-gray-600 font-medium">Test Pass</div>
-              <div class="text-gray-900 font-semibold">{formatPercentage(successData.avg_test_pass_rate)}</div>
+              <div class="text-gray-900 font-semibold">
+                {formatPercentage(successData.avg_test_pass_rate)}
+              </div>
             </div>
           {/if}
           {#if successData.avg_satisfaction}
             <div class="text-center">
               <div class="text-gray-600 font-medium">Satisfaction</div>
-              <div class="text-gray-900 font-semibold">{successData.avg_satisfaction.toFixed(1)}/5</div>
+              <div class="text-gray-900 font-semibold">
+                {successData.avg_satisfaction.toFixed(1)}/5
+              </div>
             </div>
           {/if}
         </div>
