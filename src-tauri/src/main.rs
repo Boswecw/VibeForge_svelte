@@ -2,8 +2,10 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod runtime_check;
+mod code_analyzer;
 
 use runtime_check::{check_all_runtimes, RuntimeCheckResult, RuntimeCache};
+use code_analyzer::analyze_codebase;
 use std::sync::Mutex;
 use tauri::State;
 
@@ -104,7 +106,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             check_runtimes,
             refresh_runtime_cache,
-            get_install_instructions
+            get_install_instructions,
+            analyze_codebase
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
