@@ -4,6 +4,7 @@
   import WorkspaceSettingsSection from "$lib/components/settings/WorkspaceSettingsSection.svelte";
   import AppearanceSettingsSection from "$lib/components/settings/AppearanceSettingsSection.svelte";
   import ModelSettingsSection from "$lib/components/settings/ModelSettingsSection.svelte";
+  import LLMSettingsSection from "$lib/components/settings/LLMSettingsSection.svelte";
   import DataSettingsSection from "$lib/components/settings/DataSettingsSection.svelte";
 </script>
 
@@ -24,6 +25,7 @@
   <div class="flex-1 overflow-y-auto px-8 py-6">
     <div class="max-w-4xl flex flex-col gap-6">
       <SettingsHeader />
+      <LLMSettingsSection />
       <WorkspaceSettingsSection />
       <AppearanceSettingsSection />
       <ModelSettingsSection />
