@@ -9,6 +9,7 @@ no description yet
   import TemplateSelector from "$lib/components/wizard/TemplateSelector.svelte";
   import AnalysisModal from "$lib/components/wizard/AnalysisModal.svelte";
   import type { ProjectTemplate } from "$lib/data/project-templates";
+  import { PROJECT_TEMPLATES } from "$lib/data/project-templates";
 
   $: intent = $wizardStore.intent;
   $: isValid = $isStep1Valid;
@@ -348,6 +349,7 @@ no description yet
     >
       <span class="mr-2">📦</span>
       Use a Template
+      <span class="ml-1 text-xs opacity-75">({PROJECT_TEMPLATES.length})</span>
     </button>
     <button
       class="px-4 py-3 rounded-lg font-medium transition-all bg-gray-100 hover:bg-gray-200 text-gray-700"
