@@ -3,9 +3,11 @@
 
 mod runtime_check;
 mod code_analyzer;
+mod project_generator;
 
 use runtime_check::{check_all_runtimes, RuntimeCheckResult, RuntimeCache};
 use code_analyzer::analyze_codebase;
+use project_generator::generate_project;
 use std::sync::Mutex;
 use tauri::State;
 
@@ -107,7 +109,8 @@ fn main() {
             check_runtimes,
             refresh_runtime_cache,
             get_install_instructions,
-            analyze_codebase
+            analyze_codebase,
+            generate_project
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
