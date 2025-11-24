@@ -824,6 +824,10 @@ fn generate_stack_specific_files(project_path: &Path, config: &ProjectConfig) ->
         "sveltekit-stack" => generate_sveltekit_stack_files(project_path, config),
         "solidstart-stack" => generate_solidstart_stack_files(project_path, config),
         "fastapi-ai-stack" => generate_fastapi_stack_files(project_path, config),
+        "react-native-expo" => generate_react_native_expo_files(project_path, config),
+        "django-stack" => generate_django_stack_files(project_path, config),
+        "golang-cloud-native" => generate_golang_cloud_native_files(project_path, config),
+        "laravel-stack" => generate_laravel_stack_files(project_path, config),
         _ => Ok(0)
     }
 }
@@ -3549,6 +3553,1395 @@ def test_health_check():
     fs::File::create(project_path.join("app/core/__init__.py"))?;
     fs::File::create(project_path.join("tests/__init__.py"))?;
     files_created += 7;
+    
+    Ok(files_created)
+}
+
+// ============================================================================
+// REACT NATIVE + EXPO STACK
+// ============================================================================
+
+fn generate_react_native_expo_files(project_path: &Path, config: &ProjectConfig) -> Result<usize, std::io::Error> {
+    let mut files_created = 0;
+    
+    // Create React Native directory structure
+    fs::create_dir_all(project_path.join("app"))?;
+    fs::create_dir_all(project_path.join("app/(tabs)"))?;
+    fs::create_dir_all(project_path.join("components"))?;
+    fs::create_dir_all(project_path.join("constants"))?;
+    fs::create_dir_all(project_path.join("hooks"))?;
+    fs::create_dir_all(project_path.join("assets/images"))?;
+    files_created += 6;
+    
+    // package.json
+    let package_json = format!(r#"{{
+  "name": "{}",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "scripts": {{
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "test": "jest",
+    "lint": "eslint ."
+  }},
+  "dependencies": {{
+    "expo": "~50.0.0",
+    "expo-router": "~3.4.0",
+    "react": "18.2.0",
+    "react-native": "0.73.0",
+    "@react-navigation/native": "^6.1.9",
+    "react-native-safe-area-context": "4.8.2",
+    "react-native-screens": "~3.29.0",
+    "expo-status-bar": "~1.11.1",
+    "nativewind": "^4.0.1"
+  }},
+  "devDependencies": {{
+    "@babel/core": "^7.23.0",
+    "@types/react": "~18.2.45",
+    "typescript": "^5.3.0",
+    "tailwindcss": "^3.4.0",
+    "eslint": "^8.56.0"
+  }},
+  "private": true
+}}
+"#, config.name);
+    let mut file = fs::File::create(project_path.join("package.json"))?;
+    file.write_all(package_json.as_bytes())?;
+    files_created += 1;
+    
+    // app.json (Expo config)
+    let app_json = format!(r#"{{
+  "expo": {{
+    "name": "{}",
+    "slug": "{}",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "splash": {{
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    }},
+    "ios": {{
+      "supportsTablet": true,
+      "bundleIdentifier": "com.{}.app"
+    }},
+    "android": {{
+      "adaptiveIcon": {{
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }},
+      "package": "com.{}.app"
+    }},
+    "web": {{
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    }},
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {{
+      "typedRoutes": true
+    }}
+  }}
+}}
+"#, config.name, config.name, config.name, config.name);
+    let mut file = fs::File::create(project_path.join("app.json"))?;
+    file.write_all(app_json.as_bytes())?;
+    files_created += 1;
+    
+    // tsconfig.json
+    let tsconfig = r#"{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+}
+"#;
+    let mut file = fs::File::create(project_path.join("tsconfig.json"))?;
+    file.write_all(tsconfig.as_bytes())?;
+    files_created += 1;
+    
+    // tailwind.config.js
+    let tailwind_config = r#"/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./app/**/*.{js,jsx,ts,tsx}",
+    "./components/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+"#;
+    let mut file = fs::File::create(project_path.join("tailwind.config.js"))?;
+    file.write_all(tailwind_config.as_bytes())?;
+    files_created += 1;
+    
+    // app/_layout.tsx (Root layout)
+    let app_layout = r#"import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import '../global.css';
+
+export default function RootLayout() {
+  return (
+    <>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+      </Stack>
+      <StatusBar style="auto" />
+    </>
+  );
+}
+"#;
+    let mut file = fs::File::create(project_path.join("app/_layout.tsx"))?;
+    file.write_all(app_layout.as_bytes())?;
+    files_created += 1;
+    
+    // app/(tabs)/_layout.tsx
+    let tabs_layout = r#"import { Tabs } from 'expo-router';
+import { TabBarIcon } from '@/components/TabBarIcon';
+
+export default function TabLayout() {
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: '#6366f1',
+      }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: 'Explore',
+          tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
+        }}
+      />
+    </Tabs>
+  );
+}
+"#;
+    let mut file = fs::File::create(project_path.join("app/(tabs)/_layout.tsx"))?;
+    file.write_all(tabs_layout.as_bytes())?;
+    files_created += 1;
+    
+    // app/(tabs)/index.tsx
+    let index_tsx = format!(r#"import {{ View, Text, StyleSheet }} from 'react-native';
+
+export default function HomeScreen() {{
+  return (
+    <View style={{styles.container}}>
+      <Text style={{styles.title}}>Welcome to {{}}</Text>
+      <Text style={{styles.subtitle}}>Built with React Native + Expo</Text>
+    </View>
+  );
+}}
+
+const styles = StyleSheet.create({{
+  container: {{
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  }},
+  title: {{
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  }},
+  subtitle: {{
+    fontSize: 16,
+    color: '#666',
+  }},
+}});
+"#, config.name);
+    let mut file = fs::File::create(project_path.join("app/(tabs)/index.tsx"))?;
+    file.write_all(index_tsx.as_bytes())?;
+    files_created += 1;
+    
+    // app/(tabs)/explore.tsx
+    let explore_tsx = r#"import { View, Text, StyleSheet } from 'react-native';
+
+export default function ExploreScreen() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Explore</Text>
+      <Text style={styles.subtitle}>Discover amazing content</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+  },
+});
+"#;
+    let mut file = fs::File::create(project_path.join("app/(tabs)/explore.tsx"))?;
+    file.write_all(explore_tsx.as_bytes())?;
+    files_created += 1;
+    
+    // components/TabBarIcon.tsx
+    let tab_bar_icon = r#"import { MaterialIcons } from '@expo/vector-icons';
+
+type TabBarIconProps = {
+  name: keyof typeof MaterialIcons.glyphMap;
+  color: string;
+};
+
+export function TabBarIcon({ name, color }: TabBarIconProps) {
+  return <MaterialIcons name={name} size={28} color={color} />;
+}
+"#;
+    let mut file = fs::File::create(project_path.join("components/TabBarIcon.tsx"))?;
+    file.write_all(tab_bar_icon.as_bytes())?;
+    files_created += 1;
+    
+    // global.css
+    let global_css = r#"@tailwind base;
+@tailwind components;
+@tailwind utilities;
+"#;
+    let mut file = fs::File::create(project_path.join("global.css"))?;
+    file.write_all(global_css.as_bytes())?;
+    files_created += 1;
+    
+    // .gitignore
+    let gitignore = r#"node_modules/
+.expo/
+dist/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# macOS
+.DS_Store
+
+# Environment
+.env
+.env.local
+"#;
+    let mut file = fs::File::create(project_path.join(".gitignore"))?;
+    file.write_all(gitignore.as_bytes())?;
+    files_created += 1;
+    
+    Ok(files_created)
+}
+
+// ============================================================================
+// DJANGO STACK
+// ============================================================================
+
+fn generate_django_stack_files(project_path: &Path, config: &ProjectConfig) -> Result<usize, std::io::Error> {
+    let mut files_created = 0;
+    let project_slug = config.name.replace("-", "_").replace(" ", "_").to_lowercase();
+    
+    // Create Django directory structure
+    fs::create_dir_all(project_path.join(&project_slug))?;
+    fs::create_dir_all(project_path.join("apps/core"))?;
+    fs::create_dir_all(project_path.join("apps/users"))?;
+    fs::create_dir_all(project_path.join("templates"))?;
+    fs::create_dir_all(project_path.join("static/css"))?;
+    fs::create_dir_all(project_path.join("static/js"))?;
+    fs::create_dir_all(project_path.join("media"))?;
+    files_created += 7;
+    
+    // requirements.txt
+    let requirements = r#"Django==5.0.0
+djangorestframework==3.14.0
+python-decouple==3.8
+psycopg2-binary==2.9.9
+pillow==10.1.0
+django-cors-headers==4.3.1
+drf-yasg==1.21.7
+celery==5.3.4
+redis==5.0.1
+gunicorn==21.2.0
+whitenoise==6.6.0
+"#;
+    let mut file = fs::File::create(project_path.join("requirements.txt"))?;
+    file.write_all(requirements.as_bytes())?;
+    files_created += 1;
+    
+    // manage.py
+    let manage_py = format!(r#"#!/usr/bin/env python
+"""Django's command-line utility for administrative tasks."""
+import os
+import sys
+
+def main():
+    """Run administrative tasks."""
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', '{}.settings')
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "Couldn't import Django. Are you sure it's installed and "
+            "available on your PYTHONPATH environment variable? Did you "
+            "forget to activate a virtual environment?"
+        ) from exc
+    execute_from_command_line(sys.argv)
+
+if __name__ == '__main__':
+    main()
+"#, project_slug);
+    let mut file = fs::File::create(project_path.join("manage.py"))?;
+    file.write_all(manage_py.as_bytes())?;
+    files_created += 1;
+    
+    // {project}/settings.py
+    let settings_py = format!(r#"""
+Django settings for {} project.
+"""
+from pathlib import Path
+from decouple import config
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-production')
+DEBUG = config('DEBUG', default=True, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',
+    'corsheaders',
+    'drf_yasg',
+    'apps.core',
+    'apps.users',
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+ROOT_URLCONF = '{}.urls'
+
+TEMPLATES = [
+    {{
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {{
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        }},
+    }},
+]
+
+WSGI_APPLICATION = '{}.wsgi.application'
+
+DATABASES = {{
+    'default': {{
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME', default='{}'),
+        'USER': config('DB_USER', default='postgres'),
+        'PASSWORD': config('DB_PASSWORD', default='postgres'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
+    }}
+}}
+
+AUTH_PASSWORD_VALIDATORS = [
+    {{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'}},
+    {{'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'}},
+    {{'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'}},
+    {{'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'}},
+]
+
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
+
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CORS Settings
+CORS_ALLOW_ALL_ORIGINS = DEBUG
+CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000', cast=lambda v: [s.strip() for s in v.split(',')])
+
+# REST Framework
+REST_FRAMEWORK = {{
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+}}
+"#, config.name, project_slug, project_slug, project_slug);
+    let mut file = fs::File::create(project_path.join(format!("{}/settings.py", project_slug)))?;
+    file.write_all(settings_py.as_bytes())?;
+    files_created += 1;
+    
+    // {project}/urls.py
+    let urls_py = format!(r#"""
+URL configuration for {} project.
+"""
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="{} API",
+        default_version='v1',
+        description="API documentation",
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include('apps.core.urls')),
+    path('api/users/', include('apps.users.urls')),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+"#, config.name, config.name);
+    let mut file = fs::File::create(project_path.join(format!("{}/urls.py", project_slug)))?;
+    file.write_all(urls_py.as_bytes())?;
+    files_created += 1;
+    
+    // {project}/wsgi.py
+    let wsgi_py = format!(r#"""
+WSGI config for {} project.
+"""
+import os
+from django.core.wsgi import get_wsgi_application
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', '{}.settings')
+application = get_wsgi_application()
+"#, config.name, project_slug);
+    let mut file = fs::File::create(project_path.join(format!("{}/wsgi.py", project_slug)))?;
+    file.write_all(wsgi_py.as_bytes())?;
+    files_created += 1;
+    
+    // {project}/__init__.py
+    fs::File::create(project_path.join(format!("{}/__init__.py", project_slug)))?;
+    files_created += 1;
+    
+    // apps/core/models.py
+    let core_models = r#"from django.db import models
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    author = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='posts')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    published = models.BooleanField(default=False)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return self.title
+"#;
+    let mut file = fs::File::create(project_path.join("apps/core/models.py"))?;
+    file.write_all(core_models.as_bytes())?;
+    files_created += 1;
+    
+    // apps/core/serializers.py
+    let core_serializers = r#"from rest_framework import serializers
+from .models import Post
+
+class PostSerializer(serializers.ModelSerializer):
+    author_name = serializers.ReadOnlyField(source='author.username')
+    
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'content', 'author', 'author_name', 'created_at', 'updated_at', 'published']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+"#;
+    let mut file = fs::File::create(project_path.join("apps/core/serializers.py"))?;
+    file.write_all(core_serializers.as_bytes())?;
+    files_created += 1;
+    
+    // apps/core/views.py
+    let core_views = r#"from rest_framework import viewsets, permissions
+from .models import Post
+from .serializers import PostSerializer
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+"#;
+    let mut file = fs::File::create(project_path.join("apps/core/views.py"))?;
+    file.write_all(core_views.as_bytes())?;
+    files_created += 1;
+    
+    // apps/core/urls.py
+    let core_urls = r#"from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import PostViewSet
+
+router = DefaultRouter()
+router.register(r'posts', PostViewSet)
+
+urlpatterns = [
+    path('', include(router.urls)),
+]
+"#;
+    let mut file = fs::File::create(project_path.join("apps/core/urls.py"))?;
+    file.write_all(core_urls.as_bytes())?;
+    files_created += 1;
+    
+    // apps/core/admin.py
+    let core_admin = r#"from django.contrib import admin
+from .models import Post
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ['title', 'author', 'published', 'created_at']
+    list_filter = ['published', 'created_at']
+    search_fields = ['title', 'content']
+    date_hierarchy = 'created_at'
+"#;
+    let mut file = fs::File::create(project_path.join("apps/core/admin.py"))?;
+    file.write_all(core_admin.as_bytes())?;
+    files_created += 1;
+    
+    // __init__ files
+    fs::File::create(project_path.join("apps/__init__.py"))?;
+    fs::File::create(project_path.join("apps/core/__init__.py"))?;
+    fs::File::create(project_path.join("apps/users/__init__.py"))?;
+    files_created += 3;
+    
+    // .env.example
+    let env_example = format!(r#"SECRET_KEY=your-secret-key-here
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+DB_NAME={}
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_HOST=localhost
+DB_PORT=5432
+
+CORS_ALLOWED_ORIGINS=http://localhost:3000
+"#, project_slug);
+    let mut file = fs::File::create(project_path.join(".env.example"))?;
+    file.write_all(env_example.as_bytes())?;
+    files_created += 1;
+    
+    Ok(files_created)
+}
+
+// ============================================================================
+// GOLANG CLOUD-NATIVE STACK
+// ============================================================================
+
+fn generate_golang_cloud_native_files(project_path: &Path, config: &ProjectConfig) -> Result<usize, std::io::Error> {
+    let mut files_created = 0;
+    
+    // Create Go directory structure
+    fs::create_dir_all(project_path.join("cmd/api"))?;
+    fs::create_dir_all(project_path.join("internal/handlers"))?;
+    fs::create_dir_all(project_path.join("internal/models"))?;
+    fs::create_dir_all(project_path.join("internal/middleware"))?;
+    fs::create_dir_all(project_path.join("pkg/database"))?;
+    fs::create_dir_all(project_path.join("pkg/config"))?;
+    fs::create_dir_all(project_path.join("deployments/k8s"))?;
+    files_created += 7;
+    
+    // go.mod
+    let go_mod = format!(r#"module github.com/yourusername/{}
+
+go 1.21
+
+require (
+	github.com/gin-gonic/gin v1.9.1
+	github.com/joho/godotenv v1.5.1
+	gorm.io/gorm v1.25.5
+	gorm.io/driver/postgres v1.5.4
+	github.com/golang-jwt/jwt/v5 v5.2.0
+	github.com/rs/cors v1.10.1
+)
+"#, config.name);
+    let mut file = fs::File::create(project_path.join("go.mod"))?;
+    file.write_all(go_mod.as_bytes())?;
+    files_created += 1;
+    
+    // cmd/api/main.go
+    let main_go = format!(r#"package main
+
+import (
+	"log"
+	"os"
+
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"github.com/yourusername/{}/internal/handlers"
+	"github.com/yourusername/{}/internal/middleware"
+	"github.com/yourusername/{}/pkg/config"
+	"github.com/yourusername/{}/pkg/database"
+)
+
+func main() {{
+	// Load environment variables
+	if err := godotenv.Load(); err != nil {{
+		log.Println("No .env file found")
+	}}
+
+	// Initialize database
+	db, err := database.Connect()
+	if err != nil {{
+		log.Fatal("Failed to connect to database:", err)
+	}}
+
+	// Initialize Gin router
+	r := gin.Default()
+
+	// Middleware
+	r.Use(middleware.CORS())
+	r.Use(middleware.Logger())
+
+	// Health check
+	r.GET("/health", func(c *gin.Context) {{
+		c.JSON(200, gin.H{{"status": "healthy"}})
+	}})
+
+	// API routes
+	api := r.Group("/api/v1")
+	{{
+		handlers.RegisterRoutes(api, db)
+	}}
+
+	// Start server
+	port := os.Getenv("PORT")
+	if port == "" {{
+		port = "8080"
+	}}
+
+	log.Printf("Server starting on port %s", port)
+	if err := r.Run(":" + port); err != nil {{
+		log.Fatal("Failed to start server:", err)
+	}}
+}}
+"#, config.name, config.name, config.name, config.name);
+    let mut file = fs::File::create(project_path.join("cmd/api/main.go"))?;
+    file.write_all(main_go.as_bytes())?;
+    files_created += 1;
+    
+    // internal/handlers/handlers.go
+    let handlers_go = format!(r#"package handlers
+
+import (
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+	"github.com/yourusername/{}/internal/models"
+)
+
+func RegisterRoutes(r *gin.RouterGroup, db *gorm.DB) {{
+	r.GET("/posts", GetPosts(db))
+	r.POST("/posts", CreatePost(db))
+	r.GET("/posts/:id", GetPost(db))
+	r.PUT("/posts/:id", UpdatePost(db))
+	r.DELETE("/posts/:id", DeletePost(db))
+}}
+
+func GetPosts(db *gorm.DB) gin.HandlerFunc {{
+	return func(c *gin.Context) {{
+		var posts []models.Post
+		if err := db.Find(&posts).Error; err != nil {{
+			c.JSON(500, gin.H{{"error": err.Error()}})
+			return
+		}}
+		c.JSON(200, posts)
+	}}
+}}
+
+func CreatePost(db *gorm.DB) gin.HandlerFunc {{
+	return func(c *gin.Context) {{
+		var post models.Post
+		if err := c.ShouldBindJSON(&post); err != nil {{
+			c.JSON(400, gin.H{{"error": err.Error()}})
+			return
+		}}
+		if err := db.Create(&post).Error; err != nil {{
+			c.JSON(500, gin.H{{"error": err.Error()}})
+			return
+		}}
+		c.JSON(201, post)
+	}}
+}}
+
+func GetPost(db *gorm.DB) gin.HandlerFunc {{
+	return func(c *gin.Context) {{
+		var post models.Post
+		id := c.Param("id")
+		if err := db.First(&post, id).Error; err != nil {{
+			c.JSON(404, gin.H{{"error": "Post not found"}})
+			return
+		}}
+		c.JSON(200, post)
+	}}
+}}
+
+func UpdatePost(db *gorm.DB) gin.HandlerFunc {{
+	return func(c *gin.Context) {{
+		var post models.Post
+		id := c.Param("id")
+		if err := db.First(&post, id).Error; err != nil {{
+			c.JSON(404, gin.H{{"error": "Post not found"}})
+			return
+		}}
+		if err := c.ShouldBindJSON(&post); err != nil {{
+			c.JSON(400, gin.H{{"error": err.Error()}})
+			return
+		}}
+		db.Save(&post)
+		c.JSON(200, post)
+	}}
+}}
+
+func DeletePost(db *gorm.DB) gin.HandlerFunc {{
+	return func(c *gin.Context) {{
+		id := c.Param("id")
+		if err := db.Delete(&models.Post{{}}, id).Error; err != nil {{
+			c.JSON(500, gin.H{{"error": err.Error()}})
+			return
+		}}
+		c.JSON(204, nil)
+	}}
+}}
+"#, config.name);
+    let mut file = fs::File::create(project_path.join("internal/handlers/handlers.go"))?;
+    file.write_all(handlers_go.as_bytes())?;
+    files_created += 1;
+    
+    // internal/models/post.go
+    let models_go = r#"package models
+
+import (
+	"time"
+	"gorm.io/gorm"
+)
+
+type Post struct {
+	ID        uint           `gorm:"primarykey" json:"id"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
+	Title     string         `json:"title" binding:"required"`
+	Content   string         `json:"content" binding:"required"`
+	Author    string         `json:"author" binding:"required"`
+	Published bool           `json:"published"`
+}
+"#;
+    let mut file = fs::File::create(project_path.join("internal/models/post.go"))?;
+    file.write_all(models_go.as_bytes())?;
+    files_created += 1;
+    
+    // internal/middleware/cors.go
+    let cors_go = r#"package middleware
+
+import (
+	"github.com/gin-gonic/gin"
+)
+
+func CORS() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, PATCH")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
+"#;
+    let mut file = fs::File::create(project_path.join("internal/middleware/cors.go"))?;
+    file.write_all(cors_go.as_bytes())?;
+    files_created += 1;
+    
+    // internal/middleware/logger.go
+    let logger_go = r#"package middleware
+
+import (
+	"log"
+	"time"
+
+	"github.com/gin-gonic/gin"
+)
+
+func Logger() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		start := time.Now()
+		path := c.Request.URL.Path
+		raw := c.Request.URL.RawQuery
+
+		c.Next()
+
+		latency := time.Since(start)
+		clientIP := c.ClientIP()
+		method := c.Request.Method
+		statusCode := c.Writer.Status()
+
+		if raw != "" {
+			path = path + "?" + raw
+		}
+
+		log.Printf("[%s] %d | %13v | %15s | %s",
+			method,
+			statusCode,
+			latency,
+			clientIP,
+			path,
+		)
+	}
+}
+"#;
+    let mut file = fs::File::create(project_path.join("internal/middleware/logger.go"))?;
+    file.write_all(logger_go.as_bytes())?;
+    files_created += 1;
+    
+    // pkg/database/database.go
+    let database_go = r#"package database
+
+import (
+	"fmt"
+	"os"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
+
+func Connect() (*gorm.DB, error) {
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
+}
+"#;
+    let mut file = fs::File::create(project_path.join("pkg/database/database.go"))?;
+    file.write_all(database_go.as_bytes())?;
+    files_created += 1;
+    
+    // Dockerfile
+    let dockerfile = r#"FROM golang:1.21-alpine AS builder
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/server ./cmd/api
+
+FROM alpine:latest
+
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+COPY --from=builder /app/server .
+
+EXPOSE 8080
+
+CMD ["./server"]
+"#;
+    let mut file = fs::File::create(project_path.join("Dockerfile"))?;
+    file.write_all(dockerfile.as_bytes())?;
+    files_created += 1;
+    
+    // deployments/k8s/deployment.yaml
+    let k8s_deployment = format!(r#"apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {}-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: {}-api
+  template:
+    metadata:
+      labels:
+        app: {}-api
+    spec:
+      containers:
+      - name: api
+        image: {}-api:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: host
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: password
+        - name: DB_NAME
+          value: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {}-api-service
+spec:
+  selector:
+    app: {}-api
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+  type: LoadBalancer
+"#, config.name, config.name, config.name, config.name, config.name, config.name, config.name);
+    let mut file = fs::File::create(project_path.join("deployments/k8s/deployment.yaml"))?;
+    file.write_all(k8s_deployment.as_bytes())?;
+    files_created += 1;
+    
+    // .env.example
+    let env_example = format!(r#"PORT=8080
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_NAME={}
+"#, config.name);
+    let mut file = fs::File::create(project_path.join(".env.example"))?;
+    file.write_all(env_example.as_bytes())?;
+    files_created += 1;
+    
+    Ok(files_created)
+}
+
+// ============================================================================
+// LARAVEL STACK
+// ============================================================================
+
+fn generate_laravel_stack_files(project_path: &Path, config: &ProjectConfig) -> Result<usize, std::io::Error> {
+    let mut files_created = 0;
+    
+    // Create Laravel directory structure
+    fs::create_dir_all(project_path.join("app/Http/Controllers"))?;
+    fs::create_dir_all(project_path.join("app/Models"))?;
+    fs::create_dir_all(project_path.join("database/migrations"))?;
+    fs::create_dir_all(project_path.join("database/seeders"))?;
+    fs::create_dir_all(project_path.join("routes"))?;
+    fs::create_dir_all(project_path.join("resources/views"))?;
+    fs::create_dir_all(project_path.join("public"))?;
+    fs::create_dir_all(project_path.join("config"))?;
+    files_created += 8;
+    
+    // composer.json
+    let composer_json = format!(r#"{{
+    "name": "yourusername/{}",
+    "type": "project",
+    "description": "{}",
+    "keywords": ["laravel", "framework"],
+    "license": "MIT",
+    "require": {{
+        "php": "^8.2",
+        "laravel/framework": "^10.0",
+        "laravel/sanctum": "^3.3",
+        "laravel/tinker": "^2.8"
+    }},
+    "require-dev": {{
+        "fakerphp/faker": "^1.23",
+        "laravel/pint": "^1.13",
+        "laravel/sail": "^1.26",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^7.10",
+        "phpunit/phpunit": "^10.5",
+        "spatie/laravel-ignition": "^2.4"
+    }},
+    "autoload": {{
+        "psr-4": {{
+            "App\\\\": "app/",
+            "Database\\\\Factories\\\\": "database/factories/",
+            "Database\\\\Seeders\\\\": "database/seeders/"
+        }}
+    }},
+    "autoload-dev": {{
+        "psr-4": {{
+            "Tests\\\\": "tests/"
+        }}
+    }},
+    "scripts": {{
+        "post-autoload-dump": [
+            "Illuminate\\\\Foundation\\\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ]
+    }},
+    "config": {{
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    }},
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}}
+"#, config.name, config.description);
+    let mut file = fs::File::create(project_path.join("composer.json"))?;
+    file.write_all(composer_json.as_bytes())?;
+    files_created += 1;
+    
+    // artisan
+    let artisan = r#"#!/usr/bin/env php
+<?php
+
+define('LARAVEL_START', microtime(true));
+
+require __DIR__.'/vendor/autoload.php';
+
+$app = require_once __DIR__.'/bootstrap/app.php';
+
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+
+$status = $kernel->handle(
+    $input = new Symfony\Component\Console\Input\ArgvInput,
+    new Symfony\Component\Console\Output\ConsoleOutput
+);
+
+$kernel->terminate($input, $status);
+
+exit($status);
+"#;
+    let mut file = fs::File::create(project_path.join("artisan"))?;
+    file.write_all(artisan.as_bytes())?;
+    files_created += 1;
+    
+    // routes/web.php
+    let routes_web = r#"<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+"#;
+    let mut file = fs::File::create(project_path.join("routes/web.php"))?;
+    file.write_all(routes_web.as_bytes())?;
+    files_created += 1;
+    
+    // routes/api.php
+    let routes_api = r#"<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostController;
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+Route::apiResource('posts', PostController::class);
+"#;
+    let mut file = fs::File::create(project_path.join("routes/api.php"))?;
+    file.write_all(routes_api.as_bytes())?;
+    files_created += 1;
+    
+    // app/Models/Post.php
+    let post_model = r#"<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'content',
+        'author',
+        'published',
+    ];
+
+    protected $casts = [
+        'published' => 'boolean',
+    ];
+}
+"#;
+    let mut file = fs::File::create(project_path.join("app/Models/Post.php"))?;
+    file.write_all(post_model.as_bytes())?;
+    files_created += 1;
+    
+    // app/Http/Controllers/PostController.php
+    let post_controller = r#"<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+
+class PostController extends Controller
+{
+    public function index(): JsonResponse
+    {
+        $posts = Post::all();
+        return response()->json($posts);
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'author' => 'required|string|max:255',
+            'published' => 'boolean',
+        ]);
+
+        $post = Post::create($validated);
+        return response()->json($post, 201);
+    }
+
+    public function show(Post $post): JsonResponse
+    {
+        return response()->json($post);
+    }
+
+    public function update(Request $request, Post $post): JsonResponse
+    {
+        $validated = $request->validate([
+            'title' => 'string|max:255',
+            'content' => 'string',
+            'author' => 'string|max:255',
+            'published' => 'boolean',
+        ]);
+
+        $post->update($validated);
+        return response()->json($post);
+    }
+
+    public function destroy(Post $post): JsonResponse
+    {
+        $post->delete();
+        return response()->json(null, 204);
+    }
+}
+"#;
+    let mut file = fs::File::create(project_path.join("app/Http/Controllers/PostController.php"))?;
+    file.write_all(post_controller.as_bytes())?;
+    files_created += 1;
+    
+    // database/migrations/create_posts_table.php
+    let migration = r#"<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->text('content');
+            $table->string('author');
+            $table->boolean('published')->default(false);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('posts');
+    }
+};
+"#;
+    let mut file = fs::File::create(project_path.join("database/migrations/2024_01_01_000000_create_posts_table.php"))?;
+    file.write_all(migration.as_bytes())?;
+    files_created += 1;
+    
+    // resources/views/welcome.blade.php
+    let welcome_view = format!(r#"<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-lg">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">{}</h1>
+            <p class="text-gray-600 mb-6">{}</p>
+            <div class="flex gap-4">
+                <a href="/api/posts" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    API Documentation
+                </a>
+                <a href="{{{{ url('/') }}}}" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                    Get Started
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+"#, config.name, config.name, config.description);
+    let mut file = fs::File::create(project_path.join("resources/views/welcome.blade.php"))?;
+    file.write_all(welcome_view.as_bytes())?;
+    files_created += 1;
+    
+    // .env.example
+    let env_example = format!(r#"APP_NAME={}
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE={}
+DB_USERNAME=root
+DB_PASSWORD=
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+"#, config.name, config.name);
+    let mut file = fs::File::create(project_path.join(".env.example"))?;
+    file.write_all(env_example.as_bytes())?;
+    files_created += 1;
+    
+    // public/index.php
+    let index_php = r#"<?php
+
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+require __DIR__.'/../vendor/autoload.php';
+
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$kernel = $app->make(Kernel::class);
+
+$response = $kernel->handle(
+    $request = Request::capture()
+)->send();
+
+$kernel->terminate($request, $response);
+"#;
+    let mut file = fs::File::create(project_path.join("public/index.php"))?;
+    file.write_all(index_php.as_bytes())?;
+    files_created += 1;
     
     Ok(files_created)
 }
