@@ -4,6 +4,7 @@
  */
 
 import { llmClient } from "../llm/client";
+import { modelRouter, costTracker, performanceMetrics } from "../modelRouter";
 import { StackRecommendationPrompts, type PromptContext } from "./prompts";
 import type { LLMChatResponse } from "../llm/types";
 
@@ -76,14 +77,73 @@ export class StackRecommendationService {
     const userPrompt =
       StackRecommendationPrompts.getRecommendationPrompt(context);
 
+    const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
+
     try {
-      const response: LLMChatResponse = await llmClient.chat([
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ]);
+      // Use ModelRouter to select optimal model
+      const selection = await modelRouter.selectModel(
+        fullPrompt,
+        "recommendation",
+        {
+          strategy: "balanced", // Balance cost and quality
+          constraints: {
+            maxLatency: 10000, // 10 seconds max for recommendations
+          },
+          expectedOutputLength: 1500, // Typical recommendation response
+        }
+      );
+
+      console.log(
+        `[Recommendations] Selected model: ${selection.model.provider}/${selection.model.modelId}`,
+        `\nEstimated cost: $${selection.estimatedCost.toFixed(4)}`,
+        `\nEstimated latency: ${selection.estimatedLatency}ms`,
+        `\nExplanation: ${selection.explanation}`
+      );
+
+      const startTime = Date.now();
+      let tokenCount = { input: 0, output: 0 };
+
+      // Call LLM with selected model
+      const response: LLMChatResponse = await llmClient.chat(
+        [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        {
+          // Override with selected model
+          model: selection.model.modelId,
+        }
+      );
+
+      const responseTime = Date.now() - startTime;
+
+      // Estimate token counts (rough approximation: 1 token ≈ 4 characters)
+      tokenCount.input = Math.ceil(fullPrompt.length / 4);
+      tokenCount.output = Math.ceil(response.content.length / 4);
+
+      // Track cost
+      await costTracker.trackUsage(
+        selection.model.provider,
+        selection.model.modelId,
+        "recommendation",
+        tokenCount.input,
+        tokenCount.output
+      );
 
       // Parse LLM response
       const llmRecommendations = this.parseLLMResponse(response.content);
+
+      // Record performance metrics (accepted = true if we got valid recommendations)
+      const accepted = llmRecommendations.length > 0;
+      await performanceMetrics.recordMetric(
+        selection.model.provider,
+        selection.model.modelId,
+        "recommendation",
+        responseTime,
+        accepted,
+        false,
+        accepted ? 5 : 3 // Higher satisfaction if we got good results
+      );
 
       // Combine with empirical data
       const hybridRecommendations = this.combineRecommendations(
@@ -101,6 +161,21 @@ export class StackRecommendationService {
       };
     } catch (error) {
       console.error("LLM recommendation failed:", error);
+
+      // Record error in performance metrics
+      const config = llmClient.getConfig();
+      if (config) {
+        await performanceMetrics.recordMetric(
+          config.provider,
+          config.model,
+          "recommendation",
+          0,
+          false,
+          true,
+          1
+        );
+      }
+
       return this.getEmpiricalRecommendations(context, empiricalData);
     }
   }
@@ -344,14 +419,63 @@ export class StackRecommendationService {
         languages
       );
 
-      const response = await llmClient.chat([
+      const systemPrompt =
+        "You are a helpful technology advisor. Explain stack choices clearly and concisely.";
+      const fullPrompt = `${systemPrompt}\n\n${prompt}`;
+
+      // Use cheaper model for simpler explanation task
+      const selection = await modelRouter.selectModel(
+        fullPrompt,
+        "explanation",
         {
-          role: "system",
-          content:
-            "You are a helpful technology advisor. Explain stack choices clearly and concisely.",
-        },
-        { role: "user", content: prompt },
-      ]);
+          strategy: "cost", // Use cheapest model for explanations
+          constraints: {
+            maxLatency: 5000, // 5 seconds max
+          },
+          expectedOutputLength: 300, // Brief explanation
+        }
+      );
+
+      const startTime = Date.now();
+
+      const response = await llmClient.chat(
+        [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
+          { role: "user", content: prompt },
+        ],
+        {
+          model: selection.model.modelId,
+        }
+      );
+
+      const responseTime = Date.now() - startTime;
+
+      // Track usage
+      const tokenCount = {
+        input: Math.ceil(fullPrompt.length / 4),
+        output: Math.ceil(response.content.length / 4),
+      };
+
+      await costTracker.trackUsage(
+        selection.model.provider,
+        selection.model.modelId,
+        "explanation",
+        tokenCount.input,
+        tokenCount.output
+      );
+
+      await performanceMetrics.recordMetric(
+        selection.model.provider,
+        selection.model.modelId,
+        "explanation",
+        responseTime,
+        true,
+        false,
+        4
+      );
 
       return response.content;
     } catch (error) {
