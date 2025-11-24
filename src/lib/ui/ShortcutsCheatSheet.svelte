@@ -99,7 +99,7 @@
                         </div>
                       {/if}
                     </div>
-                    <div class="flex items-center gap-1 flex-shrink-0">
+                    <div class="flex items-center gap-1 shrink-0">
                       {#each shortcut.shortcut as key}
                         <kbd
                           class="px-2 py-1 text-xs bg-slate-800 text-slate-300 rounded font-mono"

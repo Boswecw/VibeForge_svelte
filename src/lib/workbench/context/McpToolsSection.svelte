@@ -112,11 +112,11 @@
 											{#if tool.description}
 												<p class="text-xs text-slate-400 mt-0.5 line-clamp-2">{tool.description}</p>
 											{/if}
-										</div>
+									</div>
 
-										<!-- Tool Actions -->
-										<div class="flex items-center gap-1 flex-shrink-0">
-											<button
+									<!-- Tool Actions -->
+									<div class="flex items-center gap-1 shrink-0">
+										<button
 												onclick={() => handleToggleFavorite(tool.id)}
 												class="p-1 rounded hover:bg-forge-steel transition-colors"
 												aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}

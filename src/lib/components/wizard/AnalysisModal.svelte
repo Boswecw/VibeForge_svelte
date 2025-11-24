@@ -359,7 +359,7 @@ Code Analysis Modal - Analyze existing projects and import configuration
 
             <!-- Suggested Stack -->
             {#if profile.suggestedStackId}
-              <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <div class="bg-linear-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                 <h5 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Suggested VibeForge Stack</h5>
                 <div class="flex items-center justify-between">
                   <span class="text-lg font-bold text-blue-900 dark:text-blue-100">{profile.suggestedStackId}</span>

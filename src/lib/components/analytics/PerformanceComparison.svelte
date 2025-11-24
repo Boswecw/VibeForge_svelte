@@ -129,7 +129,7 @@ Displays model performance metrics including response times, error rates, and pe
             </div>
             <div class="h-6 bg-forge-blacksteel rounded-full overflow-hidden">
               <div
-                class="h-full bg-gradient-to-r from-green-400 to-blue-500 transition-all flex items-center justify-end pr-2"
+                class="h-full bg-linear-to-r from-green-400 to-blue-500 transition-all flex items-center justify-end pr-2"
                 style="width: {(stats.avgResponseTime / maxTime) * 100}%"
               >
                 <span class="text-xs text-white font-medium">{Math.round(stats.avgResponseTime)}ms</span>

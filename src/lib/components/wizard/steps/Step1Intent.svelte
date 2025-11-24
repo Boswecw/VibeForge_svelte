@@ -505,7 +505,7 @@ no description yet
               </div>
               {#if intent.projectType === type.value}
                 <svg
-                  class="w-5 h-5 text-indigo-500 flex-shrink-0"
+                  class="w-5 h-5 text-indigo-500 shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -614,7 +614,7 @@ no description yet
     <!-- Timeline Estimation Widget -->
     {#if intent.projectType && intent.teamSize && intent.timeline}
       <div
-        class="mt-6 p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl"
+        class="mt-6 p-6 bg-linear-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl"
       >
         <div class="flex items-start gap-4 mb-4">
           <div class="p-3 bg-indigo-600 rounded-lg">
@@ -694,7 +694,7 @@ no description yet
               {#each suggestedMilestones as milestone, i}
                 <div class="flex items-center gap-3">
                   <div
-                    class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-semibold flex-shrink-0"
+                    class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-semibold shrink-0"
                   >
                     {i + 1}
                   </div>
@@ -751,7 +751,7 @@ no description yet
       <div class="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
         <div class="flex items-start gap-3">
           <svg
-            class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0"
+            class="w-5 h-5 text-amber-600 mt-0.5 shrink-0"
             fill="currentColor"
             viewBox="0 0 20 20"
           >

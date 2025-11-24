@@ -235,16 +235,16 @@ no description yet
 					class:shadow-md={selectedLanguages.includes(language.id)}
 					on:click={() => toggleLanguage(language.id)}
 				>
-					<div class="flex items-start justify-between mb-2">
-						<div class="flex items-center gap-3 flex-1 min-w-0">
-							<span class="text-3xl flex-shrink-0">{language.icon}</span>
+				<div class="flex items-start justify-between mb-2">
+					<div class="flex items-center gap-3 flex-1 min-w-0">
+						<span class="text-3xl shrink-0">{language.icon}</span>
 							<div class="flex-1 min-w-0">
 								<h4 class="font-bold text-gray-900 truncate">{language.name}</h4>
 								<p class="text-xs text-gray-600 capitalize">{language.ecosystem_support} ecosystem</p>
 							</div>
-						</div>
-						{#if selectedLanguages.includes(language.id)}
-							<svg class="w-6 h-6 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+					</div>
+					{#if selectedLanguages.includes(language.id)}
+						<svg class="w-6 h-6 text-indigo-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
 								<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
 							</svg>
 						{/if}

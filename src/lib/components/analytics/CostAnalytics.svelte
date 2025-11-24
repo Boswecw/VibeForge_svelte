@@ -128,7 +128,7 @@ Displays cost breakdown with pie charts, line charts, and provider/category anal
                 class="flex-1 h-6 bg-forge-blacksteel rounded-full overflow-hidden"
               >
                 <div
-                  class="h-full bg-gradient-to-r from-green-500 to-forge-ember transition-all"
+                  class="h-full bg-linear-to-r from-green-500 to-forge-ember transition-all"
                   style="width: {calculatePercentage(
                     day.cost,
                     Math.max(...dailyCosts.map((d) => d.cost))

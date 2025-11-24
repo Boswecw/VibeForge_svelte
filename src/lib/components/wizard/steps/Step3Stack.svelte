@@ -298,7 +298,7 @@ no description yet
 
   <!-- Recommendations Section -->
   {#if recommendedStacks.length > 0}
-    <div class="mb-6 p-5 bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl">
+    <div class="mb-6 p-5 bg-linear-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl">
       <div class="flex items-start gap-3 mb-4">
         <div class="p-2 bg-indigo-600 rounded-lg">
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -499,7 +499,7 @@ no description yet
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" on:click={closeComparisonModal}>
     <div class="bg-white rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden" on:click|stopPropagation>
       <!-- Modal Header -->
-      <div class="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50">
+      <div class="flex items-center justify-between p-6 border-b border-gray-200 bg-linear-to-r from-indigo-50 to-purple-50">
         <div>
           <h2 class="text-2xl font-bold text-gray-900">Stack Comparison</h2>
           <p class="text-sm text-gray-600 mt-1">Compare features, technologies, and requirements side-by-side</p>
@@ -647,7 +647,7 @@ no description yet
           <ul class="space-y-2">
             {#each detailsStack.features as feature}
               <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-5 h-5 text-green-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                 </svg>
                 <span class="text-gray-700">{feature}</span>

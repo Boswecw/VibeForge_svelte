@@ -296,7 +296,7 @@
               >
                 <div class="flex items-center gap-3 flex-1 min-w-0">
                   <div
-                    class="w-10 h-10 rounded-full bg-forge-ember flex items-center justify-center text-slate-900 font-medium flex-shrink-0"
+                    class="w-10 h-10 rounded-full bg-forge-ember flex items-center justify-center text-slate-900 font-medium shrink-0"
                   >
                     {access.userName.charAt(0).toUpperCase()}
                   </div>
@@ -311,7 +311,7 @@
                   </div>
                 </div>
 
-                <div class="flex items-center gap-2 flex-shrink-0 ml-4">
+                <div class="flex items-center gap-2 shrink-0 ml-4">
                   <select
                     value={access.role}
                     onchange={(e) =>

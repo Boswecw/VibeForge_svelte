@@ -28,7 +28,7 @@
   <title>Create New Project - VibeForge</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+<div class="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 py-8 px-4">
   <div class="max-w-5xl mx-auto">
     <!-- Header -->
     <div class="mb-8 text-center">
