@@ -14,13 +14,13 @@ Configure intelligent model selection, cost tracking, and performance monitoring
 
   // Budget settings
   let budgetEnabled = false;
-  let budgetPeriod: "daily" | "weekly" | "monthly" = "daily";
-  let budgetLimit = 10.0;
-  let alertThreshold = 0.8;
+  let dailyLimit = 5.0;
+  let weeklyLimit = 25.0;
+  let monthlyLimit = 100.0;
+  let warningThreshold = 0.8;
 
   // Cost tracking
-  let currentSpent = 0;
-  let currentRemaining = 0;
+  let currentBudget: any = null;
   let costHistory: any[] = [];
   let showCostHistory = false;
 
@@ -100,15 +100,18 @@ Configure intelligent model selection, cost tracking, and performance monitoring
 
   async function loadBudgetStatus() {
     if (budgetEnabled) {
-      const budget = await costTracker.getBudget(budgetPeriod);
-      currentSpent = budget.spent;
-      currentRemaining = budget.remaining;
+      currentBudget = costTracker.getBudget();
     }
   }
 
-  async function saveBudget() {
-    await costTracker.setBudget(budgetLimit, budgetPeriod, alertThreshold);
-    await loadBudgetStatus();
+  function saveBudget() {
+    costTracker.setBudget({
+      dailyLimit,
+      weeklyLimit,
+      monthlyLimit,
+      warningThreshold,
+    });
+    loadBudgetStatus();
     saveSettings();
   }
 
@@ -120,17 +123,17 @@ Configure intelligent model selection, cost tracking, and performance monitoring
     saveSettings();
   }
 
-  async function loadCostHistory() {
+  function loadCostHistory() {
     const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - 30); // Last 30 days
 
-    const summary = await costTracker.getCostSummary(startDate, endDate);
+    const summary = costTracker.getSummary(startDate, endDate);
     costHistory = summary.entries.slice(-10).reverse(); // Last 10 entries
     showCostHistory = true;
   }
 
-  async function loadPerformanceStats() {
+  function loadPerformanceStats() {
     // Get stats for all models
     const models = [
       "gpt-4",
@@ -143,12 +146,9 @@ Configure intelligent model selection, cost tracking, and performance monitoring
     performanceStats = {};
 
     for (const model of models) {
-      const stats = await performanceMetrics.getMetrics(
-        "openai",
-        model,
-        "recommendation"
-      );
-      if (stats.count > 0) {
+      const provider = model.startsWith("gpt") ? "openai" : "anthropic";
+      const stats = performanceMetrics.getMetrics(provider, model);
+      if (stats && stats.totalCount > 0) {
         performanceStats[model] = stats;
       }
     }
@@ -265,81 +265,101 @@ Configure intelligent model selection, cost tracking, and performance monitoring
 
       {#if budgetEnabled}
         <div class="space-y-4 bg-forge-blacksteel/50 p-4 rounded-lg">
-          <!-- Budget Period -->
+          <!-- Daily Limit -->
           <div>
-            <label class="block text-sm font-medium text-slate-300 mb-2">
-              Budget Period
-            </label>
-            <select
-              bind:value={budgetPeriod}
-              onchange={saveBudget}
-              class="w-full px-3 py-2 bg-forge-blacksteel border border-forge-steelgray rounded-lg text-slate-100 text-sm"
-            >
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-            </select>
-          </div>
-
-          <!-- Budget Limit -->
-          <div>
-            <label class="block text-sm font-medium text-slate-300 mb-2">
-              Budget Limit: ${budgetLimit.toFixed(2)}
-            </label>
+            <span class="block text-sm font-medium text-slate-300 mb-2">
+              Daily Limit: ${dailyLimit.toFixed(2)}
+            </span>
             <input
               type="range"
               min="1"
-              max="100"
+              max="50"
               step="1"
-              bind:value={budgetLimit}
+              bind:value={dailyLimit}
               onchange={saveBudget}
               class="w-full h-2 bg-forge-steelgray rounded-lg appearance-none cursor-pointer slider"
             />
-            <div class="flex justify-between text-xs text-slate-400 mt-1">
-              <span>$1</span>
-              <span>$100</span>
-            </div>
           </div>
 
-          <!-- Alert Threshold -->
+          <!-- Weekly Limit -->
           <div>
-            <label class="block text-sm font-medium text-slate-300 mb-2">
-              Alert at {Math.round(alertThreshold * 100)}% of budget
-            </label>
+            <span class="block text-sm font-medium text-slate-300 mb-2">
+              Weekly Limit: ${weeklyLimit.toFixed(2)}
+            </span>
+            <input
+              type="range"
+              min="5"
+              max="200"
+              step="5"
+              bind:value={weeklyLimit}
+              onchange={saveBudget}
+              class="w-full h-2 bg-forge-steelgray rounded-lg appearance-none cursor-pointer slider"
+            />
+          </div>
+
+          <!-- Monthly Limit -->
+          <div>
+            <span class="block text-sm font-medium text-slate-300 mb-2">
+              Monthly Limit: ${monthlyLimit.toFixed(2)}
+            </span>
+            <input
+              type="range"
+              min="10"
+              max="1000"
+              step="10"
+              bind:value={monthlyLimit}
+              onchange={saveBudget}
+              class="w-full h-2 bg-forge-steelgray rounded-lg appearance-none cursor-pointer slider"
+            />
+          </div>
+
+          <!-- Warning Threshold -->
+          <div>
+            <span class="block text-sm font-medium text-slate-300 mb-2">
+              Warning at {Math.round(warningThreshold * 100)}% of budget
+            </span>
             <input
               type="range"
               min="0.5"
               max="0.95"
               step="0.05"
-              bind:value={alertThreshold}
+              bind:value={warningThreshold}
               onchange={saveBudget}
               class="w-full h-2 bg-forge-steelgray rounded-lg appearance-none cursor-pointer slider"
             />
           </div>
 
           <!-- Budget Status -->
-          <div class="border-t border-forge-steelgray pt-4">
-            <div class="flex justify-between text-sm mb-2">
-              <span class="text-slate-300">Spent:</span>
-              <span class="text-forge-ember font-medium">
-                ${currentSpent.toFixed(4)}
-              </span>
+          {#if currentBudget}
+            <div class="border-t border-forge-steelgray pt-4 space-y-2">
+              <div class="grid grid-cols-3 gap-2 text-xs">
+                <div>
+                  <div class="text-slate-400">Daily</div>
+                  <div class="text-slate-100">
+                    ${currentBudget.dailySpent.toFixed(2)} / ${(
+                      currentBudget.dailyLimit || dailyLimit
+                    ).toFixed(2)}
+                  </div>
+                </div>
+                <div>
+                  <div class="text-slate-400">Weekly</div>
+                  <div class="text-slate-100">
+                    ${currentBudget.weeklySpent.toFixed(2)} / ${(
+                      currentBudget.weeklyLimit || weeklyLimit
+                    ).toFixed(2)}
+                  </div>
+                </div>
+                <div>
+                  <div class="text-slate-400">Monthly</div>
+                  <div class="text-slate-100">
+                    ${currentBudget.monthlySpent.toFixed(2)} / ${(
+                      currentBudget.monthlyLimit || monthlyLimit
+                    ).toFixed(2)}
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="flex justify-between text-sm mb-2">
-              <span class="text-slate-300">Remaining:</span>
-              <span class="text-green-400 font-medium">
-                ${currentRemaining.toFixed(4)}
-              </span>
-            </div>
-            <div
-              class="w-full h-2 bg-forge-steelgray rounded-full overflow-hidden"
-            >
-              <div
-                class="h-full bg-gradient-to-r from-green-500 to-forge-ember transition-all"
-                style="width: {(currentSpent / budgetLimit) * 100}%"
-              />
-            </div>
-          </div>
+          {/if}
 
           <!-- Cost History Button -->
           <button
@@ -390,23 +410,27 @@ Configure intelligent model selection, cost tracking, and performance monitoring
             <div class="bg-forge-blacksteel/50 p-3 rounded-lg">
               <div class="flex justify-between items-center mb-2">
                 <span class="text-sm font-medium text-slate-100">{model}</span>
-                <span class="text-xs text-slate-400">{stats.count} calls</span>
+                <span class="text-xs text-slate-400"
+                  >{stats.totalCount} calls</span
+                >
               </div>
               <div class="grid grid-cols-3 gap-2 text-xs">
                 <div>
                   <div class="text-slate-400">Avg Response</div>
-                  <div class="text-slate-100">{stats.avgResponseTime}ms</div>
-                </div>
-                <div>
-                  <div class="text-slate-400">Acceptance</div>
                   <div class="text-slate-100">
-                    {(stats.acceptanceRate * 100).toFixed(0)}%
+                    {Math.round(stats.avgResponseTime)}ms
                   </div>
                 </div>
                 <div>
-                  <div class="text-slate-400">Error Rate</div>
+                  <div class="text-slate-400">Accepted</div>
                   <div class="text-slate-100">
-                    {(stats.errorRate * 100).toFixed(1)}%
+                    {stats.acceptedCount} / {stats.totalCount}
+                  </div>
+                </div>
+                <div>
+                  <div class="text-slate-400">Errors</div>
+                  <div class="text-slate-100">
+                    {stats.errorCount}
                   </div>
                 </div>
               </div>
