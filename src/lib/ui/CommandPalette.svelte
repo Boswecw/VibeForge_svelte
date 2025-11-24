@@ -80,7 +80,7 @@
         <div class="flex items-center gap-3">
           <!-- Search Icon -->
           <svg
-            class="w-5 h-5 text-slate-400 flex-shrink-0"
+            class="w-5 h-5 text-slate-400 shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -131,9 +131,9 @@
               >
                 <!-- Icon -->
                 {#if command.icon}
-                  <span class="text-lg flex-shrink-0">{command.icon}</span>
+                  <span class="text-lg shrink-0">{command.icon}</span>
                 {:else}
-                  <div class="w-5 h-5 flex-shrink-0" />
+                  <div class="w-5 h-5 shrink-0" />
                 {/if}
 
                 <!-- Content -->
@@ -150,7 +150,7 @@
 
                 <!-- Shortcut -->
                 {#if command.shortcut}
-                  <div class="flex items-center gap-1 flex-shrink-0">
+                  <div class="flex items-center gap-1 shrink-0">
                     {#each command.shortcut as key}
                       <kbd
                         class="px-1.5 py-0.5 text-xs bg-slate-800 text-slate-400 rounded"
@@ -163,7 +163,7 @@
 
                 <!-- Category Badge -->
                 <span
-                  class="px-2 py-0.5 text-xs bg-slate-800 text-slate-400 rounded flex-shrink-0"
+                  class="px-2 py-0.5 text-xs bg-slate-800 text-slate-400 rounded shrink-0"
                 >
                   {command.category}
                 </span>

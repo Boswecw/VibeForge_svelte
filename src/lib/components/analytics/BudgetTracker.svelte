@@ -50,7 +50,7 @@ Displays current budget status with progress bars and alerts
           </div>
           <div class="h-3 bg-forge-blacksteel rounded-full overflow-hidden">
             <div
-              class="h-full bg-gradient-to-r transition-all {getProgressColor(
+              class="h-full bg-linear-to-r transition-all {getProgressColor(
                 calculatePercentage(budget.dailySpent, budget.dailyLimit),
                 budget.warningThreshold
               )}"
@@ -84,7 +84,7 @@ Displays current budget status with progress bars and alerts
           </div>
           <div class="h-3 bg-forge-blacksteel rounded-full overflow-hidden">
             <div
-              class="h-full bg-gradient-to-r transition-all {getProgressColor(
+              class="h-full bg-linear-to-r transition-all {getProgressColor(
                 calculatePercentage(budget.weeklySpent, budget.weeklyLimit),
                 budget.warningThreshold
               )}"
@@ -116,7 +116,7 @@ Displays current budget status with progress bars and alerts
           </div>
           <div class="h-3 bg-forge-blacksteel rounded-full overflow-hidden">
             <div
-              class="h-full bg-gradient-to-r transition-all {getProgressColor(
+              class="h-full bg-linear-to-r transition-all {getProgressColor(
                 calculatePercentage(budget.monthlySpent, budget.monthlyLimit),
                 budget.warningThreshold
               )}"

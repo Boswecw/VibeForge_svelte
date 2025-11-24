@@ -130,7 +130,7 @@ Reusable status bar displaying workspace, models, metrics, and system health
 
   <!-- Connection Status -->
   <div
-    class="flex items-center gap-2 pl-3 border-l flex-shrink-0"
+    class="flex items-center gap-2 pl-3 border-l shrink-0"
     class:border-slate-700={$theme === "dark"}
     class:border-slate-300={$theme !== "dark"}
   >

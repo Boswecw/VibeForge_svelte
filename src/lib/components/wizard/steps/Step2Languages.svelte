@@ -356,7 +356,7 @@ no description yet
 
   <!-- AI Recommendations -->
   {#if recommendations && recommendations.recommended.length > 0}
-    <div class="mb-6 p-5 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl">
+    <div class="mb-6 p-5 bg-linear-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl">
       <div class="flex items-start gap-3 mb-3">
         <div class="p-2 bg-blue-600 rounded-lg">
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

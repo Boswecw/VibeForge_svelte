@@ -100,7 +100,7 @@ no description yet
       </div>
 
       {#if selected}
-        <div class="flex-shrink-0 ml-2">
+        <div class="shrink-0 ml-2">
           <svg
             class="w-6 h-6 text-indigo-500"
             fill="currentColor"

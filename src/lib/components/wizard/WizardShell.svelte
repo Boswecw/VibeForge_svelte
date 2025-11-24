@@ -62,7 +62,7 @@ no description yet
 </script>
 
 <div
-  class="wizard-shell min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8"
+  class="wizard-shell min-h-screen bg-linear-to-br from-gray-50 to-gray-100 py-8"
 >
   <div class="max-w-6xl mx-auto px-4">
     <!-- Header -->
@@ -85,7 +85,7 @@ no description yet
       </div>
       <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
         <div
-          class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500 ease-out"
+          class="h-full bg-linear-to-r from-indigo-500 to-purple-500 transition-all duration-500 ease-out"
           style="width: {progress}%"
         />
       </div>

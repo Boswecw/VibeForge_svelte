@@ -74,7 +74,7 @@ no description yet
 
     <!-- Stack Availability Banner -->
     <div
-      class="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-4"
+      class="bg-linear-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-4"
     >
       <div class="flex items-center gap-2 mb-2">
         <svg

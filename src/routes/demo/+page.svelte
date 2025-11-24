@@ -101,7 +101,7 @@
       <!-- Integration Demo -->
       {#if currentView === "both"}
         <section
-          class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg shadow-md p-6"
+          class="bg-linear-to-r from-indigo-50 to-purple-50 rounded-lg shadow-md p-6"
         >
           <h2 class="text-2xl font-bold text-gray-900 mb-4">
             🔗 Integration Demo

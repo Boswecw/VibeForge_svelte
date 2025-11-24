@@ -64,7 +64,7 @@ List of preset cards with selection and pin toggle
           <span class="text-[13px] font-medium truncate">{preset.name}</span>
           <button
             type="button"
-            class={`text-[11px] font-medium flex-shrink-0 transition-colors ${
+            class={`text-[11px] font-medium shrink-0 transition-colors ${
               preset.pinned
                 ? $theme === "dark"
                   ? "text-amber-400 hover:text-amber-300"
@@ -89,7 +89,7 @@ List of preset cards with selection and pin toggle
           }`}
         >
           <span>{preset.category} · {preset.workspace}</span>
-          <span class="flex-shrink-0">{preset.updatedAt}</span>
+          <span class="shrink-0">{preset.updatedAt}</span>
         </div>
 
         {#if preset.tags?.length}
