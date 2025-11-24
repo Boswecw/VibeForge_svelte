@@ -412,6 +412,17 @@ fn get_scripts_for_stack(stack_id: &str) -> String {
     "build": "cd client && npm run build",
     "install:all": "npm install && cd server && npm install && cd ../client && npm install""#.to_string()
         }
+        "sveltekit-stack" => {
+            r#"    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json""#.to_string()
+        }
+        "solidstart-stack" => {
+            r#"    "dev": "vinxi dev",
+    "build": "vinxi build",
+    "start": "vinxi start""#.to_string()
+        }
         id if id.contains("nextjs") => {
             r#"    "dev": "next dev",
     "build": "next build",
@@ -462,6 +473,17 @@ fn get_dependencies_for_stack(stack_id: &str) -> String {
     "cors": "^2.8.5",
     "dotenv": "^16.3.1""#.to_string()
         }
+        "sveltekit-stack" => {
+            r#"    "@sveltejs/kit": "^2.0.0",
+    "svelte": "^5.0.0""#.to_string()
+        }
+        "solidstart-stack" => {
+            r#"    "@solidjs/router": "^0.10.0",
+    "@solidjs/start": "^0.4.0",
+    "@solidjs/meta": "^0.29.0",
+    "solid-js": "^1.8.0",
+    "vinxi": "^0.3.0""#.to_string()
+        }
         id if id.contains("nextjs") => {
             r#"    "next": "^14.0.4",
     "react": "^18.2.0",
@@ -506,6 +528,20 @@ fn get_dev_dependencies_for_stack(stack_id: &str) -> String {
                 r#"    "nodemon": "^3.0.2""#,
                 r#"    "@types/express": "^4.17.21""#,
                 r#"    "@types/cors": "^2.8.17""#,
+            ]);
+        }
+        "sveltekit-stack" => {
+            deps.extend(vec![
+                r#"    "@sveltejs/adapter-auto": "^3.0.0""#,
+                r#"    "@sveltejs/vite-plugin-svelte": "^3.0.0""#,
+                r#"    "svelte-check": "^3.6.0""#,
+                r#"    "vite": "^5.0.10""#,
+            ]);
+        }
+        "solidstart-stack" => {
+            deps.extend(vec![
+                r#"    "vite": "^5.0.10""#,
+                r#"    "vite-plugin-solid": "^2.8.0""#,
             ]);
         }
         id if id.contains("nextjs") => {
@@ -786,6 +822,7 @@ fn generate_stack_specific_files(project_path: &Path, config: &ProjectConfig) ->
         "mern-stack" => generate_mern_stack_files(project_path, config),
         "nextjs-fullstack" => generate_nextjs_fullstack_files(project_path, config),
         "sveltekit-stack" => generate_sveltekit_stack_files(project_path, config),
+        "solidstart-stack" => generate_solidstart_stack_files(project_path, config),
         "fastapi-ai-stack" => generate_fastapi_stack_files(project_path, config),
         _ => Ok(0)
     }
@@ -2037,13 +2074,1481 @@ export default function Home() {
     Ok(files_created)
 }
 
-// Placeholder functions for other stacks
-fn generate_sveltekit_stack_files(_project_path: &Path, _config: &ProjectConfig) -> Result<usize, std::io::Error> {
-    // TODO: Implement SvelteKit template
-    Ok(0)
+// ============================================================================
+// SVELTEKIT STACK (SvelteKit 2.x + Svelte 5)
+// ============================================================================
+
+fn generate_sveltekit_stack_files(project_path: &Path, config: &ProjectConfig) -> Result<usize, std::io::Error> {
+    let mut files_created = 0;
+    
+    // Create SvelteKit directory structure
+    fs::create_dir_all(project_path.join("src/routes"))?;
+    fs::create_dir_all(project_path.join("src/routes/api/posts"))?;
+    fs::create_dir_all(project_path.join("src/routes/posts/[id]"))?;
+    fs::create_dir_all(project_path.join("src/lib/components"))?;
+    fs::create_dir_all(project_path.join("src/lib/server"))?;
+    fs::create_dir_all(project_path.join("src/lib/stores"))?;
+    fs::create_dir_all(project_path.join("static"))?;
+    files_created += 7;
+    
+    // SvelteKit config
+    let svelte_config = r#"import adapter from '@sveltejs/adapter-auto';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+
+/** @type {import('@sveltejs/kit').Config} */
+const config = {
+	preprocess: vitePreprocess(),
+	kit: {
+		adapter: adapter()
+	}
+};
+
+export default config;
+"#;
+    let mut file = fs::File::create(project_path.join("svelte.config.js"))?;
+    file.write_all(svelte_config.as_bytes())?;
+    files_created += 1;
+    
+    // Vite config
+    let vite_config = r#"import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+	plugins: [sveltekit()],
+	server: {
+		port: 5173,
+		strictPort: false
+	}
+});
+"#;
+    let mut file = fs::File::create(project_path.join("vite.config.ts"))?;
+    file.write_all(vite_config.as_bytes())?;
+    files_created += 1;
+    
+    // Root layout
+    let root_layout = r#"<script lang="ts">
+	import '../app.css';
+	
+	let { children } = $props();
+</script>
+
+<div class="app">
+	<nav>
+		<a href="/">Home</a>
+		<a href="/posts">Posts</a>
+		<a href="/about">About</a>
+	</nav>
+	
+	<main>
+		{@render children()}
+	</main>
+	
+	<footer>
+		<p>Built with SvelteKit</p>
+	</footer>
+</div>
+
+<style>
+	.app {
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+	}
+	
+	nav {
+		display: flex;
+		gap: 1rem;
+		padding: 1rem 2rem;
+		background: #f0f0f0;
+	}
+	
+	nav a {
+		text-decoration: none;
+		color: #333;
+		font-weight: 500;
+	}
+	
+	nav a:hover {
+		color: #ff3e00;
+	}
+	
+	main {
+		flex: 1;
+		padding: 2rem;
+	}
+	
+	footer {
+		padding: 1rem 2rem;
+		background: #f0f0f0;
+		text-align: center;
+	}
+</style>
+"#;
+    let mut file = fs::File::create(project_path.join("src/routes/+layout.svelte"))?;
+    file.write_all(root_layout.as_bytes())?;
+    files_created += 1;
+    
+    // Home page with load function
+    let home_page = r#"<script lang="ts">
+	import type { PageData } from './$types';
+	
+	let { data }: { data: PageData } = $props();
+</script>
+
+<svelte:head>
+	<title>Home - SvelteKit App</title>
+	<meta name="description" content="Welcome to our SvelteKit app" />
+</svelte:head>
+
+<div class="home">
+	<h1>Welcome to SvelteKit</h1>
+	<p>This is a modern full-stack framework for building web applications.</p>
+	
+	<div class="features">
+		<div class="feature">
+			<h2>🚀 Fast</h2>
+			<p>Server-side rendering and code splitting out of the box</p>
+		</div>
+		<div class="feature">
+			<h2>💪 Powerful</h2>
+			<p>Full-stack framework with API routes and form actions</p>
+		</div>
+		<div class="feature">
+			<h2>🎨 Flexible</h2>
+			<p>Use Svelte 5 with runes for reactive state management</p>
+		</div>
+	</div>
+	
+	<p class="server-message">{data.message}</p>
+</div>
+
+<style>
+	.home {
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+	
+	h1 {
+		font-size: 3rem;
+		color: #ff3e00;
+		margin-bottom: 1rem;
+	}
+	
+	.features {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: 2rem;
+		margin: 3rem 0;
+	}
+	
+	.feature {
+		padding: 2rem;
+		background: white;
+		border-radius: 8px;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	}
+	
+	.feature h2 {
+		margin: 0 0 1rem 0;
+	}
+	
+	.server-message {
+		text-align: center;
+		font-style: italic;
+		color: #666;
+	}
+</style>
+"#;
+    let mut file = fs::File::create(project_path.join("src/routes/+page.svelte"))?;
+    file.write_all(home_page.as_bytes())?;
+    files_created += 1;
+    
+    // Home page load function
+    let home_load = r#"import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async () => {
+	return {
+		message: 'This message was loaded on the server!'
+	};
+};
+"#;
+    let mut file = fs::File::create(project_path.join("src/routes/+page.server.ts"))?;
+    file.write_all(home_load.as_bytes())?;
+    files_created += 1;
+    
+    // Posts page with API fetch
+    let posts_page = r#"<script lang="ts">
+	import type { PageData } from './$types';
+	
+	let { data }: { data: PageData } = $props();
+</script>
+
+<svelte:head>
+	<title>Posts - SvelteKit App</title>
+</svelte:head>
+
+<div class="posts">
+	<h1>Posts</h1>
+	
+	{#if data.posts.length === 0}
+		<p>No posts yet.</p>
+	{:else}
+		<div class="posts-grid">
+			{#each data.posts as post}
+				<article class="post-card">
+					<h2>
+						<a href="/posts/{post.id}">{post.title}</a>
+					</h2>
+					<p>{post.excerpt}</p>
+					<div class="meta">
+						<span>By {post.author}</span>
+						<span>{new Date(post.createdAt).toLocaleDateString()}</span>
+					</div>
+				</article>
+			{/each}
+		</div>
+	{/if}
+</div>
+
+<style>
+	.posts {
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+	
+	h1 {
+		font-size: 2.5rem;
+		margin-bottom: 2rem;
+	}
+	
+	.posts-grid {
+		display: grid;
+		gap: 2rem;
+	}
+	
+	.post-card {
+		padding: 2rem;
+		background: white;
+		border-radius: 8px;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	}
+	
+	.post-card h2 {
+		margin: 0 0 1rem 0;
+	}
+	
+	.post-card h2 a {
+		color: #333;
+		text-decoration: none;
+	}
+	
+	.post-card h2 a:hover {
+		color: #ff3e00;
+	}
+	
+	.meta {
+		display: flex;
+		gap: 1rem;
+		color: #666;
+		font-size: 0.875rem;
+		margin-top: 1rem;
+	}
+</style>
+"#;
+    fs::create_dir_all(project_path.join("src/routes/posts"))?;
+    let mut file = fs::File::create(project_path.join("src/routes/posts/+page.svelte"))?;
+    file.write_all(posts_page.as_bytes())?;
+    files_created += 1;
+    
+    // Posts load function
+    let posts_load = r#"import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async ({ fetch }) => {
+	const response = await fetch('/api/posts');
+	const posts = await response.json();
+	
+	return {
+		posts
+	};
+};
+"#;
+    let mut file = fs::File::create(project_path.join("src/routes/posts/+page.server.ts"))?;
+    file.write_all(posts_load.as_bytes())?;
+    files_created += 1;
+    
+    // API endpoint for posts
+    let posts_api = r#"import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+
+// In-memory data (replace with database in production)
+let posts = [
+	{
+		id: '1',
+		title: 'Getting Started with SvelteKit',
+		excerpt: 'Learn the basics of SvelteKit and build your first app.',
+		content: 'SvelteKit is a framework for building web applications...',
+		author: 'John Doe',
+		createdAt: new Date().toISOString()
+	},
+	{
+		id: '2',
+		title: 'Svelte 5 Runes Explained',
+		excerpt: 'Understanding the new reactivity system in Svelte 5.',
+		content: 'Svelte 5 introduces a new way to handle reactivity...',
+		author: 'Jane Smith',
+		createdAt: new Date().toISOString()
+	}
+];
+
+export const GET: RequestHandler = async () => {
+	return json(posts);
+};
+
+export const POST: RequestHandler = async ({ request }) => {
+	const data = await request.json();
+	const newPost = {
+		id: String(posts.length + 1),
+		...data,
+		createdAt: new Date().toISOString()
+	};
+	posts.push(newPost);
+	return json(newPost, { status: 201 });
+};
+"#;
+    let mut file = fs::File::create(project_path.join("src/routes/api/posts/+server.ts"))?;
+    file.write_all(posts_api.as_bytes())?;
+    files_created += 1;
+    
+    // Single post page with dynamic route
+    let post_detail = r#"<script lang="ts">
+	import type { PageData } from './$types';
+	
+	let { data }: { data: PageData } = $props();
+</script>
+
+<svelte:head>
+	<title>{data.post.title} - SvelteKit App</title>
+</svelte:head>
+
+<article class="post">
+	<h1>{data.post.title}</h1>
+	<div class="meta">
+		<span>By {data.post.author}</span>
+		<span>{new Date(data.post.createdAt).toLocaleDateString()}</span>
+	</div>
+	<div class="content">
+		<p>{data.post.content}</p>
+	</div>
+	<a href="/posts" class="back-link">← Back to posts</a>
+</article>
+
+<style>
+	.post {
+		max-width: 800px;
+		margin: 0 auto;
+	}
+	
+	h1 {
+		font-size: 2.5rem;
+		margin-bottom: 1rem;
+	}
+	
+	.meta {
+		display: flex;
+		gap: 1rem;
+		color: #666;
+		font-size: 0.875rem;
+		margin-bottom: 2rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid #e0e0e0;
+	}
+	
+	.content {
+		line-height: 1.7;
+		font-size: 1.1rem;
+		margin-bottom: 2rem;
+	}
+	
+	.back-link {
+		color: #ff3e00;
+		text-decoration: none;
+	}
+	
+	.back-link:hover {
+		text-decoration: underline;
+	}
+</style>
+"#;
+    let mut file = fs::File::create(project_path.join("src/routes/posts/[id]/+page.svelte"))?;
+    file.write_all(post_detail.as_bytes())?;
+    files_created += 1;
+    
+    // Post detail load function
+    let post_detail_load = r#"import { error } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async ({ params, fetch }) => {
+	const response = await fetch('/api/posts');
+	const posts = await response.json();
+	const post = posts.find((p: any) => p.id === params.id);
+	
+	if (!post) {
+		throw error(404, 'Post not found');
+	}
+	
+	return {
+		post
+	};
+};
+"#;
+    let mut file = fs::File::create(project_path.join("src/routes/posts/[id]/+page.server.ts"))?;
+    file.write_all(post_detail_load.as_bytes())?;
+    files_created += 1;
+    
+    // Store example
+    let store = r#"import { writable } from 'svelte/store';
+
+export const theme = writable<'light' | 'dark'>('light');
+
+export const user = writable<{
+	id: string;
+	name: string;
+	email: string;
+} | null>(null);
+"#;
+    let mut file = fs::File::create(project_path.join("src/lib/stores/index.ts"))?;
+    file.write_all(store.as_bytes())?;
+    files_created += 1;
+    
+    // Reusable component
+    let button_component = r#"<script lang="ts">
+	interface Props {
+		variant?: 'primary' | 'secondary';
+		disabled?: boolean;
+		onclick?: () => void;
+		children: any;
+	}
+	
+	let { variant = 'primary', disabled = false, onclick, children }: Props = $props();
+</script>
+
+<button
+	class="btn {variant}"
+	{disabled}
+	{onclick}
+>
+	{@render children()}
+</button>
+
+<style>
+	.btn {
+		padding: 0.5rem 1rem;
+		border: none;
+		border-radius: 4px;
+		font-size: 1rem;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.2s;
+	}
+	
+	.btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+	
+	.btn.primary {
+		background: #ff3e00;
+		color: white;
+	}
+	
+	.btn.primary:hover:not(:disabled) {
+		background: #e63900;
+	}
+	
+	.btn.secondary {
+		background: #f0f0f0;
+		color: #333;
+	}
+	
+	.btn.secondary:hover:not(:disabled) {
+		background: #e0e0e0;
+	}
+</style>
+"#;
+    let mut file = fs::File::create(project_path.join("src/lib/components/Button.svelte"))?;
+    file.write_all(button_component.as_bytes())?;
+    files_created += 1;
+    
+    // App CSS
+    let app_css = r#":root {
+	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
+	color: #213547;
+	background-color: #ffffff;
 }
 
-fn generate_fastapi_stack_files(_project_path: &Path, _config: &ProjectConfig) -> Result<usize, std::io::Error> {
-    // TODO: Implement FastAPI template
-    Ok(0)
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+a {
+	color: #ff3e00;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+"#;
+    let mut file = fs::File::create(project_path.join("src/app.css"))?;
+    file.write_all(app_css.as_bytes())?;
+    files_created += 1;
+    
+    // App HTML
+    let app_html = r#"<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>
+"#;
+    let mut file = fs::File::create(project_path.join("src/app.html"))?;
+    file.write_all(app_html.as_bytes())?;
+    files_created += 1;
+    
+    Ok(files_created)
+}
+
+// ============================================================================
+// SOLIDSTART STACK (SolidStart + Solid.js)
+// ============================================================================
+
+fn generate_solidstart_stack_files(project_path: &Path, _config: &ProjectConfig) -> Result<usize, std::io::Error> {
+    let mut files_created = 0;
+    
+    // Create SolidStart directory structure
+    fs::create_dir_all(project_path.join("src/routes"))?;
+    fs::create_dir_all(project_path.join("src/routes/api"))?;
+    fs::create_dir_all(project_path.join("src/components"))?;
+    fs::create_dir_all(project_path.join("public"))?;
+    files_created += 4;
+    
+    // App config
+    let app_config = r#"import { defineConfig } from "@solidjs/start/config";
+
+export default defineConfig({
+  server: {
+    preset: "node-server",
+  },
+});
+"#;
+    let mut file = fs::File::create(project_path.join("app.config.ts"))?;
+    file.write_all(app_config.as_bytes())?;
+    files_created += 1;
+    
+    // Root component
+    let root = r#"// @refresh reload
+import { Router } from "@solidjs/router";
+import { FileRoutes } from "@solidjs/start/router";
+import { Suspense } from "solid-js";
+import "./app.css";
+
+export default function App() {
+  return (
+    <Router
+      root={(props) => (
+        <div class="app">
+          <nav>
+            <a href="/">Home</a>
+            <a href="/posts">Posts</a>
+            <a href="/about">About</a>
+          </nav>
+          <main>
+            <Suspense fallback={<div>Loading...</div>}>
+              {props.children}
+            </Suspense>
+          </main>
+          <footer>
+            <p>Built with SolidStart</p>
+          </footer>
+        </div>
+      )}
+    >
+      <FileRoutes />
+    </Router>
+  );
+}
+"#;
+    let mut file = fs::File::create(project_path.join("src/app.tsx"))?;
+    file.write_all(root.as_bytes())?;
+    files_created += 1;
+    
+    // Entry client
+    let entry_client = r#"// @refresh reload
+import { mount, StartClient } from "@solidjs/start/client";
+
+mount(() => <StartClient />, document.getElementById("app")!);
+"#;
+    let mut file = fs::File::create(project_path.join("src/entry-client.tsx"))?;
+    file.write_all(entry_client.as_bytes())?;
+    files_created += 1;
+    
+    // Entry server
+    let entry_server = r#"// @refresh reload
+import { createHandler, StartServer } from "@solidjs/start/server";
+
+export default createHandler(() => (
+  <StartServer
+    document={({ assets, children, scripts }) => (
+      <html lang="en">
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/favicon.ico" />
+          {assets}
+        </head>
+        <body>
+          <div id="app">{children}</div>
+          {scripts}
+        </body>
+      </html>
+    )}
+  />
+));
+"#;
+    let mut file = fs::File::create(project_path.join("src/entry-server.tsx"))?;
+    file.write_all(entry_server.as_bytes())?;
+    files_created += 1;
+    
+    // Home route
+    let index_route = r#"import { Title } from "@solidjs/meta";
+import { createAsync } from "@solidjs/router";
+import { cache } from "@solidjs/router";
+
+const getServerMessage = cache(async () => {
+  "use server";
+  return {
+    message: "This message was loaded on the server!",
+    timestamp: new Date().toISOString(),
+  };
+}, "server-message");
+
+export const route = {
+  load: () => getServerMessage(),
+};
+
+export default function Home() {
+  const data = createAsync(() => getServerMessage());
+
+  return (
+    <>
+      <Title>Home - SolidStart App</Title>
+      <div class="home">
+        <h1>Welcome to SolidStart</h1>
+        <p>
+          This is a modern full-stack framework for building web applications
+          with Solid.js.
+        </p>
+
+        <div class="features">
+          <div class="feature">
+            <h2>🚀 Fast</h2>
+            <p>Server-side rendering and streaming out of the box</p>
+          </div>
+          <div class="feature">
+            <h2>💪 Powerful</h2>
+            <p>Full-stack framework with API routes and server functions</p>
+          </div>
+          <div class="feature">
+            <h2>⚡ Reactive</h2>
+            <p>Fine-grained reactivity without virtual DOM</p>
+          </div>
+        </div>
+
+        <p class="server-message">{data()?.message}</p>
+      </div>
+    </>
+  );
+}
+"#;
+    let mut file = fs::File::create(project_path.join("src/routes/index.tsx"))?;
+    file.write_all(index_route.as_bytes())?;
+    files_created += 1;
+    
+    // Posts route
+    let posts_route = r#"import { Title } from "@solidjs/meta";
+import { createAsync } from "@solidjs/router";
+import { For } from "solid-js";
+import { cache } from "@solidjs/router";
+
+const getPosts = cache(async () => {
+  "use server";
+  // In-memory data (replace with database in production)
+  return [
+    {
+      id: "1",
+      title: "Getting Started with SolidStart",
+      excerpt: "Learn the basics of SolidStart and build your first app.",
+      author: "John Doe",
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: "2",
+      title: "Solid.js Reactivity Explained",
+      excerpt: "Understanding fine-grained reactivity in Solid.js.",
+      author: "Jane Smith",
+      createdAt: new Date().toISOString(),
+    },
+  ];
+}, "posts");
+
+export const route = {
+  load: () => getPosts(),
+};
+
+export default function Posts() {
+  const posts = createAsync(() => getPosts());
+
+  return (
+    <>
+      <Title>Posts - SolidStart App</Title>
+      <div class="posts">
+        <h1>Posts</h1>
+
+        <div class="posts-grid">
+          <For each={posts()}>
+            {(post) => (
+              <article class="post-card">
+                <h2>
+                  <a href={`/posts/${post.id}`}>{post.title}</a>
+                </h2>
+                <p>{post.excerpt}</p>
+                <div class="meta">
+                  <span>By {post.author}</span>
+                  <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                </div>
+              </article>
+            )}
+          </For>
+        </div>
+      </div>
+    </>
+  );
+}
+"#;
+    let mut file = fs::File::create(project_path.join("src/routes/posts.tsx"))?;
+    file.write_all(posts_route.as_bytes())?;
+    files_created += 1;
+    
+    // API route
+    let api_route = r#"import { json } from "@solidjs/router";
+import type { APIEvent } from "@solidjs/start/server";
+
+export async function GET() {
+  const posts = [
+    {
+      id: "1",
+      title: "Getting Started with SolidStart",
+      excerpt: "Learn the basics of SolidStart and build your first app.",
+      author: "John Doe",
+      createdAt: new Date().toISOString(),
+    },
+  ];
+  return json(posts);
+}
+
+export async function POST({ request }: APIEvent) {
+  const data = await request.json();
+  // Handle post creation
+  return json({ success: true, data }, { status: 201 });
+}
+"#;
+    let mut file = fs::File::create(project_path.join("src/routes/api/posts.ts"))?;
+    file.write_all(api_route.as_bytes())?;
+    files_created += 1;
+    
+    // Button component
+    let button = r#"import { JSX, splitProps } from "solid-js";
+
+interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "primary" | "secondary";
+}
+
+export default function Button(props: ButtonProps) {
+  const [local, others] = splitProps(props, ["variant", "class", "children"]);
+
+  return (
+    <button
+      class={`btn ${local.variant || "primary"} ${local.class || ""}`}
+      {...others}
+    >
+      {local.children}
+    </button>
+  );
+}
+"#;
+    let mut file = fs::File::create(project_path.join("src/components/Button.tsx"))?;
+    file.write_all(button.as_bytes())?;
+    files_created += 1;
+    
+    // App CSS
+    let app_css = r#":root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #213547;
+  background-color: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: #f0f0f0;
+}
+
+nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+nav a:hover {
+  color: #2c4f7c;
+}
+
+main {
+  flex: 1;
+  padding: 2rem;
+}
+
+footer {
+  padding: 1rem 2rem;
+  background: #f0f0f0;
+  text-align: center;
+}
+
+.home {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 3rem;
+  color: #2c4f7c;
+  margin-bottom: 1rem;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.feature {
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn.primary {
+  background: #2c4f7c;
+  color: white;
+}
+
+.btn.primary:hover {
+  background: #1e3a5f;
+}
+
+.btn.secondary {
+  background: #f0f0f0;
+  color: #333;
+}
+"#;
+    let mut file = fs::File::create(project_path.join("src/app.css"))?;
+    file.write_all(app_css.as_bytes())?;
+    files_created += 1;
+    
+    Ok(files_created)
+}
+
+// ============================================================================
+// FASTAPI STACK (FastAPI + Python + SQLAlchemy + Alembic)
+// ============================================================================
+
+fn generate_fastapi_stack_files(project_path: &Path, _config: &ProjectConfig) -> Result<usize, std::io::Error> {
+    let mut files_created = 0;
+    
+    // Create FastAPI directory structure
+    fs::create_dir_all(project_path.join("app/api/routes"))?;
+    fs::create_dir_all(project_path.join("app/models"))?;
+    fs::create_dir_all(project_path.join("app/schemas"))?;
+    fs::create_dir_all(project_path.join("app/core"))?;
+    fs::create_dir_all(project_path.join("tests"))?;
+    fs::create_dir_all(project_path.join("alembic/versions"))?;
+    files_created += 6;
+    
+    // Main application entry
+    let main = r#"from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.api.routes import users, posts
+from app.core.config import settings
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include routers
+app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
+app.include_router(posts.router, prefix=f"{settings.API_V1_STR}/posts", tags=["posts"])
+
+
+@app.get("/")
+async def root():
+    return {
+        "message": "Welcome to FastAPI",
+        "docs": "/docs",
+        "redoc": "/redoc",
+    }
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+"#;
+    let mut file = fs::File::create(project_path.join("app/main.py"))?;
+    file.write_all(main.as_bytes())?;
+    files_created += 1;
+    
+    // Config
+    let config = r#"from typing import List
+from pydantic_settings import BaseSettings
+from pydantic import AnyHttpUrl
+
+
+class Settings(BaseSettings):
+    PROJECT_NAME: str = "FastAPI App"
+    API_V1_STR: str = "/api/v1"
+    
+    # Database
+    DATABASE_URL: str = "postgresql://user:password@localhost:5432/dbname"
+    
+    # CORS
+    ALLOWED_ORIGINS: List[AnyHttpUrl] = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+    ]
+    
+    # Security
+    SECRET_KEY: str = "change-this-in-production"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+    class Config:
+        env_file = ".env"
+
+
+settings = Settings()
+"#;
+    let mut file = fs::File::create(project_path.join("app/core/config.py"))?;
+    file.write_all(config.as_bytes())?;
+    files_created += 1;
+    
+    // Database setup
+    let database = r#"from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from app.core.config import settings
+
+engine = create_engine(settings.DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+"#;
+    let mut file = fs::File::create(project_path.join("app/core/database.py"))?;
+    file.write_all(database.as_bytes())?;
+    files_created += 1;
+    
+    // User model
+    let user_model = r#"from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+from app.core.database import Base
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    full_name = Column(String)
+    is_active = Column(Integer, default=1)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    posts = relationship("Post", back_populates="author")
+"#;
+    let mut file = fs::File::create(project_path.join("app/models/user.py"))?;
+    file.write_all(user_model.as_bytes())?;
+    files_created += 1;
+    
+    // Post model
+    let post_model = r#"from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, Boolean
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+from app.core.database import Base
+
+
+class Post(Base):
+    __tablename__ = "posts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True, nullable=False)
+    content = Column(Text)
+    published = Column(Boolean, default=False)
+    author_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    author = relationship("User", back_populates="posts")
+"#;
+    let mut file = fs::File::create(project_path.join("app/models/post.py"))?;
+    file.write_all(post_model.as_bytes())?;
+    files_created += 1;
+    
+    // User schemas
+    let user_schemas = r#"from pydantic import BaseModel, EmailStr
+from datetime import datetime
+from typing import Optional
+
+
+class UserBase(BaseModel):
+    email: EmailStr
+    username: str
+    full_name: Optional[str] = None
+
+
+class UserCreate(UserBase):
+    password: str
+
+
+class UserUpdate(BaseModel):
+    email: Optional[EmailStr] = None
+    username: Optional[str] = None
+    full_name: Optional[str] = None
+    password: Optional[str] = None
+
+
+class User(UserBase):
+    id: int
+    is_active: bool
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+"#;
+    let mut file = fs::File::create(project_path.join("app/schemas/user.py"))?;
+    file.write_all(user_schemas.as_bytes())?;
+    files_created += 1;
+    
+    // Post schemas
+    let post_schemas = r#"from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional
+
+
+class PostBase(BaseModel):
+    title: str
+    content: Optional[str] = None
+    published: bool = False
+
+
+class PostCreate(PostBase):
+    pass
+
+
+class PostUpdate(BaseModel):
+    title: Optional[str] = None
+    content: Optional[str] = None
+    published: Optional[bool] = None
+
+
+class Post(PostBase):
+    id: int
+    author_id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+"#;
+    let mut file = fs::File::create(project_path.join("app/schemas/post.py"))?;
+    file.write_all(post_schemas.as_bytes())?;
+    files_created += 1;
+    
+    // Users router
+    let users_router = r#"from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List
+from app.core.database import get_db
+from app.models.user import User
+from app.schemas.user import User as UserSchema, UserCreate, UserUpdate
+
+router = APIRouter()
+
+
+@router.get("/", response_model=List[UserSchema])
+async def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """Get all users"""
+    users = db.query(User).offset(skip).limit(limit).all()
+    return users
+
+
+@router.get("/{user_id}", response_model=UserSchema)
+async def get_user(user_id: int, db: Session = Depends(get_db)):
+    """Get user by ID"""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+
+@router.post("/", response_model=UserSchema, status_code=status.HTTP_201_CREATED)
+async def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    """Create new user"""
+    # Check if user exists
+    db_user = db.query(User).filter(User.email == user.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Create user (hash password in production!)
+    db_user = User(
+        email=user.email,
+        username=user.username,
+        hashed_password=user.password,  # TODO: Hash password
+        full_name=user.full_name,
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+@router.put("/{user_id}", response_model=UserSchema)
+async def update_user(user_id: int, user: UserUpdate, db: Session = Depends(get_db)):
+    """Update user"""
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    update_data = user.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(db_user, field, value)
+    
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_user(user_id: int, db: Session = Depends(get_db)):
+    """Delete user"""
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    db.delete(db_user)
+    db.commit()
+    return None
+"#;
+    let mut file = fs::File::create(project_path.join("app/api/routes/users.py"))?;
+    file.write_all(users_router.as_bytes())?;
+    files_created += 1;
+    
+    // Posts router
+    let posts_router = r#"from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List
+from app.core.database import get_db
+from app.models.post import Post
+from app.schemas.post import Post as PostSchema, PostCreate, PostUpdate
+
+router = APIRouter()
+
+
+@router.get("/", response_model=List[PostSchema])
+async def get_posts(
+    skip: int = 0,
+    limit: int = 100,
+    published_only: bool = False,
+    db: Session = Depends(get_db)
+):
+    """Get all posts"""
+    query = db.query(Post)
+    if published_only:
+        query = query.filter(Post.published == True)
+    posts = query.offset(skip).limit(limit).all()
+    return posts
+
+
+@router.get("/{post_id}", response_model=PostSchema)
+async def get_post(post_id: int, db: Session = Depends(get_db)):
+    """Get post by ID"""
+    post = db.query(Post).filter(Post.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return post
+
+
+@router.post("/", response_model=PostSchema, status_code=status.HTTP_201_CREATED)
+async def create_post(post: PostCreate, author_id: int = 1, db: Session = Depends(get_db)):
+    """Create new post"""
+    db_post = Post(**post.model_dump(), author_id=author_id)
+    db.add(db_post)
+    db.commit()
+    db.refresh(db_post)
+    return db_post
+
+
+@router.put("/{post_id}", response_model=PostSchema)
+async def update_post(post_id: int, post: PostUpdate, db: Session = Depends(get_db)):
+    """Update post"""
+    db_post = db.query(Post).filter(Post.id == post_id).first()
+    if not db_post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    
+    update_data = post.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(db_post, field, value)
+    
+    db.commit()
+    db.refresh(db_post)
+    return db_post
+
+
+@router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(post_id: int, db: Session = Depends(get_db)):
+    """Delete post"""
+    db_post = db.query(Post).filter(Post.id == post_id).first()
+    if not db_post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    
+    db.delete(db_post)
+    db.commit()
+    return None
+"#;
+    let mut file = fs::File::create(project_path.join("app/api/routes/posts.py"))?;
+    file.write_all(posts_router.as_bytes())?;
+    files_created += 1;
+    
+    // Requirements.txt
+    let requirements = r#"fastapi==0.109.0
+uvicorn[standard]==0.27.0
+sqlalchemy==2.0.25
+alembic==1.13.1
+pydantic==2.5.3
+pydantic-settings==2.1.0
+python-multipart==0.0.6
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-dotenv==1.0.0
+psycopg2-binary==2.9.9
+"#;
+    let mut file = fs::File::create(project_path.join("requirements.txt"))?;
+    file.write_all(requirements.as_bytes())?;
+    files_created += 1;
+    
+    // Alembic config
+    let alembic_ini = r#"[alembic]
+script_location = alembic
+prepend_sys_path = .
+version_path_separator = os
+
+[loggers]
+keys = root,sqlalchemy,alembic
+
+[handlers]
+keys = console
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = WARN
+handlers = console
+
+[logger_sqlalchemy]
+level = WARN
+handlers =
+qualname = sqlalchemy.engine
+
+[logger_alembic]
+level = INFO
+handlers =
+qualname = alembic
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
+
+[formatter_generic]
+format = %(levelname)-5.5s [%(name)s] %(message)s
+datefmt = %H:%M:%S
+"#;
+    let mut file = fs::File::create(project_path.join("alembic.ini"))?;
+    file.write_all(alembic_ini.as_bytes())?;
+    files_created += 1;
+    
+    // Alembic env.py
+    let alembic_env = r#"from logging.config import fileConfig
+from sqlalchemy import engine_from_config, pool
+from alembic import context
+from app.core.config import settings
+from app.core.database import Base
+from app.models.user import User
+from app.models.post import Post
+
+config = context.config
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
+target_metadata = Base.metadata
+
+
+def run_migrations_offline() -> None:
+    url = config.get_main_option("sqlalchemy.url")
+    context.configure(
+        url=url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+    )
+
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+def run_migrations_online() -> None:
+    connectable = engine_from_config(
+        config.get_section(config.config_ini_section, {}),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
+
+    with connectable.connect() as connection:
+        context.configure(connection=connection, target_metadata=target_metadata)
+
+        with context.begin_transaction():
+            context.run_migrations()
+
+
+if context.is_offline_mode():
+    run_migrations_offline()
+else:
+    run_migrations_online()
+"#;
+    let mut file = fs::File::create(project_path.join("alembic/env.py"))?;
+    file.write_all(alembic_env.as_bytes())?;
+    files_created += 1;
+    
+    // Test example
+    let test_main = r#"from fastapi.testclient import TestClient
+from app.main import app
+
+client = TestClient(app)
+
+
+def test_read_root():
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "message" in response.json()
+
+
+def test_health_check():
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+"#;
+    let mut file = fs::File::create(project_path.join("tests/test_main.py"))?;
+    file.write_all(test_main.as_bytes())?;
+    files_created += 1;
+    
+    // __init__ files
+    fs::File::create(project_path.join("app/__init__.py"))?;
+    fs::File::create(project_path.join("app/api/__init__.py"))?;
+    fs::File::create(project_path.join("app/api/routes/__init__.py"))?;
+    fs::File::create(project_path.join("app/models/__init__.py"))?;
+    fs::File::create(project_path.join("app/schemas/__init__.py"))?;
+    fs::File::create(project_path.join("app/core/__init__.py"))?;
+    fs::File::create(project_path.join("tests/__init__.py"))?;
+    files_created += 7;
+    
+    Ok(files_created)
 }
