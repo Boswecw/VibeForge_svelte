@@ -5,6 +5,7 @@
   import AppearanceSettingsSection from "$lib/components/settings/AppearanceSettingsSection.svelte";
   import ModelSettingsSection from "$lib/components/settings/ModelSettingsSection.svelte";
   import LLMSettingsSection from "$lib/components/settings/LLMSettingsSection.svelte";
+  import ModelRoutingSettingsSection from "$lib/components/settings/ModelRoutingSettingsSection.svelte";
   import DataSettingsSection from "$lib/components/settings/DataSettingsSection.svelte";
 </script>
 
@@ -26,6 +27,7 @@
     <div class="max-w-4xl flex flex-col gap-6">
       <SettingsHeader />
       <LLMSettingsSection />
+      <ModelRoutingSettingsSection />
       <WorkspaceSettingsSection />
       <AppearanceSettingsSection />
       <ModelSettingsSection />
