@@ -212,34 +212,73 @@ no description yet
     URL.revokeObjectURL(url);
   }
 
+  let generationError: string | null = null;
+  let projectPath: string | null = null;
+
   async function generateProject() {
     generating = true;
     generationProgress = 0;
+    generationError = null;
+    projectPath = null;
 
-    // Simulate generation steps
-    const steps = [
-      { name: "Creating project structure", duration: 500 },
-      { name: "Installing dependencies", duration: 1000 },
-      { name: "Configuring environment", duration: 700 },
-      { name: "Setting up database", duration: 600 },
-      { name: "Finalizing setup", duration: 400 },
-    ];
-
-    for (let i = 0; i < steps.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, steps[i].duration));
-      generationProgress = ((i + 1) / steps.length) * 100;
+    try {
+      // Import Tauri API
+      const { invoke } = await import('@tauri-apps/api/core');
+      const { homeDir, join } = await import('@tauri-apps/api/path');
+      
+      // Get output directory (user's home directory + Projects or similar)
+      const home = await homeDir();
+      const outputDir = await join(home, 'Projects');
+      
+      // Progress updates
+      generationProgress = 20;
+      
+      // Prepare project config
+      const projectConfig = {
+        name: state.intent.name,
+        description: state.intent.description || '',
+        project_type: state.intent.projectType || 'web',
+        languages: state.selectedLanguages,
+        stack_id: state.selectedStackId || '',
+        database: state.configuration.database || null,
+        authentication: state.configuration.authentication || null,
+        deployment_platform: state.configuration.deploymentPlatform || null,
+        environment_variables: state.configuration.environmentVariables || {},
+        features: state.configuration.features || [],
+      };
+      
+      generationProgress = 40;
+      
+      // Call Tauri backend to generate project
+      const result = await invoke('generate_project', {
+        config: projectConfig,
+        outputDir: outputDir,
+      });
+      
+      generationProgress = 80;
+      
+      // Store project path
+      if (result && typeof result === 'object' && 'project_path' in result) {
+        projectPath = result.project_path;
+      }
+      
+      // Complete the learning session
+      if (learningActive) {
+        await learningStore.completeSession(
+          state.selectedLanguages,
+          state.selectedStackId || ""
+        );
+      }
+      
+      generationProgress = 100;
+      generating = false;
+      generationComplete = true;
+    } catch (error) {
+      console.error('Project generation failed:', error);
+      generationError = error instanceof Error ? error.message : String(error);
+      generating = false;
+      generationComplete = false;
     }
-
-    // Complete the learning session
-    if (learningActive) {
-      await learningStore.completeSession(
-        state.selectedLanguages,
-        state.selectedStackId || ""
-      );
-    }
-
-    generating = false;
-    generationComplete = true;
   }
 
   // Project structure based on selections
@@ -321,7 +360,7 @@ no description yet
   <!-- Success Prediction Panel -->
   {#if predictedSuccessRate > 0}
     <div
-      class="mb-6 p-6 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-300 rounded-xl"
+      class="mb-6 p-6 bg-linear-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-300 rounded-xl"
     >
       <div class="flex items-start gap-4">
         <div class="p-3 bg-green-500 rounded-lg">
@@ -356,7 +395,7 @@ no description yet
             </div>
             <div class="w-full h-3 bg-green-100 rounded-full overflow-hidden">
               <div
-                class="h-full bg-gradient-to-r from-green-500 to-emerald-600 transition-all duration-1000"
+                class="h-full bg-linear-to-r from-green-500 to-emerald-600 transition-all duration-1000"
                 style="width: {predictedSuccessRate}%"
               />
             </div>
@@ -890,6 +929,26 @@ no description yet
               .name} project with all the configurations you've selected.
           </p>
 
+          {#if generationError}
+            <div class="mb-4 p-4 bg-red-50 border-2 border-red-200 rounded-lg">
+              <div class="flex items-start gap-3">
+                <span class="text-xl">❌</span>
+                <div>
+                  <h4 class="font-medium text-red-900 mb-1">
+                    Generation Failed
+                  </h4>
+                  <p class="text-sm text-red-800">{generationError}</p>
+                  <button
+                    class="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                    on:click={() => (generationError = null)}
+                  >
+                    Try again
+                  </button>
+                </div>
+              </div>
+            </div>
+          {/if}
+
           {#if generating}
             <div class="space-y-3">
               <div class="flex items-center gap-3">
@@ -941,24 +1000,45 @@ no description yet
           <h3 class="text-xl font-bold text-green-900 mb-2">
             Project Generated Successfully!
           </h3>
-          <p class="text-green-800 mb-4">
+          <p class="text-green-800 mb-2">
             Your project <span class="font-semibold">{state.intent.name}</span>
             has been created and is ready to use.
           </p>
+          {#if projectPath}
+            <div class="mb-4 p-3 bg-white rounded-lg border border-green-200">
+              <p class="text-sm font-medium text-gray-700 mb-1">
+                📁 Project Location:
+              </p>
+              <code class="text-sm text-gray-900 font-mono">{projectPath}</code>
+            </div>
+          {/if}
 
           <div class="space-y-3">
-            <div class="flex gap-3">
-              <button
-                class="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-lg"
-              >
-                📥 Download Project
-              </button>
-              <button
-                class="px-6 py-3 bg-white text-green-700 border-2 border-green-300 rounded-lg font-semibold hover:bg-green-50 transition-colors"
-              >
-                🐙 Clone from GitHub
-              </button>
-            </div>
+            {#if projectPath}
+              <div class="flex gap-3">
+                <button
+                  class="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-lg"
+                  on:click={async () => {
+                    const { open } = await import("@tauri-apps/plugin-shell");
+                    await open(projectPath);
+                  }}
+                >
+                  📂 Open in File Manager
+                </button>
+                <button
+                  class="px-6 py-3 bg-white text-green-700 border-2 border-green-300 rounded-lg font-semibold hover:bg-green-50 transition-colors"
+                  on:click={async () => {
+                    const { writeText } = await import(
+                      "@tauri-apps/plugin-clipboard-manager"
+                    );
+                    await writeText(projectPath);
+                    alert("Path copied to clipboard!");
+                  }}
+                >
+                  📋 Copy Path
+                </button>
+              </div>
+            {/if}
 
             <div class="p-4 bg-white rounded-lg border border-green-200">
               <p class="text-sm font-medium text-gray-700 mb-2">
@@ -967,18 +1047,22 @@ no description yet
               <ol
                 class="text-sm text-gray-700 space-y-1 list-decimal list-inside"
               >
-                <li>Extract the project files to your workspace</li>
+                <li>Navigate to the project directory</li>
                 <li>
                   Run <code class="px-2 py-0.5 bg-gray-100 rounded"
                     >npm install</code
                   > to install dependencies
                 </li>
                 <li>
-                  Copy <code class="px-2 py-0.5 bg-gray-100 rounded"
-                    >.env.example</code
-                  >
-                  to <code class="px-2 py-0.5 bg-gray-100 rounded">.env</code> and
-                  configure
+                  {#if Object.keys(state.configuration.environmentVariables || {}).length > 0}
+                    Copy <code class="px-2 py-0.5 bg-gray-100 rounded"
+                      >.env.example</code
+                    >
+                    to <code class="px-2 py-0.5 bg-gray-100 rounded">.env</code>
+                    and configure
+                  {:else}
+                    Review the generated files and configuration
+                  {/if}
                 </li>
                 <li>
                   Start development with <code
@@ -992,6 +1076,8 @@ no description yet
               class="w-full py-2 text-green-700 hover:text-green-900 hover:bg-white rounded-lg transition-colors font-medium"
               on:click={() => {
                 generationComplete = false;
+                projectPath = null;
+                generationError = null;
                 wizardStore.reset();
                 wizardStore.goToStep(1);
               }}

@@ -24,18 +24,21 @@ VibeForge uses AI to help you choose the best technology stack for your project.
 To use AI features, you need an API key from at least one provider:
 
 **Option 1: OpenAI (Recommended)**
+
 - Models: GPT-3.5-turbo, GPT-4, GPT-4o
 - Cost: $0.50 - $60 per million tokens
 - Sign up: https://platform.openai.com/
 - Create API key: Dashboard → API Keys → Create
 
 **Option 2: Anthropic**
+
 - Models: Claude Opus, Sonnet, Haiku
 - Cost: $0.25 - $75 per million tokens
 - Sign up: https://console.anthropic.com/
 - Create API key: Settings → API Keys
 
 **Option 3: Ollama (Free, Local)**
+
 - Models: Llama 2 70B, 13B
 - Cost: Free (uses your hardware)
 - Install: https://ollama.ai/download
@@ -81,11 +84,13 @@ Fill out basic project information:
 Choose programming languages for your project.
 
 **AI Enhancement:** Based on your project type, you'll see:
+
 - ✨ **Recommended** badge on suggested languages
 - 💡 Explanations of why each language fits
 - ⚠️ **Warning** if incompatible combinations selected
 
 **Example:**
+
 ```
 Project Type: Web Application
 
@@ -110,6 +115,7 @@ This is where AI shines! You'll see two sections:
 3 personalized stack suggestions with:
 
 **Example:**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  ⭐ AI Recommended: T3 Stack                                │
@@ -138,6 +144,7 @@ This is where AI shines! You'll see two sections:
 ```
 
 **Score Breakdown:**
+
 - **AI Intelligence (40%):** How well AI thinks it fits
 - **Popularity (30%):** Community adoption and maturity
 - **Compatibility (20%):** Matches selected languages
@@ -148,6 +155,7 @@ This is where AI shines! You'll see two sections:
 Browse complete stack library if AI recommendations don't fit.
 
 **Filtering:**
+
 - By category (Web, Mobile, Desktop, API)
 - By language compatibility
 - By complexity level
@@ -161,6 +169,7 @@ Browse complete stack library if AI recommendations don't fit.
 AI recommendations cost money (except Ollama which is free).
 
 **Typical Costs per Recommendation:**
+
 - **GPT-3.5-turbo:** $0.0003 - $0.001 (~1,000 tokens)
 - **GPT-4:** $0.003 - $0.01 (~1,000 tokens)
 - **Claude Sonnet:** $0.0005 - $0.002 (~1,000 tokens)
@@ -168,6 +177,7 @@ AI recommendations cost money (except Ollama which is free).
 - **Ollama:** $0 (free, local processing)
 
 **Monthly Budget Example:**
+
 - 100 wizard runs with GPT-3.5: ~$0.50 - $1.00
 - 100 wizard runs with GPT-4: ~$3.00 - $10.00
 - 100 wizard runs with Claude Sonnet: ~$1.00 - $2.00
@@ -185,6 +195,7 @@ Prevent overspending by configuring budgets:
 4. Click **Save**
 
 **What Happens When Budget Exceeded:**
+
 - ⚠️ Warning displayed in wizard
 - AI recommendations disabled
 - Fallback to empirical (non-AI) mode
@@ -210,30 +221,35 @@ Control how AI selects models for your requests.
 ### Available Strategies
 
 **1. Cost-Optimized** (Cheapest)
+
 - Prioritizes lowest-cost models
 - Uses GPT-3.5-turbo or Claude Haiku
 - Falls back to Ollama if over budget
 - **Best for:** High volume, tight budgets
 
 **2. Performance-Optimized** (Fastest)
+
 - Prioritizes response speed
 - Uses models with lowest latency
 - May cost more for faster results
 - **Best for:** User-facing features, real-time
 
 **3. Quality-Focused** (Best Results)
+
 - Prioritizes accuracy and detail
 - Uses GPT-4 or Claude Opus
 - Highest cost but best recommendations
 - **Best for:** Complex projects, critical decisions
 
 **4. Balanced** (Default)
+
 - Weighs cost, performance, and quality
 - Uses GPT-3.5-turbo or Claude Sonnet
 - Best all-around choice
 - **Best for:** Most use cases
 
 **5. Custom** (Advanced)
+
 - Define your own selection logic
 - Requires JavaScript knowledge
 - Full control over routing
@@ -255,14 +271,16 @@ Changes apply immediately to next recommendation.
 ### Get Better Results
 
 **1. Provide Detailed Descriptions**
+
 ```
 ❌ Bad: "A web app"
-✅ Good: "A task management web app with real-time collaboration, 
-         similar to Asana. Needs user auth, notifications, and 
+✅ Good: "A task management web app with real-time collaboration,
+         similar to Asana. Needs user auth, notifications, and
          mobile-responsive design."
 ```
 
 **2. Be Specific About Requirements**
+
 ```
 ❌ Bad: Project Type = Web Application
 ✅ Good: Project Type = Web Application
@@ -270,11 +288,13 @@ Changes apply immediately to next recommendation.
 ```
 
 **3. Indicate Familiarity**
+
 ```
 ✅ Good: "Team experienced with React, new to backend development"
 ```
 
 **4. Note Constraints**
+
 ```
 ✅ Good: "Must use PostgreSQL (company standard)"
          "Deploy on AWS (existing infrastructure)"
@@ -285,6 +305,7 @@ Changes apply immediately to next recommendation.
 Higher scores = better fit for your project.
 
 **Score Ranges:**
+
 - **90-100:** Excellent fit, highly recommended
 - **80-89:** Very good fit, safe choice
 - **70-79:** Good fit, worth considering
@@ -292,6 +313,7 @@ Higher scores = better fit for your project.
 - **<60:** Poor fit, probably not ideal
 
 **When to Ignore Scores:**
+
 - You have specific technology mandates
 - Team already skilled in a stack
 - Existing codebase to integrate with
@@ -307,14 +329,17 @@ AI explains reasoning behind each recommendation.
 **Key Phrases to Look For:**
 
 **"Perfect for..."**
+
 - Strong alignment with your project type
 - High confidence recommendation
 
 **"Great for..."**
+
 - Good fit but not perfect
 - Consider other factors
 
 **"Suitable for..."**
+
 - Acceptable but may have trade-offs
 - Review pros/cons carefully
 
@@ -323,6 +348,7 @@ AI explains reasoning behind each recommendation.
 Identifies ideal use cases for the stack.
 
 **Example:**
+
 ```
 Best For:
 • Teams with React experience
@@ -332,6 +358,7 @@ Best For:
 ```
 
 **Match these with your situation:**
+
 - ✅ 3-4 matches: Great fit
 - ⚠️ 1-2 matches: Acceptable
 - ❌ 0 matches: Probably not ideal
@@ -343,6 +370,7 @@ Best For:
 ### "AI recommendations unavailable"
 
 **Causes:**
+
 1. No API key configured
 2. Invalid API key
 3. Budget exceeded
@@ -350,6 +378,7 @@ Best For:
 5. Network connectivity issues
 
 **Solutions:**
+
 1. Check Settings → AI Intelligence → API Keys
 2. Verify key is valid (test in provider dashboard)
 3. Increase budget or wait for next period
@@ -359,11 +388,13 @@ Best For:
 ### "Error fetching recommendations"
 
 **Causes:**
+
 1. API request failed
 2. Rate limit exceeded
 3. Invalid project data
 
 **Solutions:**
+
 1. Try again (automatic retry after 5 seconds)
 2. Wait 60 seconds and retry
 3. Fill out all required wizard fields
@@ -371,11 +402,13 @@ Best For:
 ### Recommendations seem off-topic
 
 **Causes:**
+
 1. Vague project description
 2. Incompatible language selections
 3. Wrong project type selected
 
 **Solutions:**
+
 1. Add more detail to description
 2. Review language compatibility warnings
 3. Double-check project type matches intent
@@ -383,11 +416,13 @@ Best For:
 ### High costs
 
 **Causes:**
+
 1. Using expensive models (GPT-4)
 2. Generating many recommendations
 3. No budget limits set
 
 **Solutions:**
+
 1. Switch to "Cost-Optimized" routing
 2. Use recommendations sparingly
 3. Set daily/weekly budgets in Settings
@@ -429,36 +464,43 @@ Track AI performance and costs:
 ## 💡 Best Practices
 
 ### 1. Start with Balanced Strategy
+
 - Good mix of cost/performance/quality
 - Works for 80% of use cases
 - Switch to specialized strategies as needed
 
 ### 2. Set Realistic Budgets
+
 - Start with $5-10/month
 - Monitor for 2 weeks
 - Adjust based on usage patterns
 
 ### 3. Use Cost-Optimized for Exploration
+
 - When browsing many stacks
 - During learning/experimentation
 - For non-critical decisions
 
 ### 4. Use Quality-Focused for Important Projects
+
 - Production applications
 - Client projects
 - Complex architecture decisions
 
 ### 5. Review Analytics Monthly
+
 - Check spending trends
 - Identify expensive patterns
 - Optimize routing strategy
 
 ### 6. Provide Context in Descriptions
+
 - Mention team skills
 - Note existing infrastructure
 - Specify deployment requirements
 
 ### 7. Don't Over-Rely on AI
+
 - Use AI as one input
 - Combine with team expertise
 - Consider business constraints
@@ -468,6 +510,7 @@ Track AI performance and costs:
 ## 🔐 Privacy & Security
 
 ### Data Protection
+
 - ✅ API keys stored locally (browser)
 - ✅ Keys never sent to VibeForge servers
 - ✅ Direct communication with LLM providers
@@ -475,6 +518,7 @@ Track AI performance and costs:
 - ✅ All data stays on your device
 
 ### What Gets Sent to LLMs
+
 - Project name
 - Project description
 - Selected languages
@@ -484,6 +528,7 @@ Track AI performance and costs:
 - Timeline (optional)
 
 ### What NEVER Gets Sent
+
 - Personal information
 - Email addresses
 - API keys (stored locally)

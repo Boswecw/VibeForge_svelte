@@ -16,12 +16,13 @@ The Analytics Dashboard consists of 4 main tabs:
 
 1. **Overview** - High-level summary of AI usage
 2. **Cost Analytics** - Detailed cost breakdowns
-3. **Model Usage** - Usage patterns and acceptance rates  
+3. **Model Usage** - Usage patterns and acceptance rates
 4. **Performance** - Response times and quality grades
 
 ### Date Range Selector
 
 All analytics support date range filtering:
+
 - **Last 7 Days** - Quick view of recent activity
 - **Last 30 Days** - Monthly overview (default)
 - **Last 90 Days** - Quarterly analysis
@@ -29,6 +30,7 @@ All analytics support date range filtering:
 ### Export Options
 
 Export your data in two formats:
+
 - **CSV** - Spreadsheet-friendly for Excel/Google Sheets
 - **JSON** - Complete data structure for programmatic analysis
 
@@ -41,21 +43,25 @@ The Overview tab provides a quick snapshot of your AI usage.
 ### Summary Cards
 
 **Total Cost**
+
 - Cumulative spending in selected date range
 - Updates in real-time as you use AI features
 - Example: `$12.45`
 
 **Total Calls**
+
 - Number of AI requests made
 - Includes all providers (OpenAI, Anthropic, Ollama)
 - Example: `248 calls`
 
 **Avg Response Time**
+
 - Average latency across all models
 - Measured in milliseconds
 - Example: `1,450ms`
 
 **Top Model**
+
 - Most frequently used model
 - Shows provider and model name
 - Example: `gpt-3.5-turbo`
@@ -63,11 +69,13 @@ The Overview tab provides a quick snapshot of your AI usage.
 ### Budget Tracker Preview
 
 Displays budget status for:
+
 - **Daily Budget** - Spending today vs. daily limit
 - **Weekly Budget** - Current week vs. weekly limit
 - **Monthly Budget** - Current month vs. monthly limit
 
 **Color Coding:**
+
 - 🟢 Green: Under 75% of threshold (safe)
 - 🟡 Yellow: 75-100% of threshold (warning)
 - 🔴 Red: Over threshold (exceeded)
@@ -75,6 +83,7 @@ Displays budget status for:
 ### Cost Analytics Preview (Compact)
 
 Mini version of the Cost Analytics tab showing:
+
 - Daily cost trend for last 7 days
 - Top 3 providers by cost
 - Top 3 categories by usage
@@ -88,11 +97,13 @@ Detailed breakdown of where your AI budget is being spent.
 ### Daily Cost Trend
 
 **Horizontal bar chart** showing daily spending over selected period.
+
 - Each bar represents one day
 - Hover to see exact cost
 - Gradient color indicates spending level
 
 **Example:**
+
 ```
 2025-11-16  [$2.45]  ████████████████░░░░
 2025-11-17  [$1.80]  ████████████░░░░░░░░
@@ -104,11 +115,13 @@ Detailed breakdown of where your AI budget is being spent.
 **Pie chart** showing distribution across LLM providers.
 
 **Providers:**
+
 - 🟢 OpenAI (green) - GPT models
 - 🟠 Anthropic (orange) - Claude models
 - 🔵 Ollama (indigo) - Local models (free)
 
 **Example:**
+
 ```
 OpenAI:    $8.20  (65.9%) ████████████████░░░░
 Anthropic: $3.85  (30.9%) ████████░░░░░░░░░░░░
@@ -120,6 +133,7 @@ Ollama:    $0.40  (3.2%)  █░░░░░░░░░░░░░░░░░
 **Pie chart** showing spending by feature type.
 
 **Categories:**
+
 - **Recommendation** - Stack suggestions in wizard
 - **Explanation** - Technology descriptions
 - **Validation** - Config validation
@@ -129,6 +143,7 @@ Ollama:    $0.40  (3.2%)  █░░░░░░░░░░░░░░░░░
 ### Cost by Model Table
 
 **Detailed table** with columns:
+
 - **Model** - Provider and model name
 - **Calls** - Number of requests
 - **Cost** - Total spending
@@ -147,6 +162,7 @@ Understand which models you're using and how well they perform.
 **Horizontal bar chart** showing request counts per model.
 
 **Example:**
+
 ```
 gpt-3.5-turbo   [142 calls] (57%) ████████████████████░░░░
 claude-sonnet   [68 calls]  (27%) ████████████░░░░░░░░░░░░
@@ -159,11 +175,13 @@ claude-haiku    [10 calls]  (4%)  █░░░░░░░░░░░░░░�
 **Grid of cards** showing success rates per model.
 
 **Card Contents:**
+
 - Model name and provider
 - Large acceptance rate percentage
 - Color coding (green: ≥90%, yellow: 70-89%, red: <70%)
 
 **Example:**
+
 ```
 ┌─────────────────────┐
 │  GPT-3.5-Turbo      │
@@ -175,6 +193,7 @@ claude-haiku    [10 calls]  (4%)  █░░░░░░░░░░░░░░�
 ### Detailed Statistics Table
 
 **Complete metrics** with columns:
+
 - **Model** - Full model name
 - **Total Calls** - Request count
 - **Accepted** - Successful requests (green)
@@ -193,11 +212,13 @@ Monitor response times and evaluate model quality.
 **Grid of grade cards** showing quality scores (A+ to D).
 
 **Grading Algorithm:**
+
 - **Response Time (40%):** Faster = better
 - **Error Rate (30%):** Lower = better
 - **Acceptance Rate (30%):** Higher = better
 
 **Grade Scale:**
+
 - **A+** (90-100): Excellent performance 🟢
 - **A** (80-89): Excellent performance 🟢
 - **B** (70-79): Good performance 🔵
@@ -205,6 +226,7 @@ Monitor response times and evaluate model quality.
 - **D** (<60): Poor performance 🔴
 
 **Example:**
+
 ```
 ┌─────────────────────┐
 │  Claude Haiku       │
@@ -218,11 +240,13 @@ Monitor response times and evaluate model quality.
 **Horizontal bar chart** comparing average latency.
 
 **Color Coding:**
+
 - 🟢 Green: <1 second (fast)
 - 🟡 Yellow: 1-3 seconds (moderate)
 - 🟠 Orange: >3 seconds (slow)
 
 **Example:**
+
 ```
 claude-haiku    [850ms]  ████████████░░░░░░░░  🟢
 gpt-3.5-turbo   [1,450ms]████████████████████░░ 🟡
@@ -233,6 +257,7 @@ gpt-4           [3,200ms]██████████████████�
 ### Detailed Metrics Table
 
 **Complete performance data** with columns:
+
 - **Model** - Provider and model name
 - **Avg Response** - Mean latency
 - **p50** - Median (50th percentile)
@@ -241,6 +266,7 @@ gpt-4           [3,200ms]██████████████████�
 - **Error Rate** - Failure percentage
 
 **Percentiles Explained:**
+
 - **p50 (Median):** Half of requests are faster
 - **p95:** 95% of requests are faster (outlier threshold)
 - **p99:** 99% of requests are faster (worst-case)
@@ -254,6 +280,7 @@ gpt-4           [3,200ms]██████████████████�
 **Use Case:** Import into Excel, Google Sheets, or data analysis tools.
 
 **Format:**
+
 ```csv
 Date,Provider,Model,Category,InputTokens,OutputTokens,Cost
 2025-11-16,openai,gpt-3.5-turbo,recommendation,150,75,0.0003
@@ -261,6 +288,7 @@ Date,Provider,Model,Category,InputTokens,OutputTokens,Cost
 ```
 
 **Columns:**
+
 - **Date:** Timestamp of request
 - **Provider:** LLM provider name
 - **Model:** Specific model used
@@ -274,6 +302,7 @@ Date,Provider,Model,Category,InputTokens,OutputTokens,Cost
 **Use Case:** Programmatic analysis, custom visualizations, data pipelines.
 
 **Format:**
+
 ```json
 {
   "dateRange": {
@@ -302,7 +331,7 @@ Date,Provider,Model,Category,InputTokens,OutputTokens,Cost
       "acceptedCount": 131,
       "errorCount": 11,
       "avgResponseTime": 1450,
-      "totalCost": 4.20
+      "totalCost": 4.2
     }
   }
 }
@@ -317,6 +346,7 @@ Date,Provider,Model,Category,InputTokens,OutputTokens,Cost
 **Goal:** Stay within budget
 
 **Steps:**
+
 1. Go to Overview tab
 2. Check Total Cost card
 3. Review Budget Tracker for current month
@@ -331,6 +361,7 @@ Date,Provider,Model,Category,InputTokens,OutputTokens,Cost
 **Goal:** Reduce spending without sacrificing quality
 
 **Steps:**
+
 1. Go to Cost Analytics tab
 2. Check Cost by Model table
 3. Sort by Avg Cost (descending)
@@ -347,6 +378,7 @@ Date,Provider,Model,Category,InputTokens,OutputTokens,Cost
 **Goal:** Improve user experience with faster responses
 
 **Steps:**
+
 1. Go to Performance tab
 2. Check Response Time Comparison
 3. Note models with >2s average
@@ -362,6 +394,7 @@ Date,Provider,Model,Category,InputTokens,OutputTokens,Cost
 **Goal:** Understand which features use most AI
 
 **Steps:**
+
 1. Go to Cost Analytics tab
 2. Check Cost by Category pie chart
 3. Identify top categories
@@ -376,6 +409,7 @@ Date,Provider,Model,Category,InputTokens,OutputTokens,Cost
 **Goal:** Export data for stakeholders
 
 **Steps:**
+
 1. Set date range to "Last 30 Days"
 2. Click "Export CSV"
 3. Open in Excel/Google Sheets
@@ -391,11 +425,13 @@ Date,Provider,Model,Category,InputTokens,OutputTokens,Cost
 Configure AI behavior from Settings → AI Intelligence:
 
 ### API Keys
+
 - Add OpenAI API key for GPT models
 - Add Anthropic API key for Claude models
 - Leave empty to use Ollama (local) only
 
 ### Routing Strategy
+
 - **Cost-Optimized:** Minimize spending
 - **Performance-Optimized:** Fastest responses
 - **Quality-Focused:** Best results
@@ -403,6 +439,7 @@ Configure AI behavior from Settings → AI Intelligence:
 - **Custom:** Advanced users only
 
 ### Budgets
+
 - **Daily:** Limit spending per day
 - **Weekly:** Limit spending per week
 - **Monthly:** Limit spending per month
