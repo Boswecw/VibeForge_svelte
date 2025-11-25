@@ -78,8 +78,8 @@ class ShortcutManager {
     if (event.altKey) parts.push("alt");
     if (event.shiftKey) parts.push("shift");
 
-    const key = event.key.toLowerCase();
-    if (!["control", "meta", "alt", "shift"].includes(key)) {
+    const key = event.key?.toLowerCase();
+    if (key && !["control", "meta", "alt", "shift"].includes(key)) {
       parts.push(key);
     }
 
