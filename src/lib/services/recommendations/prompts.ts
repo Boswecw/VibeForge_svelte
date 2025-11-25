@@ -3,7 +3,7 @@
  * LLM prompt templates for intelligent stack recommendations
  */
 
-import type { ProjectType } from "../../types/wizard";
+import type { ProjectType } from "$lib/workbench/types/wizard";
 
 export interface PromptContext {
   projectType: ProjectType;

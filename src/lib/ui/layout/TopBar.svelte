@@ -4,6 +4,7 @@
    */
 
   import { workspaceStore } from "$lib/core/stores";
+  import { wizardStore, userPreferencesStore } from "$lib/workbench/stores";
   import Button from "$lib/ui/primitives/Button.svelte";
   import { goto } from "$app/navigation";
   import { currentUser, logout } from "$lib/auth";
@@ -23,6 +24,18 @@
   function handleLogout() {
     logout();
     goto("/login");
+  }
+
+  /**
+   * Handle new project - respects user preference to skip wizard
+   */
+  function handleNewProject() {
+    if (userPreferencesStore.skipWizard) {
+      // Dispatch event to show Quick Create
+      window.dispatchEvent(new CustomEvent('show-quick-create'));
+    } else {
+      wizardStore.open();
+    }
   }
 </script>
 
@@ -70,7 +83,25 @@
 
     <!-- Right: Actions -->
     <div class="flex items-center gap-2">
-      <!-- Quick Actions -->
+      <!-- New Project -->
+      <Button variant="primary" size="sm" onclick={handleNewProject}>
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+        <span>New Project</span>
+      </Button>
+
+      <!-- Quick Run -->
       <Button variant="ghost" size="sm" onclick={() => goto("/quick-run")}>
         <svg
           class="w-4 h-4"
@@ -82,10 +113,10 @@
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            d="M13 10V3L4 14h7v7l9-11h-7z"
           />
         </svg>
-        <span>New Run</span>
+        <span>Quick Run</span>
       </Button>
 
       <Button variant="icon" size="md" onclick={() => goto("/settings")}>
