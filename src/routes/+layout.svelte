@@ -9,6 +9,9 @@
   import CommandPalette from "$lib/ui/CommandPalette.svelte";
   import ShortcutsCheatSheet from "$lib/ui/ShortcutsCheatSheet.svelte";
   import ToastContainer from "$lib/ui/ToastContainer.svelte";
+  import NewProjectWizard from "$lib/workbench/components/NewProjectWizard/NewProjectWizard.svelte";
+  import QuickCreateDialog from "$lib/workbench/components/QuickCreate/QuickCreateDialog.svelte";
+  import { wizardStore, userPreferencesStore } from "$lib/workbench/stores";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
@@ -21,6 +24,7 @@
 
   let showShortcuts = $state(false);
   let sidebarVisible = $state(true);
+  let showQuickCreate = $state(false);
   let isLoginPage = $derived($page.url.pathname === "/login");
 
   // Initialize auth and check authentication
@@ -55,8 +59,41 @@
     registerShortcuts();
   });
 
+  /**
+   * Handle new project trigger - respects user preference to skip wizard
+   */
+  function handleNewProject() {
+    if (userPreferencesStore.skipWizard) {
+      showQuickCreate = true;
+    } else {
+      wizardStore.open();
+    }
+  }
+
   function registerCommands() {
     const commands: Command[] = [
+      {
+        id: "new-project",
+        name: "New Project",
+        description: "Create a new project with the wizard",
+        category: "Project",
+        icon: "🚀",
+        shortcut: ["meta", "n"],
+        keywords: ["create", "project", "wizard", "new"],
+        handler: handleNewProject,
+      },
+      {
+        id: "quick-create",
+        name: "Quick Create Project",
+        description: "Fast project creation with defaults",
+        category: "Project",
+        icon: "⚡",
+        shortcut: ["meta", "shift", "n"],
+        keywords: ["create", "quick", "fast", "project"],
+        handler: () => {
+          showQuickCreate = true;
+        },
+      },
       {
         id: "new-prompt",
         name: "New Prompt",
@@ -185,6 +222,28 @@
   }
 
   function registerShortcuts() {
+    // Cmd+N - New Project (respects skip wizard preference)
+    shortcutManager.register({
+      id: "new-project",
+      name: "New Project",
+      description: "Create a new project with the wizard",
+      category: "project",
+      shortcut: ["meta", "n"],
+      handler: handleNewProject,
+    });
+
+    // Cmd+Shift+N - Quick Create
+    shortcutManager.register({
+      id: "quick-create",
+      name: "Quick Create Project",
+      description: "Fast project creation with defaults",
+      category: "project",
+      shortcut: ["meta", "shift", "n"],
+      handler: () => {
+        showQuickCreate = true;
+      },
+    });
+
     // Cmd+K - Open command palette
     shortcutManager.register({
       id: "open-palette",
@@ -261,9 +320,19 @@
   function handleGlobalKeyDown(event: KeyboardEvent) {
     shortcutManager.handleKeyDown(event);
   }
+
+  /**
+   * Listen for custom events to show Quick Create
+   */
+  function handleShowQuickCreate() {
+    showQuickCreate = true;
+  }
 </script>
 
-<svelte:window onkeydown={handleGlobalKeyDown} />
+<svelte:window
+  onkeydown={handleGlobalKeyDown}
+  onshow-quick-create={handleShowQuickCreate}
+/>
 
 {#if isLoginPage}
   <!-- Login page - no app shell -->
@@ -298,4 +367,9 @@
     onClose={() => (showShortcuts = false)}
   />
   <ToastContainer />
+  <NewProjectWizard />
+  <QuickCreateDialog
+    isOpen={showQuickCreate}
+    onClose={() => (showQuickCreate = false)}
+  />
 {/if}

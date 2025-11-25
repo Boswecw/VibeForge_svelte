@@ -1,0 +1,108 @@
+name: E2E Tests (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Browser to test'
+        required: true
+        default: 'chromium'
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+          - all
+      headed:
+        description: 'Run in headed mode'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  e2e-manual:
+    name: E2E Tests - ${{ inputs.browser }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: |
+          if [ "${{ inputs.browser }}" = "all" ]; then
+            pnpm exec playwright install --with-deps
+          else
+            pnpm exec playwright install --with-deps ${{ inputs.browser }}
+          fi
+
+      - name: Run E2E tests (all browsers)
+        if: inputs.browser == 'all'
+        run: |
+          if [ "${{ inputs.headed }}" = "true" ]; then
+            pnpm test:e2e:headed
+          else
+            pnpm test:e2e
+          fi
+        env:
+          CI: true
+
+      - name: Run E2E tests (specific browser)
+        if: inputs.browser != 'all'
+        run: |
+          if [ "${{ inputs.headed }}" = "true" ]; then
+            pnpm exec playwright test --project=${{ inputs.browser }} --headed
+          else
+            pnpm exec playwright test --project=${{ inputs.browser }}
+          fi
+        env:
+          CI: true
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-manual-${{ inputs.browser }}-${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-manual-${{ inputs.browser }}-${{ github.run_number }}
+          path: test-results/
+          retention-days: 14
+
+      - name: Upload test videos
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-videos-${{ inputs.browser }}-${{ github.run_number }}
+          path: test-results/**/*.webm
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-screenshots-${{ inputs.browser }}-${{ github.run_number }}
+          path: test-results/**/*.png
+          retention-days: 7
+          if-no-files-found: ignore

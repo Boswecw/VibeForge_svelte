@@ -9,7 +9,7 @@ import type {
   DetectedLanguage,
   DetectedFramework,
 } from "./types";
-import type { WizardState } from "$lib/stores/wizard";
+import type { WizardData, ProjectType } from "$lib/workbench/types/wizard";
 import { ALL_STACKS } from "$lib/data/stack-profiles";
 
 // Conditionally import Tauri APIs (only available in Tauri environment)
@@ -96,29 +96,41 @@ export class CodeAnalyzerService {
   }
 
   /**
-   * Convert ProjectProfile to WizardState
+   * Convert ProjectProfile to WizardData
    * Maps detected project to wizard configuration
    */
-  profileToWizardState(profile: ProjectProfile): Partial<WizardState> {
-    const state: Partial<WizardState> = {
-      intent: {
-        name: profile.projectName,
-        description: this.generateProjectDescription(profile),
-        projectType: this.detectProjectType(profile),
-        teamSize: "solo", // Default, user can change
-        timeline: "month", // Default, user can change
+  profileToWizardData(profile: ProjectProfile): Partial<WizardData> {
+    const stack = profile.suggestedStackId
+      ? ALL_STACKS.find(s => s.id === profile.suggestedStackId) || null
+      : null;
+
+    const languages = this.mapLanguagesToIds(profile.languages);
+    const features = this.detectFeatures(profile);
+
+    const data: Partial<WizardData> = {
+      projectName: profile.projectName,
+      projectDescription: this.generateProjectDescription(profile),
+      projectType: this.detectProjectType(profile) as ProjectType,
+      complexity: 'moderate', // Default, user can change
+      primaryLanguage: languages[0] || null,
+      secondaryLanguages: languages.slice(1),
+      selectedStack: stack,
+      features: {
+        authentication: features.includes('authentication'),
+        database: features.includes('database'),
+        api: profile.hasBackend,
+        testing: features.includes('testing'),
+        docker: features.includes('docker'),
+        cicd: features.includes('ci-cd'),
+        monitoring: false, // Default
       },
-      selectedLanguages: this.mapLanguagesToIds(profile.languages),
-      selectedStackId: profile.suggestedStackId || null,
-      configuration: {
-        environmentVariables: {},
-        database: profile.database?.db_type as any,
-        authentication: profile.authentication?.method as any,
-        features: this.detectFeatures(profile),
-      },
+      teamSize: 1, // Default, user can change
+      timeline: 'month', // Default, user can change
+      generateReadme: true,
+      initGit: true,
     };
 
-    return state;
+    return data;
   }
 
   /**
@@ -165,7 +177,7 @@ export class CodeAnalyzerService {
   /**
    * Detect project type from profile
    */
-  private detectProjectType(profile: ProjectProfile): string {
+  private detectProjectType(profile: ProjectProfile): ProjectType {
     if (profile.hasMobile) return "mobile";
     if (profile.hasFrontend && profile.hasBackend) return "web";
     if (profile.hasFrontend) return "web";
@@ -181,7 +193,7 @@ export class CodeAnalyzerService {
       if (hasAI) return "ai";
       return "api";
     }
-    return "other";
+    return "cli";
   }
 
   /**
