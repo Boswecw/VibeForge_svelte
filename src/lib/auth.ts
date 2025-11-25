@@ -33,7 +33,7 @@ export interface TokenResponse {
 // ============================================================================
 
 const NEUROFORGE_API_BASE =
-  import.meta.env.VITE_NEUROFORGE_API_BASE || "http://localhost:8000";
+  import.meta.env.VITE_NEUROFORGE_URL || "http://localhost:8002";
 const TOKEN_STORAGE_KEY = "vibeforge_jwt_token";
 const USER_STORAGE_KEY = "vibeforge_user";
 

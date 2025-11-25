@@ -2,11 +2,12 @@
 no description yet
 -->
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import { wizardStore, canProceed, wizardProgress } from "$lib/stores/wizard";
   import { fade, fly } from "svelte/transition";
   import { cubicOut } from "svelte/easing";
 
-  export let onComplete: (() => void) | undefined = undefined;
+  const dispatch = createEventDispatcher();
 
   const steps = [
     {
@@ -43,7 +44,7 @@ no description yet
 
   function handleNext() {
     if (currentStep === 5) {
-      onComplete?.();
+      dispatch("complete");
     } else {
       wizardStore.nextStep();
     }
@@ -62,7 +63,7 @@ no description yet
 </script>
 
 <div
-  class="wizard-shell min-h-screen bg-linear-to-br from-gray-50 to-gray-100 py-8"
+  class="wizard-shell h-full bg-linear-to-br from-gray-50 to-gray-100 py-8 overflow-y-auto"
 >
   <div class="max-w-6xl mx-auto px-4">
     <!-- Header -->

@@ -222,9 +222,16 @@ no description yet
     projectPath = null;
 
     try {
-      // Import Tauri API
-      const { invoke } = await import('@tauri-apps/api/core');
-      const { homeDir, join } = await import('@tauri-apps/api/path');
+      // Check if Tauri is available
+      if (typeof window === "undefined" || !("__TAURI__" in window)) {
+        throw new Error("Tauri not available - project generation only works in desktop app");
+      }
+
+      // Import Tauri API with vite-ignore
+      const coreModule = '@tauri-apps/api/core';
+      const pathModule = '@tauri-apps/api/path';
+      const { invoke } = await import(/* @vite-ignore */ coreModule);
+      const { homeDir, join } = await import(/* @vite-ignore */ pathModule);
       
       // Get output directory (user's home directory + Projects or similar)
       const home = await homeDir();
@@ -599,7 +606,7 @@ no description yet
       </h3>
       <button
         class="px-3 py-1 text-sm text-indigo-600 hover:text-indigo-800 hover:bg-white rounded-lg transition-colors font-medium"
-        on:click={() => editSection(1)}
+        onclick={() => editSection(1)}
       >
         ✏️ Edit
       </button>
@@ -648,7 +655,7 @@ no description yet
       </h3>
       <button
         class="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:bg-white rounded-lg transition-colors font-medium"
-        on:click={() => editSection(2)}
+        onclick={() => editSection(2)}
       >
         ✏️ Edit
       </button>
@@ -682,7 +689,7 @@ no description yet
       </h3>
       <button
         class="px-3 py-1 text-sm text-green-600 hover:text-green-800 hover:bg-white rounded-lg transition-colors font-medium"
-        on:click={() => editSection(3)}
+        onclick={() => editSection(3)}
       >
         ✏️ Edit
       </button>
@@ -748,7 +755,7 @@ no description yet
       </h3>
       <button
         class="px-3 py-1 text-sm text-amber-600 hover:text-amber-800 hover:bg-white rounded-lg transition-colors font-medium"
-        on:click={() => editSection(4)}
+        onclick={() => editSection(4)}
       >
         ✏️ Edit
       </button>
@@ -846,7 +853,7 @@ no description yet
   <div class="mb-6">
     <button
       class="w-full text-left px-6 py-4 bg-white rounded-lg border-2 border-gray-200 hover:border-purple-300 transition-colors flex items-center justify-between"
-      on:click={() => (showStructurePreview = !showStructurePreview)}
+      onclick={() => (showStructurePreview = !showStructurePreview)}
     >
       <div class="flex items-center gap-3">
         <span class="text-2xl">🌳</span>
@@ -940,7 +947,7 @@ no description yet
                   <p class="text-sm text-red-800">{generationError}</p>
                   <button
                     class="mt-2 text-sm text-red-600 hover:text-red-800 underline"
-                    on:click={() => (generationError = null)}
+                    onclick={() => (generationError = null)}
                   >
                     Try again
                   </button>
@@ -974,13 +981,13 @@ no description yet
             <div class="flex gap-3">
               <button
                 class="px-6 py-3 bg-linear-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
-                on:click={generateProject}
+                onclick={generateProject}
               >
                 🚀 Generate Project
               </button>
               <button
                 class="px-4 py-3 text-indigo-700 hover:text-indigo-900 hover:bg-white rounded-lg transition-colors font-medium"
-                on:click={() => wizardStore.saveDraft()}
+                onclick={() => wizardStore.saveDraft()}
               >
                 💾 Save as Draft
               </button>
@@ -1018,18 +1025,39 @@ no description yet
               <div class="flex gap-3">
                 <button
                   class="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-lg"
-                  on:click={async () => {
-                    const { open } = await import("@tauri-apps/plugin-shell");
-                    await open(projectPath);
+                  onclick={async () => {
+                    if (
+                      typeof window !== "undefined" &&
+                      "__TAURI__" in window
+                    ) {
+                      try {
+                        const shellModule = "@tauri-apps/plugin-shell";
+                        const { open } = await import(
+                          /* @vite-ignore */ shellModule
+                        );
+                        await open(projectPath);
+                      } catch (e) {
+                        console.error("Tauri shell not available:", e);
+                      }
+                    }
                   }}
                 >
                   📂 Open in File Manager
                 </button>
                 <button
                   class="px-6 py-3 bg-white text-green-700 border-2 border-green-300 rounded-lg font-semibold hover:bg-green-50 transition-colors"
-                  on:click={async () => {
+                  onclick={async () => {
+                    if (
+                      typeof window === "undefined" ||
+                      !("__TAURI__" in window)
+                    ) {
+                      alert("Clipboard copy only available in desktop app");
+                      return;
+                    }
+                    const clipboardModule =
+                      "@tauri-apps/plugin-clipboard-manager";
                     const { writeText } = await import(
-                      "@tauri-apps/plugin-clipboard-manager"
+                      /* @vite-ignore */ clipboardModule
                     );
                     await writeText(projectPath);
                     alert("Path copied to clipboard!");
@@ -1074,7 +1102,7 @@ no description yet
 
             <button
               class="w-full py-2 text-green-700 hover:text-green-900 hover:bg-white rounded-lg transition-colors font-medium"
-              on:click={() => {
+              onclick={() => {
                 generationComplete = false;
                 projectPath = null;
                 generationError = null;

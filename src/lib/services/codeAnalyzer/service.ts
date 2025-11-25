@@ -3,8 +3,6 @@
  * Frontend wrapper for Tauri code analysis commands
  */
 
-import { invoke } from "@tauri-apps/api/tauri";
-import { open } from "@tauri-apps/api/dialog";
 import type {
   AnalysisResult,
   ProjectProfile,
@@ -13,6 +11,30 @@ import type {
 } from "./types";
 import type { WizardState } from "$lib/stores/wizard";
 import { ALL_STACKS } from "$lib/data/stack-profiles";
+
+// Conditionally import Tauri APIs (only available in Tauri environment)
+let invoke: any = () => Promise.reject(new Error("Tauri not available"));
+let open: any = () => Promise.reject(new Error("Tauri not available"));
+
+if (typeof window !== "undefined" && "__TAURI__" in window) {
+  try {
+    // Dynamic imports with variables to bypass Vite static analysis
+    const tauriModule = "@tauri-apps/api/tauri";
+    const dialogModule = "@tauri-apps/api/dialog";
+    import(/* @vite-ignore */ tauriModule)
+      .then((module) => {
+        invoke = module.invoke;
+      })
+      .catch(() => {});
+    import(/* @vite-ignore */ dialogModule)
+      .then((module) => {
+        open = module.open;
+      })
+      .catch(() => {});
+  } catch (e) {
+    // Tauri not available in browser
+  }
+}
 
 export class CodeAnalyzerService {
   /**

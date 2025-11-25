@@ -5,7 +5,22 @@
  * and development environment status.
  */
 
-import { invoke } from "@tauri-apps/api/tauri";
+// Conditionally import Tauri API (only available in Tauri environment)
+let invoke: any = () => Promise.reject(new Error("Tauri not available"));
+
+if (typeof window !== "undefined" && "__TAURI__" in window) {
+  try {
+    // Dynamic import with variable to bypass Vite static analysis
+    const tauriModule = "@tauri-apps/api/tauri";
+    import(/* @vite-ignore */ tauriModule)
+      .then((module) => {
+        invoke = module.invoke;
+      })
+      .catch(() => {});
+  } catch (e) {
+    // Tauri not available in browser
+  }
+}
 
 export interface RuntimeStatus {
   id: string;
