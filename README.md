@@ -164,23 +164,31 @@ VibeForge connects to commercial Forge backend services:
 
 ## 🏗️ Tech Stack
 
+**Core:**
 - **SvelteKit 2.x** - Full-stack metaframework
 - **Svelte 5** - Latest with runes (`$state`, `$derived`, `$props`)
-- **TypeScript 5.9** - Full type safety
+- **TypeScript 5.9** - Full type safety (95% coverage)
 - **Tailwind CSS v4** - Utility-first styling
 - **Vite 7.x** - Lightning-fast build tool
 - **pnpm** - Fast package manager
+
+**Testing:**
+- **Vitest 4.x** - Fast unit testing with native Vite support
+- **@testing-library/svelte** - Component testing utilities
+- **Playwright** - E2E testing framework
+- **happy-dom** - Lightweight DOM implementation for tests
 
 ---
 
 ## 🎯 Project Status
 
-**Version:** 0.1.0 (Beta)  
-**Status:** 🔵 Beta - Feature Complete, Active Testing  
+**Version:** 0.1.0 (Beta)
+**Status:** 🔵 Beta - Feature Complete, Active Testing
 **License:** Freeware with Restrictions
 
-### Completed Features (Phase 3.2 & 3.3)
+### Completed Features
 
+**Phase 3.2 & 3.3 (Features):**
 - [x] Multi-step project creation wizard
 - [x] 15 programming languages with metadata
 - [x] 10 production-ready stack profiles
@@ -194,8 +202,20 @@ VibeForge connects to commercial Forge backend services:
 - [x] Dark/Light theme system
 - [x] Full backend API integration ✅
 
+**Phase 2 (Code Quality & Architecture):**
+- [x] Svelte 5 runes migration (theme store)
+- [x] TypeScript 'any' type removal (95% coverage - 37/39 fixed)
+- [x] Centralized store architecture (`src/lib/core/stores/`)
+- [x] Theme store migration (46 files updated)
+- [x] Unit test infrastructure (Vitest + Testing Library)
+- [x] Theme store test suite (15 tests)
+- [x] E2E test setup (Playwright configured)
+
 ### In Progress
 
+- [ ] Store unit tests (6 remaining stores)
+- [ ] Component tests (workbench columns)
+- [ ] E2E golden path test
 - [ ] Runtime environment detection (Phase 2.7)
 - [ ] Dev-Container auto-generation
 - [ ] User authentication
@@ -224,12 +244,21 @@ VibeForge connects to commercial Forge backend services:
 
 **State Management:**
 
-- **Svelte Stores** - Reactive state management
+- **Svelte 5 Runes** - Modern reactive state with compile-time optimizations
+  - Core stores in `src/lib/core/stores/` using `$state`, `$derived`, `$effect`
+  - `theme.svelte.ts` - Theme persistence with localStorage
+  - `workspace.svelte.ts` - Workspace state and actions
+  - `contextBlocks.svelte.ts` - Context block management
+  - `prompt.svelte.ts` - Prompt composition state
+  - `models.svelte.ts` - Model selection and configuration
+  - `runs.svelte.ts` - Execution history tracking
+  - `tools.svelte.ts` - Tool integration state
+
+- **Legacy Stores** (being migrated):
   - `wizardStore.ts` - Multi-step wizard state
   - `languagesStore.ts` - Language selection state
   - `stacksStore.ts` - Stack profile state
   - `insightsStore.ts` - Learning layer state
-  - `themeStore.ts` - Theme persistence
 
 ### Backend Integration
 
@@ -938,17 +967,70 @@ open http://localhost
 
 ## 🪧 Testing
 
+### Unit Tests (Vitest)
+
 ```bash
-# Type checking
+# Run all unit tests
+pnpm test
+
+# Watch mode (re-run on file changes)
+pnpm test:watch
+
+# Run tests with UI
+pnpm test:ui
+
+# Run with coverage report
+pnpm test:coverage
+```
+
+**Test Files:**
+- `src/tests/stores/` - Store unit tests
+  - `theme.test.ts` - Theme store (15 tests) ✅
+  - More stores coming soon...
+- `src/tests/llm/` - LLM provider tests
+- Test setup: `src/tests/setup.ts`
+
+### E2E Tests (Playwright)
+
+```bash
+# Run E2E tests
+pnpm test:e2e
+
+# Run with UI
+pnpm test:e2e:ui
+
+# Run in headed mode (visible browser)
+pnpm test:e2e:headed
+
+# Debug mode
+pnpm test:e2e:debug
+
+# Specific browser
+pnpm test:e2e:chromium
+pnpm test:e2e:firefox
+pnpm test:e2e:webkit
+```
+
+### Type Checking
+
+```bash
+# One-time check
 pnpm check
 
-# Manual testing
+# Watch mode (continuous checking)
+pnpm check:watch
+```
+
+### Manual Testing
+
+```bash
+# Start dev server
 pnpm dev
 # Navigate to http://localhost:5173
 # Test features in browser
 ```
 
-See [TESTING.md](./TESTING.md) for comprehensive testing procedures.
+See [TESTING.md](./TESTING.md) for comprehensive testing procedures and checklists.
 
 ---
 
@@ -968,13 +1050,44 @@ vibeforge/
 │   │   ├── workspaces/      # Workspace management
 │   │   └── settings/        # User preferences
 │   │
-│   └── lib/
-│       ├── components/      # Reusable UI components
-│       ├── stores/          # Svelte state management
-│       └── types/           # TypeScript interfaces
+│   ├── lib/
+│   │   ├── components/      # Reusable UI components
+│   │   │   ├── analytics/   # Analytics dashboards
+│   │   │   ├── context/     # Context management
+│   │   │   ├── quickrun/    # Quick-run components
+│   │   │   └── settings/    # Settings sections
+│   │   │
+│   │   ├── core/            # Core architecture (Svelte 5)
+│   │   │   ├── stores/      # Rune-based stores
+│   │   │   │   ├── theme.svelte.ts
+│   │   │   │   ├── workspace.svelte.ts
+│   │   │   │   ├── contextBlocks.svelte.ts
+│   │   │   │   ├── prompt.svelte.ts
+│   │   │   │   ├── models.svelte.ts
+│   │   │   │   ├── runs.svelte.ts
+│   │   │   │   └── tools.svelte.ts
+│   │   │   └── api/         # Core API clients
+│   │   │
+│   │   ├── stores/          # Legacy stores (being migrated)
+│   │   ├── services/        # Business logic services
+│   │   │   ├── llm/         # LLM providers
+│   │   │   ├── modelRouter/ # Intelligent model routing
+│   │   │   └── codeAnalyzer/
+│   │   │
+│   │   ├── api/             # API integrations
+│   │   ├── types/           # TypeScript interfaces
+│   │   └── data/            # Static data and configs
+│   │
+│   └── tests/               # Test files
+│       ├── stores/          # Store unit tests
+│       │   └── theme.test.ts (15 tests) ✅
+│       ├── llm/             # LLM provider tests
+│       └── setup.ts         # Test configuration
 │
 ├── static/                  # Static assets
 ├── docs/                    # Archived documentation
+├── vitest.config.ts         # Vitest configuration
+├── playwright.config.ts     # Playwright configuration
 └── [config files]
 ```
 
