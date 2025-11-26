@@ -230,3 +230,70 @@ export async function executePrompt(
     };
   }
 }
+
+// ============================================================================
+// SIMPLIFIED EXECUTION (Refactoring Plan Compatible)
+// ============================================================================
+
+export interface SimplifiedExecuteRequest {
+  prompt: string;
+  model_id: string;
+  context_blocks?: string[];
+  parameters?: {
+    temperature?: number;
+    max_tokens?: number;
+    top_p?: number;
+  };
+  workspace_id?: string;
+}
+
+export interface SimplifiedExecuteResponse {
+  run_id: string;
+  model_id: string;
+  output: string;
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+  latency_ms: number;
+  created_at: string;
+}
+
+export async function executePromptSimplified(
+  request: SimplifiedExecuteRequest
+): Promise<SimplifiedExecuteResponse> {
+  const response = await fetch(getApiUrl("/workbench/execute"), {
+    method: "POST",
+    headers: getHeaders(),
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const error: NeuroForgeError = await response
+      .json()
+      .catch(() => ({ detail: "Unknown error" }));
+    throw new Error(error.detail || `Execution failed: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function executeMultiModel(
+  prompt: string,
+  modelIds: string[],
+  options?: Omit<SimplifiedExecuteRequest, "prompt" | "model_id">
+): Promise<SimplifiedExecuteResponse[]> {
+  const results = await Promise.allSettled(
+    modelIds.map((model_id) =>
+      executePromptSimplified({ prompt, model_id, ...options })
+    )
+  );
+
+  return results
+    .filter(
+      (r): r is PromiseFulfilledResult<SimplifiedExecuteResponse> =>
+        r.status === "fulfilled"
+    )
+    .map((r) => r.value);
+}

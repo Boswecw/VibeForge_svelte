@@ -5,6 +5,7 @@
  */
 
 import type { PromptRun, RunStatus } from '$lib/core/types';
+import { executePromptSimplified, type SimplifiedExecuteResponse } from '$lib/core/api/neuroforgeClient';
 
 // ============================================================================
 // RUNS STATE
@@ -139,6 +140,42 @@ function getRunsByModel(modelId: string): PromptRun[] {
   return state.runs.filter((run) => run.modelId === modelId);
 }
 
+// Execute a prompt with a single model (Refactoring Plan Compatible)
+async function execute(prompt: string, modelId: string, contextBlocks?: string[]): Promise<SimplifiedExecuteResponse> {
+  state.isExecuting = true;
+  state.error = null;
+
+  try {
+    const result = await executePromptSimplified({
+      prompt,
+      model_id: modelId,
+      context_blocks: contextBlocks,
+    });
+
+    // Convert SimplifiedExecuteResponse to PromptRun format
+    const run: PromptRun = {
+      id: result.run_id,
+      modelId: result.model_id,
+      output: result.output,
+      status: 'success',
+      totalTokens: result.usage.total_tokens,
+      durationMs: result.latency_ms,
+      startedAt: result.created_at,
+      completedAt: new Date().toISOString(),
+      cost: 0, // Calculate based on model pricing
+    };
+
+    addRun(run);
+    state.activeRunId = run.id;
+    return result;
+  } catch (err) {
+    state.error = err instanceof Error ? err.message : 'Execution failed';
+    throw err;
+  } finally {
+    state.isExecuting = false;
+  }
+}
+
 // ============================================================================
 // EXPORTS
 // ============================================================================
@@ -199,4 +236,5 @@ export const runsStore = {
   setError,
   getRunById,
   getRunsByModel,
+  execute,
 };
