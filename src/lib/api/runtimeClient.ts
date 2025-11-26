@@ -6,7 +6,8 @@
  */
 
 // Conditionally import Tauri API (only available in Tauri environment)
-let invoke: any = () => Promise.reject(new Error("Tauri not available"));
+type TauriInvoke = <T>(cmd: string, args?: Record<string, unknown>) => Promise<T>;
+let invoke: TauriInvoke = () => Promise.reject(new Error("Tauri not available"));
 
 if (typeof window !== "undefined" && "__TAURI__" in window) {
   try {

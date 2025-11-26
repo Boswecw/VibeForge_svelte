@@ -39,13 +39,13 @@ export interface ChainCreate {
 }
 
 export interface ChainExecuteRequest {
-  initialInputs?: { [key: string]: any };
+  initialInputs?: Record<string, unknown>;
 }
 
 export interface NodeExecutionResult {
   nodeId: string;
   status: "success" | "error" | "skipped";
-  outputs: { [key: string]: any };
+  outputs: Record<string, unknown>;
   error?: string;
   executionTimeMs: number;
 }

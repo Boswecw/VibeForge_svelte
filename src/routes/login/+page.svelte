@@ -26,8 +26,8 @@
     try {
       await login(username, password);
       // User will be redirected by the onMount handler
-    } catch (err: any) {
-      error = err.message || "Login failed. Please try again.";
+    } catch (err) {
+      error = err instanceof Error ? err.message : "Login failed. Please try again.";
     } finally {
       loading = false;
     }

@@ -10,6 +10,7 @@ import type {
   LLMStreamChunk,
   LLMModelInfo,
   LLMProviderStatus,
+  LLMConfig,
 } from "./types";
 import {
   LLMError,
@@ -21,7 +22,7 @@ import {
 export class AnthropicProvider extends BaseLLMProvider {
   private readonly baseUrl: string;
 
-  constructor(config: any) {
+  constructor(config: LLMConfig) {
     super(config, "Anthropic");
     this.baseUrl = config.baseUrl || "https://api.anthropic.com/v1";
   }
@@ -315,7 +316,7 @@ export class AnthropicProvider extends BaseLLMProvider {
 
   private async handleErrorResponse(response: Response): Promise<never> {
     const status = response.status;
-    let errorData: any;
+    let errorData: { error?: { message?: string }; message?: string };
 
     try {
       errorData = await response.json();

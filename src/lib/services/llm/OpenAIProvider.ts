@@ -10,6 +10,7 @@ import type {
   LLMStreamChunk,
   LLMModelInfo,
   LLMProviderStatus,
+  LLMConfig,
 } from "./types";
 import {
   LLMError,
@@ -21,7 +22,7 @@ import {
 export class OpenAIProvider extends BaseLLMProvider {
   private readonly baseUrl: string;
 
-  constructor(config: any) {
+  constructor(config: LLMConfig) {
     super(config, "OpenAI");
     this.baseUrl = config.baseUrl || "https://api.openai.com/v1";
   }
@@ -206,9 +207,9 @@ export class OpenAIProvider extends BaseLLMProvider {
       const data = await response.json();
 
       // Filter to chat models only and add metadata
-      const chatModels = data.data
-        .filter((model: any) => model.id.includes("gpt"))
-        .map((model: any) => this.getModelInfo(model.id));
+      const chatModels = (data.data as Array<{ id: string }>)
+        .filter((model) => model.id.includes("gpt"))
+        .map((model) => this.getModelInfo(model.id));
 
       return chatModels;
     } catch (error) {
@@ -319,7 +320,7 @@ export class OpenAIProvider extends BaseLLMProvider {
 
   private async handleErrorResponse(response: Response): Promise<never> {
     const status = response.status;
-    let errorData: any;
+    let errorData: { error?: { message?: string }; message?: string };
 
     try {
       errorData = await response.json();

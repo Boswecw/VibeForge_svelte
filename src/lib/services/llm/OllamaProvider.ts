@@ -10,13 +10,14 @@ import type {
   LLMStreamChunk,
   LLMModelInfo,
   LLMProviderStatus,
+  LLMConfig,
 } from "./types";
 import { LLMError, LLMTimeoutError } from "./types";
 
 export class OllamaProvider extends BaseLLMProvider {
   private readonly baseUrl: string;
 
-  constructor(config: any) {
+  constructor(config: LLMConfig) {
     super(config, "Ollama");
     this.baseUrl = config.baseUrl || "http://localhost:11434";
   }
@@ -203,7 +204,7 @@ export class OllamaProvider extends BaseLLMProvider {
 
       const data = await response.json();
 
-      return data.models.map((model: any) => ({
+      return (data.models as Array<{ name: string; size: number }>).map((model) => ({
         id: model.name,
         name: model.name,
         description: `Local Ollama model (${this.formatBytes(model.size)})`,
