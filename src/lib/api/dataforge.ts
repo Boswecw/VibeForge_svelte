@@ -11,6 +11,7 @@ import type {
   DataForgeContext,
   DataForgeContextChunk,
   DataForgeContextSearchResult,
+  DataForgeRun,
   SearchContextsRequest,
   SearchContextsResponse,
   ListContextsResponse,
@@ -158,7 +159,7 @@ export async function listRuns(
     offset?: number;
     model?: string;
   }
-): Promise<{ runs: any[]; total: number }> {
+): Promise<{ runs: DataForgeRun[]; total: number }> {
   const url = new URL(
     `${API_BASE}/workspaces/${encodeURIComponent(workspaceId)}/runs`
   );

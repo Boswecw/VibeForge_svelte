@@ -39,7 +39,7 @@
     "{{variable}}" +
     " syntax for template variables\nPress Cmd+Enter to run";
 
-  let editorInstance: any = null;
+  let editorInstance: HTMLElement | null = null;
 
   onMount(() => {
     // Load pricing data on mount

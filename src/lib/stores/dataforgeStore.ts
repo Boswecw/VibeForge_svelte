@@ -11,6 +11,7 @@ import { writable, derived, type Writable, type Readable } from "svelte/store";
 import type {
   DataForgeContext,
   DataForgeContextSearchResult,
+  DataForgeRun,
 } from "$lib/types/dataforge";
 
 // ============================================================================
@@ -20,7 +21,7 @@ import type {
 export interface DataForgeState {
   contexts: DataForgeContext[];
   searchResults: DataForgeContextSearchResult[];
-  history: any[];
+  history: DataForgeRun[];
   isLoadingContexts: boolean;
   isSearching: boolean;
   isLoadingHistory: boolean;
@@ -98,7 +99,7 @@ function createDataForgeStore() {
     // History Management
     // ========================================================================
 
-    setHistory(history: any[]): void {
+    setHistory(history: DataForgeRun[]): void {
       state.update((s) => ({
         ...s,
         history,
