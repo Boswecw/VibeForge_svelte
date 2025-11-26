@@ -32,6 +32,10 @@ export interface RefactoringTask {
 	estimatedHours: number;
 	actualHours?: number;
 
+	// AI-specific estimate (minutes, not hours)
+	estimatedMinutesAI: number;
+	aiEstimateConfidence: number; // 0-1
+
 	files: string[];
 	affectedFiles: string[]; // Legacy alias for files
 	dependencies: string[]; // Task IDs that must complete first
@@ -70,6 +74,13 @@ export interface TimeEstimate {
 	pessimistic: number; // Hours (worst case)
 	expected: number; // Weighted average
 	confidence: number; // 0-1 confidence in estimate
+
+	// AI estimates (in minutes)
+	aiOptimisticMinutes: number;
+	aiRealisticMinutes: number;
+	aiPessimisticMinutes: number;
+	aiExpectedMinutes: number;
+	aiConfidence: number;
 }
 
 export interface CostEstimate {

@@ -21,6 +21,32 @@ export type ExecutionStatus =
 	| 'failed'
 	| 'cancelled';
 
+export type ExecutorType = 'human' | 'ai-claude-code' | 'ai-cursor' | 'ai-other';
+
+export interface AIExecutionMetrics {
+	executorType: ExecutorType;
+
+	// Timing (minutes for AI, not hours)
+	estimatedMinutes: number;
+	actualMinutes?: number;
+
+	// Token/API metrics
+	totalTokens?: number;
+	inputTokens?: number;
+	outputTokens?: number;
+	apiCalls?: number;
+	retryCount?: number;
+
+	// Cost (USD)
+	estimatedCost?: number;
+	actualCost?: number;
+
+	// Quality indicators
+	firstPassSuccess: boolean;
+	iterationCount: number;
+	testPassedOnFirst: boolean;
+}
+
 export interface GitCheckpoint {
 	id: string;
 	branch: string;
@@ -69,6 +95,9 @@ export interface TaskExecution {
 		results: string[];
 		errors: string[];
 	};
+
+	// AI execution metrics (optional, for AI executors)
+	aiMetrics?: AIExecutionMetrics;
 
 	logs: {
 		timestamp: string;

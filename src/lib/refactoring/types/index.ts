@@ -58,6 +58,8 @@ export type {
 // Execution types
 export type {
 	ExecutionStatus,
+	ExecutorType,
+	AIExecutionMetrics,
 	GitCheckpoint,
 	GitOperationResult,
 	ClaudeCodeSession,

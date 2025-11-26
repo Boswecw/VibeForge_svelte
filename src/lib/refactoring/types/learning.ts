@@ -4,7 +4,7 @@
  * Types for recording refactoring outcomes and generating AI-powered recommendations via NeuroForge.
  */
 
-import type { RefactoringProject } from './execution';
+import type { RefactoringProject, ExecutorType, AIExecutionMetrics } from './execution';
 import type { CodebaseAnalysis } from './analysis';
 
 export type OutcomeRating = 'excellent' | 'good' | 'fair' | 'poor' | 'failed';
@@ -30,6 +30,15 @@ export interface RefactoringOutcome {
 	estimatedHours: number; // Alias for plannedHours
 	actualHours: number;
 	variance: number; // Percentage difference
+
+	// AI execution metrics
+	executorType: ExecutorType;
+	aiMetrics?: AIExecutionMetrics;
+
+	// AI-specific time tracking (minutes)
+	plannedMinutesAI?: number;
+	actualMinutesAI?: number;
+	aiVariance?: number; // Percentage difference
 
 	// Quality improvements
 	coverageBefore: number;
@@ -69,6 +78,13 @@ export interface EstimationFeedback {
 	estimatedHours: number;
 	actualHours: number;
 	accuracy: number; // Percentage
+
+	executorType: ExecutorType;
+
+	// AI-specific tracking (minutes)
+	estimatedMinutesAI?: number;
+	actualMinutesAI?: number;
+	aiAccuracy?: number; // Percentage
 
 	codebaseContext: {
 		size: number;

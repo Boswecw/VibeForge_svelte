@@ -21,7 +21,7 @@ export class TaskGenerator {
 	 * Generates tasks from codebase analysis
 	 */
 	generate(analysis: CodebaseAnalysis): RefactoringTask[] {
-		const tasks: RefactoringTask[] = [];
+		const tasks: Omit<RefactoringTask, 'id' | 'createdAt'>[] = [];
 
 		// Generate tasks from detected issues
 		tasks.push(...this.generateFromIssues(analysis.issues));
@@ -49,14 +49,22 @@ export class TaskGenerator {
 				'TypeScript compilation successful'
 			];
 
+			const estimatedHours = this.estimateHoursFromIssue(issue);
+			const category = this.mapIssueCategory(issue.category);
+
 			return {
 				phase: 0, // Will be assigned by PhaseGenerator
 				title: issue.title,
 				description: issue.description,
 				rationale: issue.description,
-				category: issue.category,
+				category,
 				priority,
-				estimatedHours: this.estimateHoursFromIssue(issue),
+				estimatedHours,
+
+				// AI-specific estimates
+				estimatedMinutesAI: this.convertToAIMinutes(estimatedHours, category),
+				aiEstimateConfidence: 0.8,
+
 				dependencies: [],
 				files: issue.files,
 				affectedFiles: issue.files,
@@ -79,6 +87,7 @@ export class TaskGenerator {
 		// Low test coverage
 		if (metrics.testCoverage.lines < 80) {
 			const coverageGap = 80 - metrics.testCoverage.lines;
+			const estimatedHours = Math.ceil(coverageGap / 5); // 1 hour per 5% coverage
 			const acceptanceCriteria = [
 				'Test coverage ≥ 80%',
 				'All new tests passing',
@@ -91,7 +100,12 @@ export class TaskGenerator {
 				rationale: `Coverage gap of ${coverageGap}% needs to be addressed to meet quality standards`,
 				category: 'testing',
 				priority: 'high',
-				estimatedHours: Math.ceil(coverageGap / 5), // 1 hour per 5% coverage
+				estimatedHours,
+
+				// AI-specific estimates
+				estimatedMinutesAI: this.convertToAIMinutes(estimatedHours, 'testing'),
+				aiEstimateConfidence: 0.85,
+
 				dependencies: [],
 				files: metrics.testCoverage.uncoveredFiles,
 				affectedFiles: metrics.testCoverage.uncoveredFiles,
@@ -104,6 +118,7 @@ export class TaskGenerator {
 
 		// Failing tests
 		if (metrics.testCoverage.failingTests > 0) {
+			const estimatedHours = metrics.testCoverage.failingTests * 0.5;
 			const acceptanceCriteria = ['All tests passing', 'No test failures'];
 			tasks.push({
 				phase: 0,
@@ -112,7 +127,12 @@ export class TaskGenerator {
 				rationale: 'Failing tests indicate broken functionality that must be fixed',
 				category: 'testing',
 				priority: 'critical',
-				estimatedHours: metrics.testCoverage.failingTests * 0.5,
+				estimatedHours,
+
+				// AI-specific estimates
+				estimatedMinutesAI: this.convertToAIMinutes(estimatedHours, 'testing'),
+				aiEstimateConfidence: 0.75,
+
 				dependencies: [],
 				files: [],
 				affectedFiles: [],
@@ -125,6 +145,7 @@ export class TaskGenerator {
 
 		// Type errors
 		if (metrics.typeSafety.typeErrorCount > 0) {
+			const estimatedHours = metrics.typeSafety.typeErrorCount * 0.25;
 			const acceptanceCriteria = [
 				'Zero TypeScript errors',
 				'Strict mode enabled',
@@ -137,7 +158,12 @@ export class TaskGenerator {
 				rationale: 'Type errors prevent safe refactoring and must be resolved first',
 				category: 'type-safety',
 				priority: 'critical',
-				estimatedHours: metrics.typeSafety.typeErrorCount * 0.25,
+				estimatedHours,
+
+				// AI-specific estimates
+				estimatedMinutesAI: this.convertToAIMinutes(estimatedHours, 'type-safety'),
+				aiEstimateConfidence: 0.9,
+
 				dependencies: [],
 				files: [],
 				affectedFiles: [],
@@ -150,6 +176,7 @@ export class TaskGenerator {
 
 		// Missing strict mode
 		if (!metrics.typeSafety.strictMode) {
+			const estimatedHours = 4;
 			const acceptanceCriteria = [
 				'strict: true in tsconfig.json',
 				'All files compile with strict mode',
@@ -162,7 +189,12 @@ export class TaskGenerator {
 				rationale: 'Strict mode catches more type errors and improves code quality',
 				category: 'type-safety',
 				priority: 'high',
-				estimatedHours: 4,
+				estimatedHours,
+
+				// AI-specific estimates
+				estimatedMinutesAI: this.convertToAIMinutes(estimatedHours, 'type-safety'),
+				aiEstimateConfidence: 0.85,
+
 				dependencies: ['fix-typescript-errors'], // Must fix errors first
 				files: ['tsconfig.json'],
 				affectedFiles: ['tsconfig.json'],
@@ -175,6 +207,7 @@ export class TaskGenerator {
 
 		// Excessive TODOs
 		if (metrics.quality.todoCount > 50) {
+			const estimatedHours = Math.ceil(metrics.quality.todoCount / 10);
 			const acceptanceCriteria = [
 				'TODO count < 50',
 				'Critical TODOs addressed',
@@ -187,7 +220,12 @@ export class TaskGenerator {
 				rationale: 'Excessive TODOs indicate incomplete work and technical debt',
 				category: 'code-quality',
 				priority: 'medium',
-				estimatedHours: Math.ceil(metrics.quality.todoCount / 10),
+				estimatedHours,
+
+				// AI-specific estimates
+				estimatedMinutesAI: this.convertToAIMinutes(estimatedHours, 'code-quality'),
+				aiEstimateConfidence: 0.8,
+
 				dependencies: [],
 				files: [],
 				affectedFiles: [],
@@ -199,6 +237,45 @@ export class TaskGenerator {
 		}
 
 		return tasks;
+	}
+
+	/**
+	 * Maps IssueCategory to TaskCategory
+	 */
+	private mapIssueCategory(issueCategory: string): RefactoringTask['category'] {
+		// Map issue categories to task categories
+		switch (issueCategory) {
+			case 'type-safety':
+				return 'type-safety';
+			case 'code-quality':
+			case 'performance':
+			case 'maintainability':
+				return 'code-quality';
+			case 'testing':
+				return 'testing';
+			case 'architecture':
+			case 'security':
+				return 'architecture';
+			default:
+				return 'code-quality';
+		}
+	}
+
+	/**
+	 * Converts human hours to AI minutes based on task category
+	 * AI speed multipliers: testing=8x, type-safety=12x, code-quality=10x, architecture=6x, documentation=15x
+	 */
+	private convertToAIMinutes(hours: number, category: RefactoringTask['category']): number {
+		const multipliers = {
+			'testing': 8,
+			'type-safety': 12,
+			'code-quality': 10,
+			'architecture': 6,
+			'documentation': 15
+		};
+
+		const multiplier = multipliers[category] || 8; // Default to 8x
+		return Math.ceil((hours * 60) / multiplier);
 	}
 
 	/**

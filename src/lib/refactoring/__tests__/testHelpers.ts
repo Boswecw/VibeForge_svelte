@@ -26,6 +26,10 @@ export function createTestTask(overrides: Partial<RefactoringTask> = {}): Refact
 		estimatedHours: 2,
 		actualHours: undefined,
 
+		// AI-specific estimate (minutes, not hours)
+		estimatedMinutesAI: 15, // ~8x faster than human
+		aiEstimateConfidence: 0.8,
+
 		files: [],
 		affectedFiles: [], // Legacy alias
 		dependencies: [],
