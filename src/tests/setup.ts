@@ -6,6 +6,14 @@ vi.mock("@tauri-apps/api/core", () => ({
   invoke: vi.fn(),
 }));
 
+// Mock SvelteKit environment
+vi.mock("$app/environment", () => ({
+  browser: true,
+  dev: true,
+  building: false,
+  version: "test",
+}));
+
 // Mock window.matchMedia
 Object.defineProperty(window, "matchMedia", {
   writable: true,
