@@ -192,7 +192,16 @@ export class StackRecommendationService {
       const jsonStr = jsonMatch ? jsonMatch[1] : content;
 
       const parsed = JSON.parse(jsonStr);
-      return (parsed.recommendations || []).map((rec: any) => ({
+      interface ParsedRecommendation {
+        stackId: string;
+        stackName: string;
+        score: number;
+        strengths?: string[];
+        concerns?: string[];
+        bestFor?: string;
+        reasoning?: string;
+      }
+      return ((parsed.recommendations || []) as ParsedRecommendation[]).map((rec) => ({
         stackId: rec.stackId,
         stackName: rec.stackName,
         score: rec.score,
@@ -415,7 +424,7 @@ export class StackRecommendationService {
 
       const prompt = StackRecommendationPrompts.getExplanationPrompt(
         stackName,
-        projectType as any,
+        projectType,
         languages
       );
 
