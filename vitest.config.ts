@@ -7,8 +7,9 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
-    setupFiles: ["./src/tests/setup.ts"],
+    setupFiles: [path.resolve(__dirname, "./src/tests/setup.ts")],
     include: ["src/**/*.{test,spec}.{js,ts}"],
+    exclude: ["**/node_modules/**", "**/llm_old/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
@@ -25,6 +26,7 @@ export default defineConfig({
   resolve: {
     alias: {
       $lib: path.resolve("./src/lib"),
+      "$app/environment": path.resolve("./src/tests/mocks/app-environment.ts"),
     },
   },
 });
