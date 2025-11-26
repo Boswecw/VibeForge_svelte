@@ -13,6 +13,7 @@ import type {
 	LearningMetrics
 } from '../types/learning';
 import type { CodebaseAnalysis } from '../types/analysis';
+import type { AIExecutionMetrics } from '../types/execution';
 
 /**
  * Learning Loop
@@ -217,5 +218,61 @@ export class LearningLoop {
 			baseUrl: this.baseUrl,
 			enabled: this.enabled
 		};
+	}
+
+	/**
+	 * Records AI execution metrics for analytics
+	 * Provides detailed logging and optional separate tracking of AI-specific data
+	 */
+	async recordAIExecutionMetrics(
+		taskId: string,
+		metrics: AIExecutionMetrics,
+		context?: {
+			taskCategory: string;
+			taskTitle: string;
+			codebaseSize: number;
+		}
+	): Promise<void> {
+		if (!this.enabled) {
+			return;
+		}
+
+		// Log AI metrics for visibility
+		console.log('[LearningLoop] AI Execution Metrics:', {
+			taskId,
+			executor: metrics.executorType,
+			estimatedMinutes: metrics.estimatedMinutes,
+			actualMinutes: metrics.actualMinutes,
+			accuracy: metrics.actualMinutes
+				? `${((metrics.estimatedMinutes / metrics.actualMinutes) * 100).toFixed(1)}%`
+				: 'N/A',
+			tokens: metrics.totalTokens,
+			cost: `$${metrics.actualCost?.toFixed(4) || 'N/A'}`,
+			firstPassSuccess: metrics.firstPassSuccess,
+			iterations: metrics.iterationCount,
+			...context
+		});
+
+		// Optionally send to dedicated AI metrics endpoint
+		// This allows NeuroForge to track AI performance separately
+		try {
+			const response = await fetch(`${this.baseUrl}/learning/ai-metrics`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					taskId,
+					metrics,
+					context,
+					recordedAt: new Date().toISOString()
+				})
+			});
+
+			if (!response.ok) {
+				console.warn('[LearningLoop] Failed to record AI metrics (non-critical)');
+			}
+		} catch (error) {
+			// Silent fail - AI metrics recording is supplementary
+			console.debug('[LearningLoop] AI metrics endpoint not available (optional feature)');
+		}
 	}
 }
