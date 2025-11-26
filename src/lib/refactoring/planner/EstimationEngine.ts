@@ -4,7 +4,7 @@
  * Refines time estimates using historical data and learning
  */
 
-import type { RefactoringTask, RefactoringPhase } from '../types/planning';
+import type { RefactoringTask, RefactoringPhase, TaskCategory } from '../types/planning';
 import type { TaskRecommendation } from '../types/learning';
 
 /**
@@ -38,9 +38,14 @@ export class EstimationEngine {
 					learnedEstimate * confidence + currentEstimate * (1 - confidence)
 				);
 
+				// Also update AI estimate based on refined human estimate
+				const refinedAIEstimate = this.convertHoursToAIMinutes(refinedEstimate, task.category);
+
 				return {
 					...task,
-					estimatedHours: refinedEstimate
+					estimatedHours: refinedEstimate,
+					estimatedMinutesAI: refinedAIEstimate,
+					aiEstimateConfidence: confidence
 				};
 			}
 
@@ -126,5 +131,86 @@ export class EstimationEngine {
 		};
 
 		return Math.round(estimate * bufferMultipliers[complexity]);
+	}
+
+	/**
+	 * AI Estimation Methods
+	 * Convert human hours to AI minutes based on task category speed multipliers
+	 */
+
+	/**
+	 * Converts human hours to AI minutes based on task category
+	 * AI speed multipliers: testing=8x, type-safety=12x, code-quality=10x, architecture=6x, documentation=15x
+	 */
+	convertHoursToAIMinutes(hours: number, category: TaskCategory): number {
+		const speedMultipliers: Record<TaskCategory, number> = {
+			'testing': 8,
+			'type-safety': 12,
+			'code-quality': 10,
+			'architecture': 6,
+			'documentation': 15
+		};
+
+		const multiplier = speedMultipliers[category];
+		return Math.ceil((hours * 60) / multiplier);
+	}
+
+	/**
+	 * Converts AI minutes back to human hours (for comparison/reporting)
+	 */
+	convertAIMinutesToHours(minutes: number, category: TaskCategory): number {
+		const speedMultipliers: Record<TaskCategory, number> = {
+			'testing': 8,
+			'type-safety': 12,
+			'code-quality': 10,
+			'architecture': 6,
+			'documentation': 15
+		};
+
+		const multiplier = speedMultipliers[category];
+		return (minutes * multiplier) / 60;
+	}
+
+	/**
+	 * Refines AI estimates using learning data
+	 * Similar to refineTaskEstimates but for AI-specific timing
+	 */
+	refineAIEstimates(
+		tasks: RefactoringTask[],
+		recommendations: TaskRecommendation[] = []
+	): RefactoringTask[] {
+		return tasks.map((task) => {
+			const recommendation = this.findMatchingRecommendation(task, recommendations);
+
+			if (recommendation && recommendation.estimate) {
+				// Convert learned human estimate to AI minutes
+				const learnedAIMinutes = this.convertHoursToAIMinutes(
+					recommendation.estimate.hours,
+					task.category
+				);
+				const currentAIEstimate = task.estimatedMinutesAI;
+				const confidence = recommendation.confidence;
+
+				// Blend learned and current AI estimates based on confidence
+				const refinedAIEstimate = Math.ceil(
+					learnedAIMinutes * confidence + currentAIEstimate * (1 - confidence)
+				);
+
+				return {
+					...task,
+					estimatedMinutesAI: refinedAIEstimate,
+					aiEstimateConfidence: confidence
+				};
+			}
+
+			return task;
+		});
+	}
+
+	/**
+	 * Calculates total estimated AI minutes for all tasks
+	 */
+	calculateTotalAIEstimate(tasks: RefactoringTask[]): number {
+		return tasks.reduce((sum, task) => sum + task.estimatedMinutesAI, 0);
 	}
 }
