@@ -581,12 +581,14 @@ describe('Additional Coverage Tests', () => {
 				...createMockAnalysis().structure,
 				files: [
 					{
+						path: '/project/src/temp/test.ts',
 						relativePath: 'src/temp/test.ts',
-						name: 'test.ts',
 						extension: 'ts',
 						type: 'typescript' as const,
 						size: 100,
-						lines: 10
+						lines: 10,
+						isTest: false,
+						lastModified: new Date().toISOString()
 					}
 				]
 			}
