@@ -118,4 +118,5 @@ export interface GateVerificationResult {
 		actual: number | boolean | string;
 		message: string;
 	}[];
+	summary?: string; // Optional summary of the verification
 }

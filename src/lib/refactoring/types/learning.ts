@@ -27,6 +27,7 @@ export interface RefactoringOutcome {
 	skippedTasks: number;
 
 	plannedHours: number;
+	estimatedHours: number; // Alias for plannedHours
 	actualHours: number;
 	variance: number; // Percentage difference
 
@@ -35,6 +36,10 @@ export interface RefactoringOutcome {
 	coverageAfter: number;
 	typeErrorsBefore: number;
 	typeErrorsAfter: number;
+	qualityScoreBefore: number;
+	qualityScoreAfter: number;
+	todosBefore: number;
+	todosAfter: number;
 
 	// Success metrics
 	allTestsPassed: boolean;
@@ -42,11 +47,15 @@ export interface RefactoringOutcome {
 	noRegressions: boolean;
 	gatesPassed: number;
 	gatesFailed: number;
+	totalGates: number;
 
 	// Overall outcome
 	rating: OutcomeRating;
 	success: boolean;
 	userSatisfaction?: number; // 1-5 rating from user
+
+	// Estimation feedback
+	estimationFeedback?: EstimationFeedback;
 
 	notes?: string;
 	lessonsLearned?: string[];
@@ -91,6 +100,12 @@ export interface TaskRecommendation {
 		category: string;
 		priority: string;
 	};
+
+	// Legacy properties for backward compatibility
+	taskCategory: string;
+	taskPattern: string;
+	suggestedEstimateHours: number;
+	confidence: number; // 0-1
 
 	estimate: {
 		hours: number;

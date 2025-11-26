@@ -43,20 +43,26 @@ export class TaskGenerator {
 	private generateFromIssues(issues: DetectedIssue[]): Omit<RefactoringTask, 'id' | 'createdAt'>[] {
 		return issues.map((issue) => {
 			const priority = this.issueSeverityToPriority(issue.severity);
+			const acceptanceCriteria = [
+				issue.suggestion || 'Issue resolved',
+				'All tests passing',
+				'TypeScript compilation successful'
+			];
 
 			return {
+				phase: 0, // Will be assigned by PhaseGenerator
 				title: issue.title,
 				description: issue.description,
+				rationale: issue.description,
 				category: issue.category,
 				priority,
 				estimatedHours: this.estimateHoursFromIssue(issue),
 				dependencies: [],
+				files: issue.files,
 				affectedFiles: issue.files,
-				acceptanceCriteria: [
-					issue.suggestion || 'Issue resolved',
-					'All tests passing',
-					'TypeScript compilation successful'
-				],
+				acceptance: acceptanceCriteria,
+				acceptanceCriteria,
+				autoExecutable: issue.autoFixable,
 				status: 'pending' as const
 			};
 		});
@@ -73,91 +79,121 @@ export class TaskGenerator {
 		// Low test coverage
 		if (metrics.testCoverage.lines < 80) {
 			const coverageGap = 80 - metrics.testCoverage.lines;
+			const acceptanceCriteria = [
+				'Test coverage ≥ 80%',
+				'All new tests passing',
+				'Existing tests still passing'
+			];
 			tasks.push({
+				phase: 0,
 				title: 'Increase Test Coverage',
 				description: `Current coverage is ${metrics.testCoverage.lines}%. Need to reach 80% minimum.`,
+				rationale: `Coverage gap of ${coverageGap}% needs to be addressed to meet quality standards`,
 				category: 'testing',
 				priority: 'high',
 				estimatedHours: Math.ceil(coverageGap / 5), // 1 hour per 5% coverage
 				dependencies: [],
+				files: metrics.testCoverage.uncoveredFiles,
 				affectedFiles: metrics.testCoverage.uncoveredFiles,
-				acceptanceCriteria: [
-					'Test coverage ≥ 80%',
-					'All new tests passing',
-					'Existing tests still passing'
-				],
+				acceptance: acceptanceCriteria,
+				acceptanceCriteria,
+				autoExecutable: false,
 				status: 'pending'
 			});
 		}
 
 		// Failing tests
 		if (metrics.testCoverage.failingTests > 0) {
+			const acceptanceCriteria = ['All tests passing', 'No test failures'];
 			tasks.push({
+				phase: 0,
 				title: 'Fix Failing Tests',
 				description: `${metrics.testCoverage.failingTests} tests are currently failing`,
+				rationale: 'Failing tests indicate broken functionality that must be fixed',
 				category: 'testing',
 				priority: 'critical',
 				estimatedHours: metrics.testCoverage.failingTests * 0.5,
 				dependencies: [],
+				files: [],
 				affectedFiles: [],
-				acceptanceCriteria: ['All tests passing', 'No test failures'],
+				acceptance: acceptanceCriteria,
+				acceptanceCriteria,
+				autoExecutable: false,
 				status: 'pending'
 			});
 		}
 
 		// Type errors
 		if (metrics.typeSafety.typeErrorCount > 0) {
+			const acceptanceCriteria = [
+				'Zero TypeScript errors',
+				'Strict mode enabled',
+				'All files compile successfully'
+			];
 			tasks.push({
+				phase: 0,
 				title: 'Fix TypeScript Errors',
 				description: `${metrics.typeSafety.typeErrorCount} TypeScript compilation errors`,
+				rationale: 'Type errors prevent safe refactoring and must be resolved first',
 				category: 'type-safety',
 				priority: 'critical',
 				estimatedHours: metrics.typeSafety.typeErrorCount * 0.25,
 				dependencies: [],
+				files: [],
 				affectedFiles: [],
-				acceptanceCriteria: [
-					'Zero TypeScript errors',
-					'Strict mode enabled',
-					'All files compile successfully'
-				],
+				acceptance: acceptanceCriteria,
+				acceptanceCriteria,
+				autoExecutable: false,
 				status: 'pending'
 			});
 		}
 
 		// Missing strict mode
 		if (!metrics.typeSafety.strictMode) {
+			const acceptanceCriteria = [
+				'strict: true in tsconfig.json',
+				'All files compile with strict mode',
+				'No new type errors introduced'
+			];
 			tasks.push({
+				phase: 0,
 				title: 'Enable TypeScript Strict Mode',
 				description: 'Enable strict mode for better type safety',
+				rationale: 'Strict mode catches more type errors and improves code quality',
 				category: 'type-safety',
 				priority: 'high',
 				estimatedHours: 4,
 				dependencies: ['fix-typescript-errors'], // Must fix errors first
+				files: ['tsconfig.json'],
 				affectedFiles: ['tsconfig.json'],
-				acceptanceCriteria: [
-					'strict: true in tsconfig.json',
-					'All files compile with strict mode',
-					'No new type errors introduced'
-				],
+				acceptance: acceptanceCriteria,
+				acceptanceCriteria,
+				autoExecutable: false,
 				status: 'pending'
 			});
 		}
 
 		// Excessive TODOs
 		if (metrics.quality.todoCount > 50) {
+			const acceptanceCriteria = [
+				'TODO count < 50',
+				'Critical TODOs addressed',
+				'Outdated TODOs removed'
+			];
 			tasks.push({
+				phase: 0,
 				title: 'Reduce TODO Comments',
 				description: `${metrics.quality.todoCount} TODO comments should be addressed or removed`,
+				rationale: 'Excessive TODOs indicate incomplete work and technical debt',
 				category: 'code-quality',
 				priority: 'medium',
 				estimatedHours: Math.ceil(metrics.quality.todoCount / 10),
 				dependencies: [],
+				files: [],
 				affectedFiles: [],
-				acceptanceCriteria: [
-					'TODO count < 50',
-					'Critical TODOs addressed',
-					'Outdated TODOs removed'
-				],
+				acceptance: acceptanceCriteria,
+				acceptanceCriteria,
+				autoExecutable: false,
 				status: 'pending'
 			});
 		}

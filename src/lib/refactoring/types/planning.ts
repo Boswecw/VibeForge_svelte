@@ -23,6 +23,7 @@ export interface RefactoringTask {
 	category: TaskCategory;
 	priority: TaskPriority;
 	status: TaskStatus;
+	createdAt: string;
 
 	title: string;
 	description: string;
@@ -32,10 +33,12 @@ export interface RefactoringTask {
 	actualHours?: number;
 
 	files: string[];
+	affectedFiles: string[]; // Legacy alias for files
 	dependencies: string[]; // Task IDs that must complete first
 	blockedBy?: string[]; // Issue IDs blocking this task
 
 	acceptance: string[]; // Acceptance criteria (bullets)
+	acceptanceCriteria: string[]; // Legacy alias for acceptance
 	commands?: string[]; // Verification commands
 
 	autoExecutable: boolean;
@@ -43,9 +46,12 @@ export interface RefactoringTask {
 }
 
 export interface RefactoringPhase {
+	id: string;
 	phase: number;
+	number: number; // Legacy alias for phase
 	name: string;
 	description: string;
+	required: boolean;
 
 	tasks: RefactoringTask[];
 	gate: QualityGate;
@@ -88,6 +94,9 @@ export interface RefactoringPlan {
 
 	phases: RefactoringPhase[];
 	estimate: CostEstimate;
+	totalEstimatedHours: number;
+	prompts: ClaudePromptDocument[];
+	qualityGates: QualityGate[];
 
 	riskFactors: {
 		factor: string;
@@ -122,6 +131,9 @@ export interface PlanTemplate {
 }
 
 export interface ClaudePromptDocument {
+	taskId: string;
+	title: string;
+	content: string;
 	plan: RefactoringPlan;
 	phase: number;
 	generatedAt: string;
