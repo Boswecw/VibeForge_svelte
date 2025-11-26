@@ -1,5 +1,6 @@
 <script lang="ts">
   import { theme } from "$lib/stores/themeStore";
+  import { runsStore } from "$lib/core/stores/runs.svelte";
   import QuickRunHeader from "$lib/components/quickrun/QuickRunHeader.svelte";
   import QuickRunForm from "$lib/components/quickrun/QuickRunForm.svelte";
   import QuickRunOutputs from "$lib/components/quickrun/QuickRunOutputs.svelte";
@@ -92,38 +93,48 @@
     }
 
     isLoading = true;
+    const newOutputs: QuickOutput[] = [];
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    try {
+      // Execute prompt on each selected model
+      for (const modelId of activeModelIds) {
+        try {
+          const result = await runsStore.execute(prompt, modelId, selectedContextIds);
 
-    // Generate mock outputs
-    const newOutputs: QuickOutput[] = activeModelIds.map((modelId, idx) => {
-      const metadata = modelMetadata[modelId] || {
-        tokensPerRun: 150,
-        costPerKTokens: 0.003,
-      };
-      const tokens = metadata.tokensPerRun + Math.floor(Math.random() * 50);
-      const cost = (tokens / 1000) * metadata.costPerKTokens;
+          const metadata = modelMetadata[modelId] || {
+            tokensPerRun: 150,
+            costPerKTokens: 0.003,
+          };
+          const cost = (result.usage.total_tokens / 1000) * metadata.costPerKTokens;
 
-      return {
-        id: `output-${modelId}-${Date.now()}`,
-        model: modelLabels[modelId] || modelId,
-        text: mockResponses[modelId] || "Model response not available.",
-        tokens,
-        cost,
-      };
-    });
+          newOutputs.push({
+            id: result.run_id,
+            model: modelLabels[modelId] || modelId,
+            text: result.output,
+            tokens: result.usage.total_tokens,
+            cost,
+          });
+        } catch (err) {
+          console.error(`Failed to execute on ${modelId}:`, err);
+          // Add error output
+          newOutputs.push({
+            id: `error-${modelId}-${Date.now()}`,
+            model: modelLabels[modelId] || modelId,
+            text: `Error: ${err instanceof Error ? err.message : 'Execution failed'}`,
+            tokens: 0,
+            cost: 0,
+          });
+        }
+      }
 
-    outputs = newOutputs;
+      outputs = newOutputs;
 
-    // Update metrics
-    lastRunTokens = newOutputs.reduce((sum, o) => sum + o.tokens, 0);
-    lastRunCost = newOutputs.reduce((sum, o) => sum + o.cost, 0);
-
-    isLoading = false;
-
-    // TODO: Replace mock outputs with real API call to run selected models
-    // TODO: Persist lastRunTokens/lastRunCost to metrics backend
+      // Update metrics
+      lastRunTokens = newOutputs.reduce((sum, o) => sum + o.tokens, 0);
+      lastRunCost = newOutputs.reduce((sum, o) => sum + o.cost, 0);
+    } finally {
+      isLoading = false;
+    }
   };
 
   const resetQuickRun = () => {

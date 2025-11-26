@@ -9,9 +9,77 @@
 
 import type {
   ContextBlock,
+  Workspace,
   ApiResponse,
   PaginatedResponse,
 } from "$lib/core/types";
+
+const DATAFORGE_BASE_URL =
+  import.meta.env.VITE_DATAFORGE_URL || "http://localhost:8001";
+const API_VERSION = "v1";
+
+function getApiUrl(path: string): string {
+  return `${DATAFORGE_BASE_URL}/api/${API_VERSION}${path}`;
+}
+
+function getHeaders(): HeadersInit {
+  return {
+    "Content-Type": "application/json",
+    // TODO: Add authentication when available
+  };
+}
+
+// ============================================================================
+// WORKSPACE OPERATIONS
+// ============================================================================
+
+export interface CreateWorkspaceRequest {
+  name: string;
+  description?: string;
+  context_ids?: string[];
+  model_ids?: string[];
+  settings?: Record<string, unknown>;
+}
+
+export async function listWorkspaces(): Promise<Workspace[]> {
+  const response = await fetch(getApiUrl("/workspaces"), {
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) throw new Error("Failed to fetch workspaces");
+  return response.json();
+}
+
+export async function createWorkspace(data: CreateWorkspaceRequest): Promise<Workspace> {
+  const response = await fetch(getApiUrl("/workspaces"), {
+    method: "POST",
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) throw new Error("Failed to create workspace");
+  return response.json();
+}
+
+export async function updateWorkspace(id: string, data: Partial<CreateWorkspaceRequest>): Promise<Workspace> {
+  const response = await fetch(getApiUrl(`/workspaces/${id}`), {
+    method: "PATCH",
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) throw new Error("Failed to update workspace");
+  return response.json();
+}
+
+export async function deleteWorkspace(id: string): Promise<void> {
+  const response = await fetch(getApiUrl(`/workspaces/${id}`), {
+    method: "DELETE",
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) throw new Error("Failed to delete workspace");
+}
 
 // ============================================================================
 // CONTEXT BLOCK OPERATIONS
@@ -213,6 +281,51 @@ export async function deleteContextBlock(
   };
 }
 
+// Simplified context operations (Refactoring Plan Compatible)
+export interface CreateContextRequest {
+  name: string;
+  type: ContextBlock['kind'];
+  content: string;
+  metadata?: Record<string, unknown>;
+}
+
+export async function listContexts(): Promise<ContextBlock[]> {
+  const result = await listContextBlocks();
+  if (!result.success || !result.data) {
+    throw new Error(result.error?.message || 'Failed to fetch contexts');
+  }
+  return result.data.items;
+}
+
+export async function createContext(data: CreateContextRequest): Promise<ContextBlock> {
+  const result = await createContextBlock({
+    title: data.name,
+    kind: data.type,
+    content: data.content,
+    description: '',
+    tags: [],
+    isActive: false,
+    source: 'local',
+  });
+
+  if (!result.success || !result.data) {
+    throw new Error(result.error?.message || 'Failed to create context');
+  }
+  return result.data;
+}
+
+export async function searchContexts(query: string): Promise<ContextBlock[]> {
+  const result = await searchContextBlocks({
+    query,
+    limit: 20,
+  });
+
+  if (!result.success || !result.data) {
+    throw new Error(result.error?.message || 'Search failed');
+  }
+  return result.data;
+}
+
 // ============================================================================
 // SEARCH OPERATIONS
 // ============================================================================
@@ -268,9 +381,6 @@ export async function searchContextBlocks(
 // ============================================================================
 // RUN LOGGING
 // ============================================================================
-
-const DATAFORGE_BASE_URL =
-  import.meta.env.VITE_DATAFORGE_URL || "http://localhost:8001";
 
 export interface LogRunRequest {
   userId: string;
