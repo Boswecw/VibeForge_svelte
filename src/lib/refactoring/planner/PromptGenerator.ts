@@ -16,7 +16,11 @@ export class PromptGenerator {
 	/**
 	 * Generates a prompt for a single task
 	 */
-	generateTaskPrompt(task: RefactoringTask, standards: QualityStandards): ClaudePromptDocument {
+	generateTaskPrompt(
+		task: RefactoringTask,
+		standards: QualityStandards,
+		plan?: import('../types/planning').RefactoringPlan
+	): ClaudePromptDocument {
 		const content = `# Refactoring Task: ${task.title}
 
 ## Objective
@@ -78,11 +82,30 @@ ${task.estimatedHours} hour${task.estimatedHours > 1 ? 's' : ''}
 **Note**: This is a generated prompt for automated refactoring. Follow the guidelines strictly.
 `;
 
+		const verificationCommands = [
+			'pnpm check', // TypeScript compilation
+			'pnpm test' // All tests
+		];
+
+		if (task.commands) {
+			verificationCommands.push(...task.commands);
+		}
+
 		return {
 			taskId: task.id,
 			title: task.title,
 			content,
-			generatedAt: new Date().toISOString()
+			plan: plan as any, // Circular reference - will be set by planner
+			phase: task.phase,
+			generatedAt: new Date().toISOString(),
+			prompt: content, // Same as content
+			context: {
+				codebaseInfo: `Tech stack: ${standards.preset} standards`,
+				currentState: `Task ${task.id} in phase ${task.phase}`,
+				goals: task.acceptanceCriteria.join('; '),
+				constraints: 'Maintain backward compatibility, no breaking changes'
+			},
+			commands: verificationCommands
 		};
 	}
 
@@ -91,9 +114,10 @@ ${task.estimatedHours} hour${task.estimatedHours > 1 ? 's' : ''}
 	 */
 	generatePhasePrompts(
 		phase: RefactoringPhase,
-		standards: QualityStandards
+		standards: QualityStandards,
+		plan?: import('../types/planning').RefactoringPlan
 	): ClaudePromptDocument[] {
-		return phase.tasks.map((task) => this.generateTaskPrompt(task, standards));
+		return phase.tasks.map((task) => this.generateTaskPrompt(task, standards, plan));
 	}
 
 	/**
@@ -158,7 +182,17 @@ ${phase.tasks.map((task, j) => `${j + 1}. [${task.priority.toUpperCase()}] ${tas
 			taskId: 'plan-summary',
 			title: 'Refactoring Plan Summary',
 			content,
-			generatedAt: new Date().toISOString()
+			plan: undefined as any, // Will be set by planner
+			phase: 0, // Summary is not phase-specific
+			generatedAt: new Date().toISOString(),
+			prompt: content,
+			context: {
+				codebaseInfo: `${phases.length} phases, ${totalTasks} tasks`,
+				currentState: 'Planning phase',
+				goals: `Meet ${standards.name} quality standards`,
+				constraints: 'Follow execution guidelines strictly'
+			},
+			commands: ['pnpm check', 'pnpm test']
 		};
 	}
 }

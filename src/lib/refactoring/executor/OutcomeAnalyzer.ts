@@ -33,6 +33,8 @@ export class OutcomeAnalyzer {
 		const rating = this.determineRating(executionMetrics, qualityImprovements, successMetrics);
 		const success = this.determineSuccess(rating, successMetrics);
 
+		const estimationFeedback = this.generateEstimationFeedback(project);
+
 		return {
 			id: `outcome-${Date.now()}`,
 			projectId: project.id,
@@ -51,6 +53,7 @@ export class OutcomeAnalyzer {
 			skippedTasks: executionMetrics.skippedTasks,
 
 			plannedHours: project.plan.totalEstimatedHours,
+			estimatedHours: project.plan.totalEstimatedHours, // Legacy alias
 			actualHours: executionMetrics.actualHours,
 			variance: executionMetrics.variance,
 
@@ -60,16 +63,25 @@ export class OutcomeAnalyzer {
 			typeErrorsBefore: initialAnalysis.metrics.typeSafety.typeErrorCount,
 			typeErrorsAfter: finalAnalysis.metrics.typeSafety.typeErrorCount,
 
+			qualityScoreBefore: initialAnalysis.summary.score,
+			qualityScoreAfter: finalAnalysis.summary.score,
+			todosBefore: initialAnalysis.metrics.quality.todoCount,
+			todosAfter: finalAnalysis.metrics.quality.todoCount,
+
 			// Success metrics
 			allTestsPassed: successMetrics.allTestsPassed,
 			buildSucceeded: successMetrics.buildSucceeded,
 			noRegressions: successMetrics.noRegressions,
 			gatesPassed: successMetrics.gatesPassed,
 			gatesFailed: successMetrics.gatesFailed,
+			totalGates: successMetrics.gatesPassed + successMetrics.gatesFailed,
 
 			// Overall outcome
 			rating,
-			success
+			success,
+
+			// Learning feedback
+			estimationFeedback
 		};
 	}
 

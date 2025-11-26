@@ -88,16 +88,40 @@ export class RefactoringPlanner {
 		}
 
 		// Step 7: Create plan
-		return {
+		const createdAt = new Date().toISOString();
+		const totalTasks = tasks.length;
+		const qualityGates = phases.map((p) => p.gate);
+
+		const plan: RefactoringPlan = {
 			id: this.generatePlanId(),
 			analysisId: analysis.id,
 			standardsId: config.standards.id,
-			createdAt: new Date().toISOString(),
+			createdAt,
+			updatedAt: createdAt,
+
+			name: `Refactoring Plan for ${analysis.techStack.framework} Project`,
+			description: `Comprehensive refactoring plan to improve code quality from ${analysis.summary.health} to ${config.standards.preset} standards`,
+			goals: this.generateGoals(analysis, config.standards),
+
 			phases,
+			estimate: this.createCostEstimate(bufferedTotalHours),
 			totalEstimatedHours: bufferedTotalHours,
 			prompts,
+			qualityGates,
+
+			riskFactors: this.identifyRiskFactors(analysis, totalTasks),
+			prerequisites: ['Git repository with clean working tree', 'All tests passing before starting'],
+			deliverables: ['Refactored codebase', 'Updated tests', 'Quality metrics report'],
+
 			status: 'draft'
 		};
+
+		// Fix circular reference: update prompts to reference the plan
+		for (const prompt of prompts) {
+			prompt.plan = plan;
+		}
+
+		return plan;
 	}
 
 	/**
@@ -145,5 +169,107 @@ export class RefactoringPlanner {
 			valid: errors.length === 0,
 			errors
 		};
+	}
+
+	/**
+	 * Generates goals for the refactoring plan
+	 */
+	private generateGoals(analysis: CodebaseAnalysis, standards: QualityStandards): string[] {
+		const goals: string[] = [];
+
+		// Test coverage goal
+		if (analysis.metrics.testCoverage.lines < standards.testing.minimumCoverage) {
+			goals.push(`Achieve ${standards.testing.minimumCoverage}% test coverage`);
+		}
+
+		// Type safety goal
+		if (analysis.metrics.typeSafety.typeErrorCount > 0) {
+			goals.push('Eliminate all TypeScript compilation errors');
+		}
+
+		if (!analysis.metrics.typeSafety.strictMode && standards.typeSafety.requireStrictMode) {
+			goals.push('Enable TypeScript strict mode');
+		}
+
+		// Code quality goal
+		if (analysis.metrics.quality.todoCount > standards.codeQuality.maxTodoCount) {
+			goals.push(`Reduce TODO comments to under ${standards.codeQuality.maxTodoCount}`);
+		}
+
+		// General quality improvement
+		goals.push(`Improve overall code health from ${analysis.summary.health} to ${standards.preset} standards`);
+
+		return goals;
+	}
+
+	/**
+	 * Creates a cost estimate breakdown
+	 */
+	private createCostEstimate(totalHours: number): import('../types/planning').CostEstimate {
+		const developmentHours = totalHours * 0.6; // 60% development
+		const testingHours = totalHours * 0.25; // 25% testing
+		const reviewHours = totalHours * 0.15; // 15% review
+
+		return {
+			developmentHours,
+			testingHours,
+			reviewHours,
+			totalHours,
+			weekEstimate: Math.ceil(totalHours / 40),
+			assumptions: [
+				'40-hour work week',
+				'Experienced developer familiar with codebase',
+				'No major blockers or external dependencies',
+				'Automated tools available for refactoring'
+			]
+		};
+	}
+
+	/**
+	 * Identifies risk factors based on analysis
+	 */
+	private identifyRiskFactors(
+		analysis: CodebaseAnalysis,
+		totalTasks: number
+	): { factor: string; impact: 'high' | 'medium' | 'low'; mitigation: string }[] {
+		const risks: { factor: string; impact: 'high' | 'medium' | 'low'; mitigation: string }[] = [];
+
+		// Large number of tasks
+		if (totalTasks > 50) {
+			risks.push({
+				factor: 'Large number of refactoring tasks',
+				impact: 'high',
+				mitigation: 'Break into smaller phases with quality gates between each'
+			});
+		}
+
+		// Failing tests
+		if (analysis.metrics.testCoverage.failingTests > 0) {
+			risks.push({
+				factor: 'Existing test failures',
+				impact: 'high',
+				mitigation: 'Fix all failing tests before starting refactoring'
+			});
+		}
+
+		// Low test coverage
+		if (analysis.metrics.testCoverage.lines < 50) {
+			risks.push({
+				factor: 'Low test coverage',
+				impact: 'high',
+				mitigation: 'Add tests incrementally during refactoring to catch regressions'
+			});
+		}
+
+		// Type errors
+		if (analysis.metrics.typeSafety.typeErrorCount > 10) {
+			risks.push({
+				factor: 'Many TypeScript errors',
+				impact: 'medium',
+				mitigation: 'Address type errors in early phases before other refactoring'
+			});
+		}
+
+		return risks;
 	}
 }
