@@ -75,7 +75,12 @@ ${task.affectedFiles.length > 0 ? task.affectedFiles.map((f) => `- ${f}`).join('
 - [ ] Changes committed to git
 
 ## Estimated Time
-${task.estimatedHours} hour${task.estimatedHours > 1 ? 's' : ''}
+
+**Human Estimate:** ${task.estimatedHours} hour${task.estimatedHours > 1 ? 's' : ''}
+**AI Estimate (Claude Code):** ${task.estimatedMinutesAI} minute${task.estimatedMinutesAI > 1 ? 's' : ''} (~${Math.round(task.estimatedHours / (task.estimatedMinutesAI / 60))}x faster)
+**Confidence:** ${Math.round(task.aiEstimateConfidence * 100)}%
+
+> 💡 AI execution is typically 8-15x faster than human execution due to parallel processing and instant code comprehension.
 
 ---
 
@@ -129,13 +134,23 @@ ${task.estimatedHours} hour${task.estimatedHours > 1 ? 's' : ''}
 	): ClaudePromptDocument {
 		const totalTasks = phases.reduce((sum, phase) => sum + phase.tasks.length, 0);
 		const totalHours = phases.reduce((sum, phase) => sum + phase.estimatedHours, 0);
+		const totalAIMinutes = phases.reduce(
+			(sum, phase) => sum + phase.tasks.reduce((taskSum, task) => taskSum + task.estimatedMinutesAI, 0),
+			0
+		);
 
 		const content = `# Refactoring Plan Summary
 
 ## Overview
 This refactoring plan consists of ${phases.length} phase${phases.length > 1 ? 's' : ''} with ${totalTasks} task${totalTasks > 1 ? 's' : ''}.
 
-**Total Estimated Time**: ${totalHours} hours (${Math.ceil(totalHours / 8)} working days)
+### Time Estimates
+
+**Human Execution:** ${totalHours} hours (${Math.ceil(totalHours / 8)} working days)
+**AI Execution (Claude Code):** ${totalAIMinutes} minutes (~${Math.round(totalAIMinutes / 60)} hours)
+**Speed Multiplier:** ~${Math.round(totalHours / (totalAIMinutes / 60))}x faster with AI
+
+> 💡 **Why AI is faster:** Claude Code executes tasks 8-15x faster through parallel code analysis, instant pattern matching, and elimination of context-switching delays.
 
 ## Quality Standards: ${standards.name}
 - Test Coverage: ${standards.testing.minimumCoverage}%
@@ -147,13 +162,17 @@ This refactoring plan consists of ${phases.length} phase${phases.length > 1 ? 's
 
 ${phases
 	.map(
-		(phase, i) => `### Phase ${phase.number}: ${phase.name}
+		(phase, i) => {
+			const phaseAIMinutes = phase.tasks.reduce((sum, task) => sum + task.estimatedMinutesAI, 0);
+			return `### Phase ${phase.number}: ${phase.name}
 **Status**: ${phase.required ? 'Required' : 'Optional'}
-**Estimated Time**: ${phase.estimatedHours} hours
+**Estimated Time (Human)**: ${phase.estimatedHours} hours
+**Estimated Time (AI)**: ${phaseAIMinutes} minutes
 **Tasks**: ${phase.tasks.length}
 
-${phase.tasks.map((task, j) => `${j + 1}. [${task.priority.toUpperCase()}] ${task.title} (${task.estimatedHours}h)`).join('\n')}
-`
+${phase.tasks.map((task, j) => `${j + 1}. [${task.priority.toUpperCase()}] ${task.title} (Human: ${task.estimatedHours}h | AI: ${task.estimatedMinutesAI}m)`).join('\n')}
+`;
+		}
 	)
 	.join('\n')}
 
