@@ -10,7 +10,7 @@
 Right panel: details, metadata, and actions for selected workspace
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
   import type { Workspace } from "$lib/types/workspace";
 
   interface Props {
@@ -44,7 +44,7 @@ Right panel: details, metadata, and actions for selected workspace
 <!-- Right panel: workspace detail or empty state -->
 <section
   class={`rounded-lg border p-4 flex flex-col gap-4 ${
-    $theme === "dark"
+    themeStore.current === "dark"
       ? "bg-slate-900 border-slate-700"
       : "bg-white border-slate-200 shadow-sm"
   }`}
@@ -53,20 +53,20 @@ Right panel: details, metadata, and actions for selected workspace
     <!-- Header with name and actions -->
     <header
       class="flex items-start justify-between gap-2 border-b pb-4"
-      class:border-slate-700={$theme === "dark"}
-      class:border-slate-200={$theme !== "dark"}
+      class:border-slate-700={themeStore.current === "dark"}
+      class:border-slate-200={themeStore.current !== "dark"}
     >
       <div class="flex flex-col gap-1">
         <h2
           class={`text-sm font-semibold ${
-            $theme === "dark" ? "text-slate-100" : "text-slate-900"
+            themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
           }`}
         >
           {workspace.name}
         </h2>
         <p
           class={`text-[11px] ${
-            $theme === "dark" ? "text-slate-400" : "text-slate-600"
+            themeStore.current === "dark" ? "text-slate-400" : "text-slate-600"
           }`}
         >
           {workspace.slug} · Created {formatDate(workspace.createdAt)} · Updated
@@ -76,7 +76,7 @@ Right panel: details, metadata, and actions for selected workspace
       <div class="flex flex-wrap gap-2 justify-end text-xs">
         <button
           class={`px-3 py-1.5 rounded-md border transition-colors ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "border-slate-600 text-slate-300 hover:bg-slate-800"
               : "border-slate-300 text-slate-600 hover:bg-slate-100"
           }`}
@@ -88,10 +88,10 @@ Right panel: details, metadata, and actions for selected workspace
         <button
           class={`px-3 py-1.5 rounded-md border transition-colors ${
             workspace.status === "active"
-              ? $theme === "dark"
+              ? themeStore.current === "dark"
                 ? "border-amber-500 text-amber-400 hover:bg-slate-800"
                 : "border-amber-600 text-amber-700 hover:bg-amber-50"
-              : $theme === "dark"
+              : themeStore.current === "dark"
               ? "border-slate-600 text-slate-400 hover:bg-slate-800"
               : "border-slate-300 text-slate-600 hover:bg-slate-100"
           }`}
@@ -109,7 +109,7 @@ Right panel: details, metadata, and actions for selected workspace
     <section class="flex flex-col gap-2">
       <p
         class={`text-xs ${
-          $theme === "dark" ? "text-slate-300" : "text-slate-700"
+          themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
         }`}
       >
         {workspace.description}
@@ -119,7 +119,7 @@ Right panel: details, metadata, and actions for selected workspace
           {#each workspace.tags as tag (tag)}
             <span
               class={`inline-flex items-center rounded-full border px-2 py-0.5 ${
-                $theme === "dark"
+                themeStore.current === "dark"
                   ? "border-slate-600 text-slate-300"
                   : "border-slate-300 text-slate-700"
               }`}
@@ -135,7 +135,7 @@ Right panel: details, metadata, and actions for selected workspace
     <section class="flex flex-col gap-2 text-xs">
       <h3
         class={`text-xs font-semibold ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Default models
@@ -144,7 +144,7 @@ Right panel: details, metadata, and actions for selected workspace
         {#each workspace.models as model (model)}
           <span
             class={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "border-slate-600 text-slate-300"
                 : "border-slate-300 text-slate-700"
             }`}
@@ -156,14 +156,14 @@ Right panel: details, metadata, and actions for selected workspace
 
       <h3
         class={`text-xs font-semibold mt-3 ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Evaluation defaults
       </h3>
       <p
         class={`text-[11px] ${
-          $theme === "dark" ? "text-slate-400" : "text-slate-600"
+          themeStore.current === "dark" ? "text-slate-400" : "text-slate-600"
         }`}
       >
         Scale: {workspace.settings.defaultEvaluationScale} ·
@@ -177,14 +177,14 @@ Right panel: details, metadata, and actions for selected workspace
     <section class="flex flex-col gap-2 text-xs">
       <h3
         class={`text-xs font-semibold ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Activity
       </h3>
       <p
         class={`text-[11px] ${
-          $theme === "dark" ? "text-slate-400" : "text-slate-600"
+          themeStore.current === "dark" ? "text-slate-400" : "text-slate-600"
         }`}
       >
         {workspace.stats.totalRuns} runs total
@@ -196,7 +196,7 @@ Right panel: details, metadata, and actions for selected workspace
       <div class="flex flex-wrap gap-2">
         <button
           class={`px-3 py-1.5 rounded-md border transition-colors ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "border-slate-600 text-slate-300 hover:bg-slate-800"
               : "border-slate-300 text-slate-600 hover:bg-slate-100"
           }`}
@@ -207,7 +207,7 @@ Right panel: details, metadata, and actions for selected workspace
         </button>
         <button
           class={`px-3 py-1.5 rounded-md border transition-colors ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "border-slate-600 text-slate-300 hover:bg-slate-800"
               : "border-slate-300 text-slate-600 hover:bg-slate-100"
           }`}
@@ -223,7 +223,7 @@ Right panel: details, metadata, and actions for selected workspace
     <section class="flex flex-col gap-2 text-xs">
       <label
         class={`inline-flex items-center gap-2 text-[11px] cursor-pointer ${
-          $theme === "dark" ? "text-slate-300" : "text-slate-700"
+          themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
         }`}
       >
         <input
@@ -239,7 +239,7 @@ Right panel: details, metadata, and actions for selected workspace
     <!-- Danger zone -->
     <section
       class={`mt-2 rounded-md border px-3 py-2 text-[11px] ${
-        $theme === "dark"
+        themeStore.current === "dark"
           ? "border-rose-500/50 bg-rose-950/40 text-rose-200"
           : "border-rose-300 bg-rose-50 text-rose-700"
       }`}
@@ -251,7 +251,7 @@ Right panel: details, metadata, and actions for selected workspace
       </p>
       <button
         class={`mt-2 px-3 py-1.5 rounded-md border transition-colors ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "border-rose-500 text-rose-400 hover:bg-rose-900/40"
             : "border-rose-500 text-rose-600 hover:bg-rose-100"
         }`}
@@ -266,7 +266,7 @@ Right panel: details, metadata, and actions for selected workspace
     <div class="flex items-center justify-center h-64">
       <p
         class={`text-sm ${
-          $theme === "dark" ? "text-slate-400" : "text-slate-500"
+          themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
         }`}
       >
         Select a workspace from the list to view its details, or create a new

@@ -5,7 +5,7 @@
   import ContextDetailPanel from "$lib/components/context/ContextDetailPanel.svelte";
   import UploadIngestModal from "$lib/components/ingest/UploadIngestModal.svelte";
   import IngestQueuePanel from "$lib/components/ingest/IngestQueuePanel.svelte";
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   // Mock context block type definitions
   type ContextType =
@@ -423,7 +423,7 @@ before the main instruction.`,
     <!-- Ingest Queue Panel (below library UI) -->
     {#if ingestQueue.length > 0}
       <div
-        class="mt-8 border-t {$theme === 'dark'
+        class="mt-8 border-t {themeStore.current === 'dark'
           ? 'border-slate-700'
           : 'border-slate-200'} pt-6"
       >

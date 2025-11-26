@@ -8,7 +8,7 @@
 no description yet
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
   import { pinnedPresets, allPresets, presets } from "$lib/stores/presets";
   import type { Preset } from "$lib/stores/presets";
   import PresetsHeader from "./PresetsHeader.svelte";
@@ -64,7 +64,7 @@ no description yet
     <!-- Drawer panel -->
     <aside
       class={`w-full max-w-md h-full border-l flex flex-col ${
-        $theme === "dark"
+        themeStore.current === "dark"
           ? "bg-slate-950 border-slate-800"
           : "bg-white border-slate-200"
       }`}
@@ -78,7 +78,7 @@ no description yet
           class={`px-3 py-1.5 rounded-full border transition-colors ${
             activeTab === "pinned"
               ? "bg-amber-500 text-slate-900 border-amber-500 font-medium"
-              : $theme === "dark"
+              : themeStore.current === "dark"
               ? "bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800 hover:border-slate-600"
               : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300"
           }`}
@@ -90,7 +90,7 @@ no description yet
           class={`px-3 py-1.5 rounded-full border transition-colors ${
             activeTab === "all"
               ? "bg-amber-500 text-slate-900 border-amber-500 font-medium"
-              : $theme === "dark"
+              : themeStore.current === "dark"
               ? "bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800 hover:border-slate-600"
               : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300"
           }`}

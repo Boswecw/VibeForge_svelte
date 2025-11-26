@@ -2,7 +2,7 @@
 no description yet
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   let historyRetention = $state("30d");
   let allowRawOutputs = $state(true);
@@ -28,7 +28,7 @@ no description yet
 <!-- Data & Privacy section -->
 <section
   class={`rounded-lg border p-4 flex flex-col gap-3 transition-colors ${
-    $theme === "dark"
+    themeStore.current === "dark"
       ? "bg-slate-900 border-slate-700"
       : "bg-white border-slate-200 shadow-sm"
   }`}
@@ -36,14 +36,14 @@ no description yet
   <div class="flex flex-col gap-1">
     <h2
       class={`text-sm font-semibold ${
-        $theme === "dark" ? "text-slate-100" : "text-slate-900"
+        themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
       }`}
     >
       Data & Privacy
     </h2>
     <p
       class={`text-xs ${
-        $theme === "dark" ? "text-slate-400" : "text-slate-500"
+        themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
       }`}
     >
       Manage data retention, exports, and deletion.
@@ -55,7 +55,7 @@ no description yet
     <div class="flex flex-col gap-1.5">
       <label
         class={`text-xs font-medium ${
-          $theme === "dark" ? "text-slate-300" : "text-slate-700"
+          themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
         }`}
       >
         Keep Run History
@@ -63,7 +63,7 @@ no description yet
       <select
         bind:value={historyRetention}
         class={`border rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "bg-slate-950 border-slate-700 text-slate-100"
             : "bg-slate-50 border-slate-200 text-slate-900"
         }`}
@@ -74,7 +74,7 @@ no description yet
       </select>
       <p
         class={`text-[11px] ${
-          $theme === "dark" ? "text-slate-500" : "text-slate-600"
+          themeStore.current === "dark" ? "text-slate-500" : "text-slate-600"
         }`}
       >
         Older runs will be automatically deleted based on your selection.
@@ -82,7 +82,7 @@ no description yet
       <!-- TODO comment -->
       <p
         class={`text-[10px] ${
-          $theme === "dark" ? "text-slate-700" : "text-slate-400"
+          themeStore.current === "dark" ? "text-slate-700" : "text-slate-400"
         }`}
       >
         💾 TODO: Implement retention policy and auto-cleanup
@@ -92,20 +92,20 @@ no description yet
     <!-- Raw outputs toggle -->
     <div
       class="flex items-center justify-between gap-2 border-t pt-3"
-      class:border-slate-700={$theme === "dark"}
-      class:border-slate-200={$theme !== "dark"}
+      class:border-slate-700={themeStore.current === "dark"}
+      class:border-slate-200={themeStore.current !== "dark"}
     >
       <div>
         <label
           class={`text-xs font-medium ${
-            $theme === "dark" ? "text-slate-300" : "text-slate-700"
+            themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
           }`}
         >
           Store Raw Outputs
         </label>
         <p
           class={`text-[11px] ${
-            $theme === "dark" ? "text-slate-500" : "text-slate-600"
+            themeStore.current === "dark" ? "text-slate-500" : "text-slate-600"
           }`}
         >
           Allow saving full model outputs for re-review and analysis
@@ -115,10 +115,10 @@ no description yet
         type="button"
         class={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
           allowRawOutputs
-            ? $theme === "dark"
+            ? themeStore.current === "dark"
               ? "bg-green-500/20 border border-green-600 text-green-300"
               : "bg-green-50 border border-green-300 text-green-700"
-            : $theme === "dark"
+            : themeStore.current === "dark"
             ? "bg-slate-950 border border-slate-700 text-slate-400"
             : "bg-slate-50 border border-slate-200 text-slate-600"
         }`}
@@ -131,12 +131,12 @@ no description yet
     <!-- Actions -->
     <div
       class="flex flex-col gap-2 border-t pt-3"
-      class:border-slate-700={$theme === "dark"}
-      class:border-slate-200={$theme !== "dark"}
+      class:border-slate-700={themeStore.current === "dark"}
+      class:border-slate-200={themeStore.current !== "dark"}
     >
       <p
         class={`text-xs font-medium ${
-          $theme === "dark" ? "text-slate-300" : "text-slate-700"
+          themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
         }`}
       >
         Data Management
@@ -145,7 +145,7 @@ no description yet
         <button
           type="button"
           class={`px-3 py-2 rounded-md border text-xs font-medium transition-colors ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "bg-slate-950 border-slate-700 text-slate-300 hover:bg-slate-900"
               : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-white"
           }`}
@@ -156,7 +156,7 @@ no description yet
         <button
           type="button"
           class={`px-3 py-2 rounded-md border text-xs font-medium transition-colors ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "bg-red-950/20 border-red-800 text-red-400 hover:bg-red-950/40"
               : "bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
           }`}
@@ -167,7 +167,7 @@ no description yet
       </div>
       <p
         class={`text-[11px] ${
-          $theme === "dark" ? "text-slate-500" : "text-slate-600"
+          themeStore.current === "dark" ? "text-slate-500" : "text-slate-600"
         }`}
       >
         ⚠️ These actions are placeholders. Implement confirmation dialogs before
@@ -179,7 +179,7 @@ no description yet
   <!-- Info banner -->
   <div
     class={`rounded-md border p-3 ${
-      $theme === "dark"
+      themeStore.current === "dark"
         ? "bg-slate-950/50 border-slate-800 text-slate-400"
         : "bg-amber-50 border-amber-200 text-amber-700"
     }`}

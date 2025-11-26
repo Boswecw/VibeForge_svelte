@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
   import { runsStore } from "$lib/core/stores/runs.svelte";
   import QuickRunHeader from "$lib/components/quickrun/QuickRunHeader.svelte";
   import QuickRunForm from "$lib/components/quickrun/QuickRunForm.svelte";

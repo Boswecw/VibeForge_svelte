@@ -9,7 +9,7 @@
 no description yet
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   type PatternCategory =
     | "coding"
@@ -68,7 +68,7 @@ no description yet
 <!-- Filters panel: search, category, complexity, and model filters -->
 <section
   class={`rounded-lg border p-4 flex flex-col gap-3 transition-colors ${
-    $theme === "dark"
+    themeStore.current === "dark"
       ? "border-slate-700 bg-slate-900"
       : "border-slate-200 bg-white shadow-sm"
   }`}
@@ -77,7 +77,7 @@ no description yet
   <div class="flex items-center justify-between">
     <h2
       class={`text-xs font-semibold ${
-        $theme === "dark" ? "text-slate-300" : "text-slate-700"
+        themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
       }`}
     >
       Filters
@@ -86,7 +86,7 @@ no description yet
       <button
         type="button"
         class={`text-xs transition-colors ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "text-amber-400 hover:text-amber-300"
             : "text-amber-600 hover:text-amber-700"
         }`}
@@ -101,7 +101,7 @@ no description yet
   <div>
     <label
       class={`block text-xs mb-1.5 ${
-        $theme === "dark" ? "text-slate-400" : "text-slate-600"
+        themeStore.current === "dark" ? "text-slate-400" : "text-slate-600"
       }`}
     >
       Search
@@ -110,7 +110,7 @@ no description yet
       type="text"
       placeholder="Search by name or use case..."
       class={`w-full px-3 py-1.5 rounded-md border text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 ${
-        $theme === "dark"
+        themeStore.current === "dark"
           ? "bg-slate-950 border-slate-700 text-slate-100 placeholder-slate-500"
           : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
       }`}
@@ -122,7 +122,7 @@ no description yet
   <div>
     <label
       class={`block text-xs mb-1.5 ${
-        $theme === "dark" ? "text-slate-400" : "text-slate-600"
+        themeStore.current === "dark" ? "text-slate-400" : "text-slate-600"
       }`}
     >
       Category
@@ -133,10 +133,10 @@ no description yet
           type="button"
           class={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
             selectedCategory === option.value
-              ? $theme === "dark"
+              ? themeStore.current === "dark"
                 ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
                 : "bg-amber-50 text-amber-700 border border-amber-200"
-              : $theme === "dark"
+              : themeStore.current === "dark"
               ? "bg-slate-950 text-slate-400 border border-slate-700 hover:bg-slate-800"
               : "bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100"
           }`}
@@ -152,7 +152,7 @@ no description yet
   <div>
     <label
       class={`block text-xs mb-1.5 ${
-        $theme === "dark" ? "text-slate-400" : "text-slate-600"
+        themeStore.current === "dark" ? "text-slate-400" : "text-slate-600"
       }`}
     >
       Complexity
@@ -163,10 +163,10 @@ no description yet
           type="button"
           class={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
             selectedComplexity === option.value
-              ? $theme === "dark"
+              ? themeStore.current === "dark"
                 ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
                 : "bg-amber-50 text-amber-700 border border-amber-200"
-              : $theme === "dark"
+              : themeStore.current === "dark"
               ? "bg-slate-950 text-slate-400 border border-slate-700 hover:bg-slate-800"
               : "bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100"
           }`}
@@ -183,7 +183,7 @@ no description yet
     <div>
       <label
         class={`block text-xs mb-1.5 ${
-          $theme === "dark" ? "text-slate-400" : "text-slate-600"
+          themeStore.current === "dark" ? "text-slate-400" : "text-slate-600"
         }`}
       >
         Model
@@ -193,10 +193,10 @@ no description yet
           type="button"
           class={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
             selectedModel === "all"
-              ? $theme === "dark"
+              ? themeStore.current === "dark"
                 ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
                 : "bg-amber-50 text-amber-700 border border-amber-200"
-              : $theme === "dark"
+              : themeStore.current === "dark"
               ? "bg-slate-950 text-slate-400 border border-slate-700 hover:bg-slate-800"
               : "bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100"
           }`}
@@ -209,10 +209,10 @@ no description yet
             type="button"
             class={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
               selectedModel === model
-                ? $theme === "dark"
+                ? themeStore.current === "dark"
                   ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
                   : "bg-amber-50 text-amber-700 border border-amber-200"
-                : $theme === "dark"
+                : themeStore.current === "dark"
                 ? "bg-slate-950 text-slate-400 border border-slate-700 hover:bg-slate-800"
                 : "bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100"
             }`}

@@ -7,7 +7,7 @@
 no description yet
 -->
 <script lang="ts">
-  import { theme } from '$lib/stores/themeStore';
+  import { themeStore } from '$lib/core/stores';
   import type { EvaluationSession, EvaluationStatus } from '$lib/types/evaluation';
 
   interface Props {
@@ -36,15 +36,15 @@ no description yet
   const getStatusBadgeColor = (status: EvaluationStatus) => {
     switch (status) {
       case 'draft':
-        return $theme === 'dark'
+        return themeStore.current === 'dark'
           ? 'bg-slate-700/40 text-slate-300 border-slate-600'
           : 'bg-slate-100 text-slate-700 border-slate-300';
       case 'in-progress':
-        return $theme === 'dark'
+        return themeStore.current === 'dark'
           ? 'bg-blue-500/20 text-blue-300 border-blue-600'
           : 'bg-blue-50 text-blue-700 border-blue-300';
       case 'completed':
-        return $theme === 'dark'
+        return themeStore.current === 'dark'
           ? 'bg-green-500/20 text-green-300 border-green-600'
           : 'bg-green-50 text-green-700 border-green-300';
     }
@@ -54,7 +54,7 @@ no description yet
 <!-- Scrollable list of evaluation sessions -->
 <section
   class={`rounded-lg border p-3 flex flex-col gap-2 overflow-y-auto max-h-[520px] transition-colors ${
-    $theme === 'dark'
+    themeStore.current === 'dark'
       ? 'bg-slate-950 border-slate-700'
       : 'bg-white border-slate-200'
   }`}
@@ -62,12 +62,12 @@ no description yet
   <!-- Section header -->
   <div class="flex items-center justify-between mb-1 px-1">
     <h2 class={`text-xs font-semibold ${
-      $theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+      themeStore.current === 'dark' ? 'text-slate-300' : 'text-slate-700'
     }`}>
       Evaluations
     </h2>
     <span class={`text-xs ${
-      $theme === 'dark' ? 'text-slate-500' : 'text-slate-400'
+      themeStore.current === 'dark' ? 'text-slate-500' : 'text-slate-400'
     }`}>
       {evaluations.length}
     </span>
@@ -76,7 +76,7 @@ no description yet
   <!-- List of evaluation cards -->
   {#if evaluations.length === 0}
     <div class={`border border-dashed rounded-md p-6 text-center text-xs ${
-      $theme === 'dark'
+      themeStore.current === 'dark'
         ? 'border-slate-700 text-slate-500'
         : 'border-slate-300 text-slate-500'
     }`}>
@@ -91,10 +91,10 @@ no description yet
           type="button"
           class={`w-full text-left rounded-md border px-3 py-2 flex flex-col gap-1 transition-colors ${
             isActive
-              ? $theme === 'dark'
+              ? themeStore.current === 'dark'
                 ? 'border-amber-400 bg-slate-900 ring-1 ring-amber-400/30'
                 : 'border-amber-500 bg-amber-50 ring-1 ring-amber-500/20'
-              : $theme === 'dark'
+              : themeStore.current === 'dark'
                 ? 'border-slate-700 bg-slate-950 hover:bg-slate-900 hover:border-slate-600'
                 : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300'
           }`}
@@ -104,10 +104,10 @@ no description yet
           <div class="flex items-center justify-between gap-2">
             <span class={`font-medium text-[13px] truncate ${
               isActive
-                ? $theme === 'dark'
+                ? themeStore.current === 'dark'
                   ? 'text-amber-400'
                   : 'text-amber-700'
-                : $theme === 'dark'
+                : themeStore.current === 'dark'
                   ? 'text-slate-100'
                   : 'text-slate-900'
             }`}>
@@ -121,12 +121,12 @@ no description yet
           <!-- Workspace and project -->
           <div class="flex items-center justify-between gap-2">
             <span class={`text-[11px] truncate ${
-              $theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+              themeStore.current === 'dark' ? 'text-slate-400' : 'text-slate-600'
             }`}>
               {evaluation.workspace} {evaluation.project ? `· ${evaluation.project}` : ''}
             </span>
             <span class={`text-[11px] whitespace-nowrap ${
-              $theme === 'dark' ? 'text-slate-500' : 'text-slate-500'
+              themeStore.current === 'dark' ? 'text-slate-500' : 'text-slate-500'
             }`}>
               {formatDate(evaluation.updatedAt)}
             </span>
@@ -136,7 +136,7 @@ no description yet
           <div class="flex items-center gap-1 flex-wrap">
             {#each evaluation.models as model}
               <span class={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] border ${
-                $theme === 'dark'
+                themeStore.current === 'dark'
                   ? 'border-slate-600 text-slate-300'
                   : 'border-slate-300 text-slate-600'
               }`}>
@@ -150,7 +150,7 @@ no description yet
             <div class="flex flex-wrap gap-1">
               {#each evaluation.tags as tag}
                 <span class={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] ${
-                  $theme === 'dark'
+                  themeStore.current === 'dark'
                     ? 'border-slate-600 text-slate-400'
                     : 'border-slate-300 text-slate-500'
                 }`}>
@@ -162,7 +162,7 @@ no description yet
 
           <!-- Prompt summary -->
           <p class={`text-[11px] line-clamp-2 ${
-            $theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+            themeStore.current === 'dark' ? 'text-slate-400' : 'text-slate-600'
           }`}>
             {evaluation.promptSummary}
           </p>

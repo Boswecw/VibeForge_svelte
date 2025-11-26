@@ -9,7 +9,7 @@
 Right-side slide-in drawer for workspace creation and editing
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
   import type { Workspace } from "$lib/types/workspace";
 
   interface Props {
@@ -110,7 +110,7 @@ Right-side slide-in drawer for workspace creation and editing
   class={`fixed right-0 top-0 bottom-0 z-50 w-full max-w-md overflow-y-auto transform transition-transform duration-300 ${
     open ? "translate-x-0" : "translate-x-full"
   } ${
-    $theme === "dark"
+    themeStore.current === "dark"
       ? "bg-slate-900 border-l border-slate-700"
       : "bg-white border-l border-slate-200"
   }`}
@@ -118,19 +118,19 @@ Right-side slide-in drawer for workspace creation and editing
   <!-- Header -->
   <div
     class={`sticky top-0 border-b px-4 py-3 flex items-center justify-between ${
-      $theme === "dark" ? "border-slate-700" : "border-slate-200"
+      themeStore.current === "dark" ? "border-slate-700" : "border-slate-200"
     }`}
   >
     <h2
       class={`text-sm font-semibold ${
-        $theme === "dark" ? "text-slate-100" : "text-slate-900"
+        themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
       }`}
     >
       {mode === "create" ? "New workspace" : "Edit workspace"}
     </h2>
     <button
       class={`text-lg leading-none hover:opacity-70 transition-opacity ${
-        $theme === "dark" ? "text-slate-400" : "text-slate-600"
+        themeStore.current === "dark" ? "text-slate-400" : "text-slate-600"
       }`}
       onclick={onCancel}
       title="Close drawer"
@@ -146,7 +146,7 @@ Right-side slide-in drawer for workspace creation and editing
       <label
         for="workspace-name"
         class={`text-xs font-semibold ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Workspace name
@@ -158,7 +158,7 @@ Right-side slide-in drawer for workspace creation and editing
         bind:value={name}
         placeholder="e.g., AuthorForge"
         class={`rounded-md px-3 py-2 text-xs border transition-colors ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "bg-slate-950 border-slate-700 text-slate-100 placeholder-slate-500 focus:border-amber-500"
             : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-amber-500"
         } focus:outline-none`}
@@ -170,7 +170,7 @@ Right-side slide-in drawer for workspace creation and editing
       <label
         for="workspace-slug"
         class={`text-xs font-semibold ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Slug (URL-safe)
@@ -181,14 +181,14 @@ Right-side slide-in drawer for workspace creation and editing
         bind:value={slug}
         placeholder="auto-generated"
         class={`rounded-md px-3 py-2 text-xs border transition-colors ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "bg-slate-950 border-slate-700 text-slate-100 placeholder-slate-500 focus:border-amber-500"
             : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-amber-500"
         } focus:outline-none`}
       />
       <p
         class={`text-[10px] ${
-          $theme === "dark" ? "text-slate-500" : "text-slate-500"
+          themeStore.current === "dark" ? "text-slate-500" : "text-slate-500"
         }`}
       >
         Auto-generated from name
@@ -200,7 +200,7 @@ Right-side slide-in drawer for workspace creation and editing
       <label
         for="workspace-desc"
         class={`text-xs font-semibold ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Description
@@ -211,7 +211,7 @@ Right-side slide-in drawer for workspace creation and editing
         placeholder="Brief description of this workspace..."
         rows="3"
         class={`rounded-md px-3 py-2 text-xs border resize-none transition-colors ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "bg-slate-950 border-slate-700 text-slate-100 placeholder-slate-500 focus:border-amber-500"
             : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-amber-500"
         } focus:outline-none`}
@@ -223,7 +223,7 @@ Right-side slide-in drawer for workspace creation and editing
       <label
         for="workspace-tags"
         class={`text-xs font-semibold ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Tags (comma-separated)
@@ -234,7 +234,7 @@ Right-side slide-in drawer for workspace creation and editing
         bind:value={tags}
         placeholder="e.g., authoring, research"
         class={`rounded-md px-3 py-2 text-xs border transition-colors ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "bg-slate-950 border-slate-700 text-slate-100 placeholder-slate-500 focus:border-amber-500"
             : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-amber-500"
         } focus:outline-none`}
@@ -245,7 +245,7 @@ Right-side slide-in drawer for workspace creation and editing
     <div class="flex flex-col gap-2">
       <label
         class={`text-xs font-semibold ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Default models
@@ -255,10 +255,10 @@ Right-side slide-in drawer for workspace creation and editing
           <label
             class={`flex items-center gap-2 text-[11px] cursor-pointer px-2 py-1 rounded-md border transition-colors ${
               selectedModels.includes(model)
-                ? $theme === "dark"
+                ? themeStore.current === "dark"
                   ? "border-amber-500 bg-amber-950/40"
                   : "border-amber-500 bg-amber-50"
-                : $theme === "dark"
+                : themeStore.current === "dark"
                 ? "border-slate-700 hover:border-slate-600"
                 : "border-slate-300 hover:border-slate-200"
             }`}
@@ -279,7 +279,7 @@ Right-side slide-in drawer for workspace creation and editing
     <div class="flex flex-col gap-2">
       <label
         class={`text-xs font-semibold ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Evaluation scale
@@ -289,10 +289,10 @@ Right-side slide-in drawer for workspace creation and editing
           <label
             class={`flex items-center gap-2 text-[11px] cursor-pointer px-3 py-1 rounded-md border transition-colors ${
               evaluationScale === scale
-                ? $theme === "dark"
+                ? themeStore.current === "dark"
                   ? "border-amber-500 bg-amber-950/40"
                   : "border-amber-500 bg-amber-50"
-                : $theme === "dark"
+                : themeStore.current === "dark"
                 ? "border-slate-700 hover:border-slate-600"
                 : "border-slate-300 hover:border-slate-200"
             }`}
@@ -313,7 +313,7 @@ Right-side slide-in drawer for workspace creation and editing
     <!-- Require winner -->
     <label
       class={`flex items-center gap-2 text-[11px] cursor-pointer px-2 py-1 rounded-md ${
-        $theme === "dark" ? "text-slate-300" : "text-slate-700"
+        themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
       }`}
     >
       <input
@@ -327,12 +327,12 @@ Right-side slide-in drawer for workspace creation and editing
     <!-- Actions -->
     <div
       class="flex gap-2 justify-end pt-4 border-t"
-      class:border-slate-700={$theme === "dark"}
-      class:border-slate-200={$theme !== "dark"}
+      class:border-slate-700={themeStore.current === "dark"}
+      class:border-slate-200={themeStore.current !== "dark"}
     >
       <button
         class={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "border-slate-700 text-slate-300 hover:bg-slate-800"
             : "border-slate-300 text-slate-600 hover:bg-slate-100"
         }`}

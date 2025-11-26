@@ -2,7 +2,7 @@
 no description yet
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   interface Model {
     id: string;
@@ -55,7 +55,7 @@ no description yet
 <!-- Model & API Settings section -->
 <section
   class={`rounded-lg border p-4 flex flex-col gap-3 transition-colors ${
-    $theme === "dark"
+    themeStore.current === "dark"
       ? "bg-slate-900 border-slate-700"
       : "bg-white border-slate-200 shadow-sm"
   }`}
@@ -63,14 +63,14 @@ no description yet
   <div class="flex flex-col gap-1">
     <h2
       class={`text-sm font-semibold ${
-        $theme === "dark" ? "text-slate-100" : "text-slate-900"
+        themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
       }`}
     >
       Model & API Settings
     </h2>
     <p
       class={`text-xs ${
-        $theme === "dark" ? "text-slate-400" : "text-slate-500"
+        themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
       }`}
     >
       Configure API keys and endpoints for each model. Keys are stored locally
@@ -82,7 +82,7 @@ no description yet
     {#each models as model (model.id)}
       <div
         class={`rounded-md border p-3 flex flex-col gap-2 transition-colors ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "bg-slate-950 border-slate-800"
             : "bg-slate-50 border-slate-200"
         }`}
@@ -92,14 +92,14 @@ no description yet
           <div class="flex flex-col gap-0.5">
             <span
               class={`font-semibold text-xs ${
-                $theme === "dark" ? "text-slate-100" : "text-slate-900"
+                themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
               }`}
             >
               {model.name}
             </span>
             <span
               class={`text-[11px] ${
-                $theme === "dark" ? "text-slate-500" : "text-slate-600"
+                themeStore.current === "dark" ? "text-slate-500" : "text-slate-600"
               }`}
             >
               {model.description}
@@ -108,10 +108,10 @@ no description yet
           <label
             class={`inline-flex items-center gap-1.5 text-[11px] font-medium cursor-pointer ${
               model.enabled
-                ? $theme === "dark"
+                ? themeStore.current === "dark"
                   ? "text-amber-300"
                   : "text-amber-700"
-                : $theme === "dark"
+                : themeStore.current === "dark"
                 ? "text-slate-400"
                 : "text-slate-600"
             }`}
@@ -130,7 +130,7 @@ no description yet
           <div class="flex flex-col gap-1">
             <label
               class={`text-[11px] font-medium ${
-                $theme === "dark" ? "text-slate-300" : "text-slate-700"
+                themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
               }`}
             >
               API Key
@@ -141,7 +141,7 @@ no description yet
               placeholder="••••••••••••"
               disabled={!model.enabled}
               class={`rounded-md border px-2.5 py-1.5 text-[11px] focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors ${
-                $theme === "dark"
+                themeStore.current === "dark"
                   ? "bg-slate-900 border-slate-700 text-slate-100 placeholder:text-slate-600 disabled:opacity-50"
                   : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 disabled:opacity-50"
               }`}
@@ -149,7 +149,7 @@ no description yet
             {#if model.apiKey}
               <p
                 class={`text-[10px] ${
-                  $theme === "dark" ? "text-slate-600" : "text-slate-500"
+                  themeStore.current === "dark" ? "text-slate-600" : "text-slate-500"
                 }`}
               >
                 {maskApiKey(model.apiKey)}
@@ -159,7 +159,7 @@ no description yet
           <div class="flex flex-col gap-1">
             <label
               class={`text-[11px] font-medium ${
-                $theme === "dark" ? "text-slate-300" : "text-slate-700"
+                themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
               }`}
             >
               Endpoint URL
@@ -170,7 +170,7 @@ no description yet
               placeholder="https://api.example.com"
               disabled={!model.enabled}
               class={`rounded-md border px-2.5 py-1.5 text-[11px] focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors ${
-                $theme === "dark"
+                themeStore.current === "dark"
                   ? "bg-slate-900 border-slate-700 text-slate-100 placeholder:text-slate-600 disabled:opacity-50"
                   : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 disabled:opacity-50"
               }`}
@@ -181,7 +181,7 @@ no description yet
         <!-- TODO comment -->
         <p
           class={`text-[10px] ${
-            $theme === "dark" ? "text-slate-700" : "text-slate-400"
+            themeStore.current === "dark" ? "text-slate-700" : "text-slate-400"
           }`}
         >
           💾 TODO: Encrypt and persist credentials securely
@@ -192,7 +192,7 @@ no description yet
 
   <div
     class={`rounded-md border p-3 ${
-      $theme === "dark"
+      themeStore.current === "dark"
         ? "bg-slate-950/50 border-slate-800 text-slate-400"
         : "bg-blue-50 border-blue-200 text-blue-700"
     }`}

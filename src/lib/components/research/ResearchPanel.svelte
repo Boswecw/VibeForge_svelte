@@ -3,7 +3,7 @@ no description yet
 -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
   import { researchStore } from "$lib/stores/researchStore";
   import { listResearchSources } from "$lib/api/research";
   import type {
@@ -162,7 +162,7 @@ no description yet
 
 <div
   class={`h-full flex flex-col gap-4 p-6 rounded-lg ${
-    $theme === "dark"
+    themeStore.current === "dark"
       ? "bg-slate-900 border border-slate-800"
       : "bg-white border border-slate-200"
   }`}
@@ -171,7 +171,7 @@ no description yet
   <div class="flex items-center justify-between">
     <h2
       class={`text-lg font-semibold ${
-        $theme === "dark" ? "text-slate-100" : "text-slate-900"
+        themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
       }`}
     >
       🔍 Research Assistant
@@ -180,7 +180,7 @@ no description yet
       <button
         on:click={resetQuery}
         class={`px-3 py-1 text-xs rounded font-medium transition ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "bg-slate-700 hover:bg-slate-600 text-slate-100"
             : "bg-slate-100 hover:bg-slate-200 text-slate-900"
         }`}
@@ -196,7 +196,7 @@ no description yet
       <label
         for="query-input"
         class={`block text-sm font-medium ${
-          $theme === "dark" ? "text-slate-300" : "text-slate-700"
+          themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
         }`}
       >
         Research Query
@@ -207,7 +207,7 @@ no description yet
         placeholder="What would you like to research? E.g., 'How do I implement OAuth2 in SvelteKit?'"
         rows="3"
         class={`w-full px-3 py-2 rounded border text-sm resize-none focus:outline-none focus:ring-2 ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "bg-slate-800 border-slate-700 text-slate-100 focus:ring-amber-500"
             : "bg-slate-50 border-slate-300 text-slate-900 focus:ring-amber-400"
         }`}
@@ -218,7 +218,7 @@ no description yet
     <div class="space-y-3">
       <div
         class={`block text-sm font-medium ${
-          $theme === "dark" ? "text-slate-300" : "text-slate-700"
+          themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
         }`}
       >
         Research Sources
@@ -227,7 +227,7 @@ no description yet
         {#each availableSources as source (source)}
           <label
             class={`flex items-center gap-2 p-2 rounded cursor-pointer transition ${
-              $theme === "dark" ? "hover:bg-slate-800" : "hover:bg-slate-100"
+              themeStore.current === "dark" ? "hover:bg-slate-800" : "hover:bg-slate-100"
             }`}
           >
             <input
@@ -243,10 +243,10 @@ no description yet
             <span
               class={`text-xs px-1.5 py-0.5 rounded ${
                 getSourceTier(source) === "Priority"
-                  ? $theme === "dark"
+                  ? themeStore.current === "dark"
                     ? "bg-amber-900 text-amber-200"
                     : "bg-amber-100 text-amber-800"
-                  : $theme === "dark"
+                  : themeStore.current === "dark"
                   ? "bg-slate-700 text-slate-300"
                   : "bg-slate-200 text-slate-700"
               }`}
@@ -263,7 +263,7 @@ no description yet
       <label
         for="depth-select"
         class={`block text-sm font-medium ${
-          $theme === "dark" ? "text-slate-300" : "text-slate-700"
+          themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
         }`}
       >
         Research Depth
@@ -272,7 +272,7 @@ no description yet
         id="depth-select"
         bind:value={selectedDepth}
         class={`w-full px-3 py-2 rounded border text-sm focus:outline-none focus:ring-2 ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "bg-slate-800 border-slate-700 text-slate-100 focus:ring-amber-500"
             : "bg-slate-50 border-slate-300 text-slate-900 focus:ring-amber-400"
         }`}
@@ -288,7 +288,7 @@ no description yet
       <label
         for="max-results"
         class={`block text-sm font-medium ${
-          $theme === "dark" ? "text-slate-300" : "text-slate-700"
+          themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
         }`}
       >
         Max Results Per Source: {maxResults}
@@ -309,10 +309,10 @@ no description yet
       disabled={!queryText.trim() || $researchStore.isExecuting}
       class={`w-full py-2 px-4 rounded font-medium transition flex items-center justify-center gap-2 ${
         !queryText.trim() || $researchStore.isExecuting
-          ? $theme === "dark"
+          ? themeStore.current === "dark"
             ? "bg-slate-700 text-slate-500 cursor-not-allowed"
             : "bg-slate-200 text-slate-400 cursor-not-allowed"
-          : $theme === "dark"
+          : themeStore.current === "dark"
           ? "bg-amber-600 hover:bg-amber-500 text-white"
           : "bg-amber-500 hover:bg-amber-400 text-white"
       }`}
@@ -334,7 +334,7 @@ no description yet
         <!-- Error State -->
         <div
           class={`p-4 rounded-lg border ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "bg-red-900/20 border-red-700 text-red-100"
               : "bg-red-50 border-red-300 text-red-900"
           }`}
@@ -344,7 +344,7 @@ no description yet
           <button
             on:click={() => researchStore.clearError()}
             class={`mt-2 text-xs px-2 py-1 rounded ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "bg-red-700 hover:bg-red-600"
                 : "bg-red-200 hover:bg-red-300"
             }`}
@@ -358,7 +358,7 @@ no description yet
         <!-- Loading State -->
         <div
           class={`p-4 rounded-lg flex items-center gap-3 ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "bg-slate-800 text-slate-300"
               : "bg-slate-100 text-slate-700"
           }`}
@@ -377,21 +377,21 @@ no description yet
         <!-- Summary Section -->
         <div
           class={`p-4 rounded-lg border ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "bg-slate-800 border-slate-700"
               : "bg-slate-50 border-slate-200"
           }`}
         >
           <div
             class={`text-sm font-medium mb-2 ${
-              $theme === "dark" ? "text-amber-300" : "text-amber-600"
+              themeStore.current === "dark" ? "text-amber-300" : "text-amber-600"
             }`}
           >
             📋 Summary
           </div>
           <p
             class={`text-sm leading-relaxed ${
-              $theme === "dark" ? "text-slate-300" : "text-slate-700"
+              themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
             }`}
           >
             {$researchStore.currentAnswer.summary}
@@ -401,21 +401,21 @@ no description yet
         <!-- Detailed Answer -->
         <div
           class={`p-4 rounded-lg border ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "bg-slate-800 border-slate-700"
               : "bg-slate-50 border-slate-200"
           }`}
         >
           <div
             class={`text-sm font-medium mb-2 ${
-              $theme === "dark" ? "text-amber-300" : "text-amber-600"
+              themeStore.current === "dark" ? "text-amber-300" : "text-amber-600"
             }`}
           >
             💡 Detailed Answer
           </div>
           <p
             class={`text-sm leading-relaxed ${
-              $theme === "dark" ? "text-slate-300" : "text-slate-700"
+              themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
             }`}
           >
             {$researchStore.currentAnswer.answer}
@@ -426,14 +426,14 @@ no description yet
         {#if $researchStore.currentAnswer.bullet_points.length > 0}
           <div
             class={`p-4 rounded-lg border ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "bg-slate-800 border-slate-700"
                 : "bg-slate-50 border-slate-200"
             }`}
           >
             <div
               class={`text-sm font-medium mb-2 ${
-                $theme === "dark" ? "text-amber-300" : "text-amber-600"
+                themeStore.current === "dark" ? "text-amber-300" : "text-amber-600"
               }`}
             >
               ✨ Key Points
@@ -442,7 +442,7 @@ no description yet
               {#each $researchStore.currentAnswer.bullet_points as point}
                 <li
                   class={`text-sm flex gap-2 ${
-                    $theme === "dark" ? "text-slate-300" : "text-slate-700"
+                    themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
                   }`}
                 >
                   <span class="text-amber-400">•</span>
@@ -457,14 +457,14 @@ no description yet
         {#if $researchStore.currentAnswer.sources.length > 0}
           <div
             class={`p-4 rounded-lg border ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "bg-slate-800 border-slate-700"
                 : "bg-slate-50 border-slate-200"
             }`}
           >
             <div
               class={`text-sm font-medium mb-3 ${
-                $theme === "dark" ? "text-amber-300" : "text-amber-600"
+                themeStore.current === "dark" ? "text-amber-300" : "text-amber-600"
               }`}
             >
               📚 Sources ({$researchStore.currentAnswer.sources.length})
@@ -475,10 +475,10 @@ no description yet
                   type="button"
                   class={`w-full text-left p-2 rounded border cursor-pointer transition ${
                     expandedSources.get(source.id)
-                      ? $theme === "dark"
+                      ? themeStore.current === "dark"
                         ? "bg-slate-700 border-slate-600"
                         : "bg-slate-100 border-slate-300"
-                      : $theme === "dark"
+                      : themeStore.current === "dark"
                       ? "bg-slate-800 border-slate-700 hover:bg-slate-750"
                       : "bg-slate-50 border-slate-200 hover:bg-slate-75"
                   }`}
@@ -487,7 +487,7 @@ no description yet
                   <div class="flex items-start gap-2">
                     <span
                       class={`text-xs font-bold px-1.5 py-0.5 rounded ${
-                        $theme === "dark"
+                        themeStore.current === "dark"
                           ? "bg-slate-700 text-slate-300"
                           : "bg-slate-200 text-slate-700"
                       }`}
@@ -497,7 +497,7 @@ no description yet
                     <div class="flex-1">
                       <div
                         class={`text-sm font-medium flex items-center gap-1 ${
-                          $theme === "dark"
+                          themeStore.current === "dark"
                             ? "text-slate-100"
                             : "text-slate-900"
                         }`}
@@ -515,7 +515,7 @@ no description yet
                       </div>
                       <div
                         class={`text-xs opacity-60 ${
-                          $theme === "dark"
+                          themeStore.current === "dark"
                             ? "text-slate-400"
                             : "text-slate-600"
                         }`}
@@ -531,7 +531,7 @@ no description yet
                   {#if expandedSources.get(source.id)}
                     <div
                       class={`mt-2 pt-2 border-t ${
-                        $theme === "dark"
+                        themeStore.current === "dark"
                           ? "border-slate-600 text-slate-300"
                           : "border-slate-300 text-slate-700"
                       }`}
@@ -545,7 +545,7 @@ no description yet
                           target="_blank"
                           rel="noopener noreferrer"
                           class={`text-xs font-medium py-1 px-2 rounded inline-block transition ${
-                            $theme === "dark"
+                            themeStore.current === "dark"
                               ? "bg-amber-600 hover:bg-amber-500 text-white"
                               : "bg-amber-500 hover:bg-amber-400 text-white"
                           }`}
@@ -564,7 +564,7 @@ no description yet
         <!-- Metadata Footer -->
         <div
           class={`text-xs opacity-60 text-center py-2 ${
-            $theme === "dark" ? "text-slate-400" : "text-slate-600"
+            themeStore.current === "dark" ? "text-slate-400" : "text-slate-600"
           }`}
         >
           Research completed in {$researchStore.currentAnswer.took_ms}ms

@@ -7,7 +7,7 @@
 no description yet
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   interface Props {
     totalCount: number;
@@ -24,14 +24,14 @@ no description yet
     <div class="flex flex-col gap-1">
       <h1
         class={`text-base font-semibold tracking-tight ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Context Library
       </h1>
       <p
         class={`text-xs leading-relaxed ${
-          $theme === "dark" ? "text-slate-400" : "text-slate-500"
+          themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
         }`}
       >
         Browse, search, and manage context blocks that shape your prompts in the
@@ -43,7 +43,7 @@ no description yet
     <div class="flex items-center gap-3">
       <div
         class={`text-xs px-3 py-1.5 rounded-md border ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "border-slate-700 bg-slate-900 text-slate-300"
             : "border-slate-200 bg-white text-slate-600"
         }`}
@@ -60,7 +60,7 @@ no description yet
         type="button"
         onclick={onAddDocuments}
         class={`px-3 py-1.5 rounded-md border text-xs transition-colors ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:border-slate-600"
             : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-white hover:border-slate-300"
         }`}

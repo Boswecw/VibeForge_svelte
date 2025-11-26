@@ -6,7 +6,7 @@
 no description yet
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   interface IngestDocument {
     id: string;
@@ -76,7 +76,7 @@ no description yet
 
 <section
   class={`rounded-lg border p-4 flex flex-col gap-3 ${
-    $theme === "dark"
+    themeStore.current === "dark"
       ? "bg-slate-900 border-slate-800"
       : "bg-white border-slate-200 shadow-sm"
   }`}
@@ -87,7 +87,7 @@ no description yet
       <h2 class="text-xs font-semibold">Ingestion queue</h2>
       <p
         class={`text-[11px] ${
-          $theme === "dark" ? "text-slate-400" : "text-slate-500"
+          themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
         }`}
       >
         Recently uploaded documents and their processing status.
@@ -112,7 +112,7 @@ no description yet
       {#if readyCount > 0}
         <div class="flex items-center gap-1">
           <span class="inline-block w-2 h-2 rounded-full bg-emerald-500" />
-          <span class={$theme === "dark" ? "text-slate-300" : "text-slate-600"}>
+          <span class={themeStore.current === "dark" ? "text-slate-300" : "text-slate-600"}>
             {readyCount} ready
           </span>
         </div>
@@ -120,7 +120,7 @@ no description yet
       {#if processingCount > 0}
         <div class="flex items-center gap-1">
           <span class="inline-block w-2 h-2 rounded-full bg-amber-500" />
-          <span class={$theme === "dark" ? "text-slate-300" : "text-slate-600"}>
+          <span class={themeStore.current === "dark" ? "text-slate-300" : "text-slate-600"}>
             {processingCount} processing
           </span>
         </div>
@@ -128,7 +128,7 @@ no description yet
       {#if queuedCount > 0}
         <div class="flex items-center gap-1">
           <span class="inline-block w-2 h-2 rounded-full bg-slate-500" />
-          <span class={$theme === "dark" ? "text-slate-300" : "text-slate-600"}>
+          <span class={themeStore.current === "dark" ? "text-slate-300" : "text-slate-600"}>
             {queuedCount} queued
           </span>
         </div>
@@ -136,7 +136,7 @@ no description yet
       {#if errorCount > 0}
         <div class="flex items-center gap-1">
           <span class="inline-block w-2 h-2 rounded-full bg-rose-500" />
-          <span class={$theme === "dark" ? "text-slate-300" : "text-slate-600"}>
+          <span class={themeStore.current === "dark" ? "text-slate-300" : "text-slate-600"}>
             {errorCount} error
           </span>
         </div>
@@ -148,7 +148,7 @@ no description yet
   {#if ingestQueue.length === 0}
     <p
       class={`text-xs ${
-        $theme === "dark" ? "text-slate-400" : "text-slate-500"
+        themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
       }`}
     >
       No documents in the queue yet. Use "Add documents" above to get started.
@@ -158,7 +158,7 @@ no description yet
       <!-- Header Row -->
       <div
         class={`grid grid-cols-[1.2fr_0.8fr_0.7fr_0.6fr_0.8fr_0.5fr] gap-3 px-4 py-2 text-[11px] font-medium border-b ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "bg-slate-950 border-slate-800 text-slate-400"
             : "bg-slate-50 border-slate-200 text-slate-500"
         }`}
@@ -174,7 +174,7 @@ no description yet
       <!-- Rows -->
       <div
         class={`max-h-96 overflow-y-auto text-xs ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "divide-y divide-slate-800"
             : "divide-y divide-slate-200"
         }`}
@@ -182,14 +182,14 @@ no description yet
         {#each recentQueue as doc (doc.id)}
           <div
             class={`grid grid-cols-[1.2fr_0.8fr_0.7fr_0.6fr_0.8fr_0.5fr] gap-3 px-4 py-3 items-center transition-colors ${
-              $theme === "dark" ? "hover:bg-slate-900/50" : "hover:bg-slate-50"
+              themeStore.current === "dark" ? "hover:bg-slate-900/50" : "hover:bg-slate-50"
             }`}
           >
             <!-- Title -->
             <div class="flex flex-col gap-0.5">
               <span
                 class={`truncate font-medium ${
-                  $theme === "dark" ? "text-slate-100" : "text-slate-900"
+                  themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
                 }`}
               >
                 {doc.title}
@@ -199,7 +199,7 @@ no description yet
                   {#each doc.tags.slice(0, 2) as tag}
                     <span
                       class={`text-[9px] px-1.5 py-0.5 rounded truncate ${
-                        $theme === "dark"
+                        themeStore.current === "dark"
                           ? "bg-slate-800 text-slate-400"
                           : "bg-slate-100 text-slate-600"
                       }`}
@@ -210,7 +210,7 @@ no description yet
                   {#if doc.tags.length > 2}
                     <span
                       class={`text-[9px] ${
-                        $theme === "dark" ? "text-slate-500" : "text-slate-400"
+                        themeStore.current === "dark" ? "text-slate-500" : "text-slate-400"
                       }`}
                     >
                       +{doc.tags.length - 2}
@@ -223,7 +223,7 @@ no description yet
             <!-- Workspace -->
             <span
               class={`truncate ${
-                $theme === "dark" ? "text-slate-400" : "text-slate-600"
+                themeStore.current === "dark" ? "text-slate-400" : "text-slate-600"
               }`}
             >
               {doc.workspace}
@@ -232,7 +232,7 @@ no description yet
             <!-- Category -->
             <span
               class={`truncate capitalize ${
-                $theme === "dark" ? "text-slate-400" : "text-slate-600"
+                themeStore.current === "dark" ? "text-slate-400" : "text-slate-600"
               }`}
             >
               {doc.category}
@@ -255,7 +255,7 @@ no description yet
             <!-- Updated -->
             <span
               class={`truncate text-[10px] ${
-                $theme === "dark" ? "text-slate-500" : "text-slate-400"
+                themeStore.current === "dark" ? "text-slate-500" : "text-slate-400"
               }`}
             >
               {formatTimestamp(doc.updatedAt)}
@@ -266,7 +266,7 @@ no description yet
               {#if doc.status === "error"}
                 <button
                   class={`text-[10px] font-medium px-2 py-1 rounded transition-colors ${
-                    $theme === "dark"
+                    themeStore.current === "dark"
                       ? "text-rose-400 hover:bg-rose-900/20"
                       : "text-rose-600 hover:bg-rose-50"
                   }`}
@@ -285,7 +285,7 @@ no description yet
     {#if ingestQueue.length > 15}
       <p
         class={`text-[10px] text-center ${
-          $theme === "dark" ? "text-slate-500" : "text-slate-400"
+          themeStore.current === "dark" ? "text-slate-500" : "text-slate-400"
         }`}
       >
         Showing 15 of {ingestQueue.length} documents. TODO: pagination/infinite scroll

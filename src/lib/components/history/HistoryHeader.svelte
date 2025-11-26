@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { theme } from '$lib/stores/themeStore';
+  import { themeStore } from '$lib/core/stores';
 
   interface Props {
     totalCount: number;
@@ -14,12 +14,12 @@
   <div class="flex items-center justify-between">
     <div class="flex flex-col gap-1">
       <h1 class={`text-base font-semibold tracking-tight ${
-        $theme === 'dark' ? 'text-slate-100' : 'text-slate-900'
+        themeStore.current === 'dark' ? 'text-slate-100' : 'text-slate-900'
       }`}>
         History
       </h1>
       <p class={`text-xs leading-relaxed ${
-        $theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+        themeStore.current === 'dark' ? 'text-slate-400' : 'text-slate-500'
       }`}>
         Review past runs and re-use successful prompts in the Workbench
       </p>
@@ -28,7 +28,7 @@
     <!-- Stats -->
     <div class="flex items-center gap-3">
       <div class={`text-xs px-3 py-1.5 rounded-md border ${
-        $theme === 'dark'
+        themeStore.current === 'dark'
           ? 'border-slate-700 bg-slate-900 text-slate-300'
           : 'border-slate-200 bg-white text-slate-600'
       }`}>

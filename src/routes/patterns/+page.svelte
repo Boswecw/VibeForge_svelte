@@ -3,7 +3,7 @@
   import PatternsFilters from "$lib/components/patterns/PatternsFilters.svelte";
   import PatternsList from "$lib/components/patterns/PatternsList.svelte";
   import PatternDetailPanel from "$lib/components/patterns/PatternDetailPanel.svelte";
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   // Pattern type definitions
   type PatternCategory =

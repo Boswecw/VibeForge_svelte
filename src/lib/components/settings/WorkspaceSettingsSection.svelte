@@ -2,7 +2,7 @@
 no description yet
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   // Type for model IDs
   type ModelId = "claude" | "gpt" | "local";
@@ -34,7 +34,7 @@ no description yet
 <!-- Workspace settings section -->
 <section
   class={`rounded-lg border p-4 flex flex-col gap-3 transition-colors ${
-    $theme === "dark"
+    themeStore.current === "dark"
       ? "bg-slate-900 border-slate-700"
       : "bg-white border-slate-200 shadow-sm"
   }`}
@@ -42,14 +42,14 @@ no description yet
   <div class="flex flex-col gap-1">
     <h2
       class={`text-sm font-semibold ${
-        $theme === "dark" ? "text-slate-100" : "text-slate-900"
+        themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
       }`}
     >
       Workspace Settings
     </h2>
     <p
       class={`text-xs ${
-        $theme === "dark" ? "text-slate-400" : "text-slate-500"
+        themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
       }`}
     >
       Configure default workspace and evaluation preferences.
@@ -61,7 +61,7 @@ no description yet
     <div class="flex flex-col gap-1.5">
       <label
         class={`text-xs font-medium ${
-          $theme === "dark" ? "text-slate-300" : "text-slate-700"
+          themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
         }`}
       >
         Default Workspace
@@ -69,7 +69,7 @@ no description yet
       <select
         bind:value={defaultWorkspace}
         class={`border rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "bg-slate-950 border-slate-700 text-slate-100"
             : "bg-slate-50 border-slate-200 text-slate-900"
         }`}
@@ -80,7 +80,7 @@ no description yet
       </select>
       <p
         class={`text-[11px] ${
-          $theme === "dark" ? "text-slate-500" : "text-slate-600"
+          themeStore.current === "dark" ? "text-slate-500" : "text-slate-600"
         }`}
       >
         New runs and evaluations will use this workspace by default.
@@ -91,7 +91,7 @@ no description yet
     <div class="flex flex-col gap-1.5">
       <label
         class={`text-xs font-medium ${
-          $theme === "dark" ? "text-slate-300" : "text-slate-700"
+          themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
         }`}
       >
         Default Models for New Runs
@@ -101,10 +101,10 @@ no description yet
           <label
             class={`flex items-center gap-2 px-3 py-1.5 rounded-md border text-xs font-medium cursor-pointer transition-colors ${
               defaultModels[model.id]
-                ? $theme === "dark"
+                ? themeStore.current === "dark"
                   ? "bg-amber-500/20 border-amber-500 text-amber-300"
                   : "bg-amber-50 border-amber-400 text-amber-700"
-                : $theme === "dark"
+                : themeStore.current === "dark"
                 ? "bg-slate-950 border-slate-700 text-slate-400 hover:bg-slate-900"
                 : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-white"
             }`}
@@ -124,7 +124,7 @@ no description yet
     <div class="flex flex-col gap-1.5">
       <label
         class={`text-xs font-medium ${
-          $theme === "dark" ? "text-slate-300" : "text-slate-700"
+          themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
         }`}
       >
         Default Scoring Scale
@@ -135,10 +135,10 @@ no description yet
             type="button"
             class={`px-3 py-1.5 rounded-md border text-xs font-medium transition-colors ${
               scoringScale === scale
-                ? $theme === "dark"
+                ? themeStore.current === "dark"
                   ? "bg-amber-500/20 border-amber-500 text-amber-300"
                   : "bg-amber-50 border-amber-400 text-amber-700"
-                : $theme === "dark"
+                : themeStore.current === "dark"
                 ? "bg-slate-950 border-slate-700 text-slate-400 hover:bg-slate-900"
                 : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-white"
             }`}
@@ -150,7 +150,7 @@ no description yet
       </div>
       <p
         class={`text-[11px] ${
-          $theme === "dark" ? "text-slate-500" : "text-slate-600"
+          themeStore.current === "dark" ? "text-slate-500" : "text-slate-600"
         }`}
       >
         Used in evaluation sessions for consistent scoring.
@@ -162,14 +162,14 @@ no description yet
       <div class="flex flex-col gap-0.5">
         <label
           class={`text-xs font-medium ${
-            $theme === "dark" ? "text-slate-300" : "text-slate-700"
+            themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
           }`}
         >
           Require Winner Selection
         </label>
         <p
           class={`text-[11px] ${
-            $theme === "dark" ? "text-slate-500" : "text-slate-600"
+            themeStore.current === "dark" ? "text-slate-500" : "text-slate-600"
           }`}
         >
           Require a preferred model to complete evaluations
@@ -179,10 +179,10 @@ no description yet
         type="button"
         class={`px-3 py-1.5 rounded-md border text-xs font-medium transition-colors ${
           requireWinner
-            ? $theme === "dark"
+            ? themeStore.current === "dark"
               ? "bg-amber-500/20 border-amber-500 text-amber-300"
               : "bg-amber-50 border-amber-400 text-amber-700"
-            : $theme === "dark"
+            : themeStore.current === "dark"
             ? "bg-slate-950 border-slate-700 text-slate-400"
             : "bg-slate-50 border-slate-200 text-slate-600"
         }`}
@@ -196,7 +196,7 @@ no description yet
   <!-- TODO: Persist workspace settings to backend -->
   <p
     class={`text-[11px] ${
-      $theme === "dark" ? "text-slate-600" : "text-slate-500"
+      themeStore.current === "dark" ? "text-slate-600" : "text-slate-500"
     }`}
   >
     💾 TODO: Save these settings to per-user backend storage
