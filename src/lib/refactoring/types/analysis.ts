@@ -55,6 +55,12 @@ export interface DirectoryStructure {
 	sourceFiles: number;
 }
 
+/**
+ * Result of file system scan
+ * (Alias for DirectoryStructure for clarity in scanner code)
+ */
+export type FileScanResult = DirectoryStructure;
+
 export interface TechStack {
 	framework: Framework;
 	language: 'typescript' | 'javascript';
@@ -102,16 +108,21 @@ export interface CodeQualityMetrics {
 	eslintWarnings: number;
 }
 
+/**
+ * Size Metrics
+ */
+export interface SizeMetrics {
+	totalLines: number;
+	codeLines: number;
+	commentLines: number;
+	blankLines: number;
+}
+
 export interface CodebaseMetrics {
 	testCoverage: TestCoverageMetrics;
 	typeSafety: TypeSafetyMetrics;
 	quality: CodeQualityMetrics;
-	size: {
-		totalLines: number;
-		codeLines: number;
-		commentLines: number;
-		blankLines: number;
-	};
+	size: SizeMetrics;
 }
 
 export type PatternType =
