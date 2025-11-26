@@ -57,6 +57,15 @@ export class OutcomeAnalyzer {
 			actualHours: executionMetrics.actualHours,
 			variance: executionMetrics.variance,
 
+			// AI execution metrics
+			executorType: executionMetrics.executorType,
+			aiMetrics: executionMetrics.aiMetrics,
+
+			// AI-specific time tracking (minutes)
+			plannedMinutesAI: executionMetrics.plannedMinutesAI,
+			actualMinutesAI: executionMetrics.actualMinutesAI,
+			aiVariance: executionMetrics.aiVariance,
+
 			// Quality improvements
 			coverageBefore: initialAnalysis.metrics.testCoverage.lines,
 			coverageAfter: finalAnalysis.metrics.testCoverage.lines,
@@ -103,8 +112,17 @@ export class OutcomeAnalyzer {
 
 				const actualHours = taskExecution.duration ? taskExecution.duration / 3600 : 0;
 				const estimatedHours = planTask.estimatedHours;
-
 				const accuracy = this.calculateEstimationAccuracy(estimatedHours, actualHours);
+
+				// Determine executor type from metrics
+				const executorType = taskExecution.aiMetrics?.executorType || 'human';
+
+				// Calculate AI metrics if available
+				const actualMinutesAI = taskExecution.aiMetrics?.actualMinutes;
+				const estimatedMinutesAI = planTask.estimatedMinutesAI;
+				const aiAccuracy = actualMinutesAI && estimatedMinutesAI
+					? this.calculateEstimationAccuracy(estimatedMinutesAI, actualMinutesAI)
+					: undefined;
 
 				feedback.push({
 					id: `feedback-${taskExecution.taskId}`,
@@ -114,6 +132,13 @@ export class OutcomeAnalyzer {
 					estimatedHours,
 					actualHours,
 					accuracy,
+
+					executorType,
+
+					// AI-specific tracking (minutes)
+					estimatedMinutesAI,
+					actualMinutesAI,
+					aiAccuracy,
 
 					codebaseContext: {
 						size: project.plan.phases.reduce((sum, p) => sum + p.tasks.length, 0),
@@ -139,12 +164,19 @@ export class OutcomeAnalyzer {
 		skippedTasks: number;
 		actualHours: number;
 		variance: number;
+		executorType: 'human' | 'ai-claude-code' | 'ai-cursor' | 'ai-other';
+		aiMetrics?: any;
+		plannedMinutesAI?: number;
+		actualMinutesAI?: number;
+		aiVariance?: number;
 	} {
 		let totalTasks = 0;
 		let completedTasks = 0;
 		let failedTasks = 0;
 		let skippedTasks = 0;
 		let totalDurationSeconds = 0;
+		let totalActualMinutesAI = 0;
+		let hasAIMetrics = false;
 
 		for (const phase of project.phases) {
 			totalTasks += phase.tasks.length;
@@ -153,6 +185,10 @@ export class OutcomeAnalyzer {
 				if (task.status === 'completed') {
 					completedTasks++;
 					if (task.duration) totalDurationSeconds += task.duration;
+					if (task.aiMetrics?.actualMinutes) {
+						totalActualMinutesAI += task.aiMetrics.actualMinutes;
+						hasAIMetrics = true;
+					}
 				} else if (task.status === 'failed') {
 					failedTasks++;
 				} else {
@@ -165,13 +201,32 @@ export class OutcomeAnalyzer {
 		const plannedHours = project.plan.totalEstimatedHours;
 		const variance = plannedHours > 0 ? ((actualHours - plannedHours) / plannedHours) * 100 : 0;
 
+		// Calculate planned AI minutes from all tasks
+		const plannedMinutesAI = project.plan.phases.reduce(
+			(sum, phase) => sum + phase.tasks.reduce((taskSum, task) => taskSum + task.estimatedMinutesAI, 0),
+			0
+		);
+
+		// Determine executor type (check if any task has AI metrics)
+		const executorType = hasAIMetrics ? 'ai-claude-code' : 'human';
+
+		// Calculate AI variance if we have AI metrics
+		const aiVariance = hasAIMetrics && plannedMinutesAI > 0
+			? ((totalActualMinutesAI - plannedMinutesAI) / plannedMinutesAI) * 100
+			: undefined;
+
 		return {
 			totalTasks,
 			completedTasks,
 			failedTasks,
 			skippedTasks,
 			actualHours,
-			variance
+			variance,
+			executorType,
+			aiMetrics: undefined, // Could aggregate individual task metrics here
+			plannedMinutesAI: hasAIMetrics ? plannedMinutesAI : undefined,
+			actualMinutesAI: hasAIMetrics ? totalActualMinutesAI : undefined,
+			aiVariance
 		};
 	}
 
