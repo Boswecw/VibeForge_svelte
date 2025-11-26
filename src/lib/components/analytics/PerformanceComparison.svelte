@@ -8,7 +8,17 @@ Displays model performance metrics including response times, error rates, and pe
 
   export let dateRange: { start: Date; end: Date };
 
-  let modelPerformance: Array<{ model: string; provider: string; stats: any }> = [];
+  interface PerformanceStats {
+    totalCount: number;
+    errorCount: number;
+    acceptedCount: number;
+    avgResponseTime: number;
+    p50ResponseTime: number;
+    p95ResponseTime: number;
+    p99ResponseTime: number;
+  }
+
+  let modelPerformance: Array<{ model: string; provider: string; stats: PerformanceStats }> = [];
 
   $: if (dateRange) {
     loadPerformanceData();
@@ -55,11 +65,11 @@ Displays model performance metrics including response times, error rates, and pe
     return "text-red-400";
   }
 
-  function calculateErrorRate(stats: any): number {
+  function calculateErrorRate(stats: PerformanceStats): number {
     return stats.totalCount > 0 ? (stats.errorCount / stats.totalCount) * 100 : 0;
   }
 
-  function getPerformanceGrade(stats: any): string {
+  function getPerformanceGrade(stats: PerformanceStats): string {
     const avgTime = stats.avgResponseTime;
     const errorRate = calculateErrorRate(stats);
     const acceptanceRate = stats.totalCount > 0 ? (stats.acceptedCount / stats.totalCount) * 100 : 0;

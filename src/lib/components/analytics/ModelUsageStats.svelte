@@ -8,7 +8,14 @@ Displays model usage counts, acceptance rates, and call distribution
 
   export let dateRange: { start: Date; end: Date };
 
-  let modelStats: Array<{ model: string; provider: string; stats: any }> = [];
+  interface ModelStats {
+    totalCount: number;
+    acceptedCount: number;
+    errorCount: number;
+    avgResponseTime: number;
+  }
+
+  let modelStats: Array<{ model: string; provider: string; stats: ModelStats }> = [];
   let totalCalls = 0;
 
   $: if (dateRange) {
@@ -64,7 +71,7 @@ Displays model usage counts, acceptance rates, and call distribution
     return total > 0 ? (value / total) * 100 : 0;
   }
 
-  function getAcceptanceRate(stats: any): number {
+  function getAcceptanceRate(stats: ModelStats): number {
     return stats.totalCount > 0
       ? (stats.acceptedCount / stats.totalCount) * 100
       : 0;

@@ -5,10 +5,11 @@ Displays current budget status with progress bars and alerts
 <script lang="ts">
   import { onMount } from "svelte";
   import { costTracker } from "$lib/services/modelRouter";
+  import type { CostBudget } from "$lib/services/modelRouter/types";
 
   export let dateRange: { start: Date; end: Date };
 
-  let budget: any = null;
+  let budget: CostBudget | null = null;
 
   $: if (dateRange) {
     loadBudget();

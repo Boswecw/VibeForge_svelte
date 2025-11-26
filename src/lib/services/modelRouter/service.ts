@@ -222,7 +222,7 @@ export class ModelRouter {
    */
   trackUsage(
     modelId: string,
-    provider: string,
+    provider: LLMProvider,
     taskCategory: TaskCategory,
     promptTokens: number,
     completionTokens: number,
@@ -235,7 +235,7 @@ export class ModelRouter {
     // Track cost
     const costEntry = costTracker.track({
       modelId,
-      provider: provider as any,
+      provider,
       promptTokens,
       completionTokens,
       totalTokens,
@@ -245,7 +245,7 @@ export class ModelRouter {
     // Track performance
     performanceMetrics.record({
       modelId,
-      provider: provider as any,
+      provider,
       taskCategory,
       responseTimeMs,
       tokens: totalTokens,
@@ -561,14 +561,14 @@ export class ModelRouter {
    */
   private createSelection(
     modelId: string,
-    provider: string,
+    provider: LLMProvider,
     criteria: ModelSelectionCriteria,
     reasoning: string
   ): ModelSelection {
     const model = MODEL_CAPABILITIES[modelId];
     return {
       modelId,
-      provider: provider as any,
+      provider,
       reasoning,
       confidence: 0.8,
       estimatedCost: model ? this.estimateCost(model, criteria) : 0,

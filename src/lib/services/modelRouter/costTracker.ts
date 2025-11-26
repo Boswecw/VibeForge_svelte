@@ -293,14 +293,14 @@ export class CostTracker {
   } {
     const filtered = this.filterEntries(startDate, endDate);
 
-    const byProvider: Record<
-      string,
+    const byProvider: Partial<Record<
+      LLMProvider,
       { cost: number; tokens: number; requests: number }
-    > = {};
-    const byCategory: Record<
-      string,
+    >> = {};
+    const byCategory: Partial<Record<
+      TaskCategory,
       { cost: number; tokens: number; requests: number }
-    > = {};
+    >> = {};
 
     let totalCost = 0;
     let totalTokens = 0;
@@ -313,25 +313,25 @@ export class CostTracker {
       if (!byProvider[entry.provider]) {
         byProvider[entry.provider] = { cost: 0, tokens: 0, requests: 0 };
       }
-      byProvider[entry.provider].cost += entry.totalCost;
-      byProvider[entry.provider].tokens += entry.totalTokens;
-      byProvider[entry.provider].requests += 1;
+      byProvider[entry.provider]!.cost += entry.totalCost;
+      byProvider[entry.provider]!.tokens += entry.totalTokens;
+      byProvider[entry.provider]!.requests += 1;
 
       // By category
       if (!byCategory[entry.taskCategory]) {
         byCategory[entry.taskCategory] = { cost: 0, tokens: 0, requests: 0 };
       }
-      byCategory[entry.taskCategory].cost += entry.totalCost;
-      byCategory[entry.taskCategory].tokens += entry.totalTokens;
-      byCategory[entry.taskCategory].requests += 1;
+      byCategory[entry.taskCategory]!.cost += entry.totalCost;
+      byCategory[entry.taskCategory]!.tokens += entry.totalTokens;
+      byCategory[entry.taskCategory]!.requests += 1;
     });
 
     return {
       totalCost,
       totalTokens,
       totalRequests: filtered.length,
-      byProvider: byProvider as any,
-      byCategory: byCategory as any,
+      byProvider: byProvider as Record<LLMProvider, { cost: number; tokens: number; requests: number }>,
+      byCategory: byCategory as Record<TaskCategory, { cost: number; tokens: number; requests: number }>,
     };
   }
 
@@ -381,7 +381,10 @@ export class CostTracker {
   import(json: string): void {
     try {
       const data = JSON.parse(json);
-      this.entries = data.entries.map((e: any) => ({
+      interface SerializedEntry extends Omit<CostEntry, 'timestamp'> {
+        timestamp: string;
+      }
+      this.entries = (data.entries as SerializedEntry[]).map((e) => ({
         ...e,
         timestamp: new Date(e.timestamp),
       }));
