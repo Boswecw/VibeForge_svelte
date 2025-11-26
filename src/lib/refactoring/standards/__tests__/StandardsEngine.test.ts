@@ -541,3 +541,63 @@ describe('StandardsEngine', () => {
 		});
 	});
 });
+
+describe('Additional Coverage Tests', () => {
+	it('should warn about excessive any types when allowed', () => {
+		const engine = new StandardsEngine(startupStandards); // Allows any types
+		const analysis = createMockAnalysis({
+			metrics: {
+				...createMockAnalysis().metrics,
+				typeSafety: {
+					...createMockAnalysis().metrics.typeSafety,
+					anyTypeCount: 25 // More than reasonable (20)
+				}
+			}
+		});
+
+		const result = engine.evaluate(analysis);
+
+		// Should pass category (any types allowed) but have warning rule
+		const anyTypeWarning = result.categories.typeSafety.rules.find(
+			(r) => r.ruleId === 'any-types-warning'
+		);
+		expect(anyTypeWarning).toBeDefined();
+		expect(anyTypeWarning?.passed).toBe(false); // 25 > 20
+		expect(anyTypeWarning?.severity).toBe('warning');
+	});
+
+	it('should detect forbidden file patterns', () => {
+		const customStandards = {
+			...balancedStandards,
+			architecture: {
+				...balancedStandards.architecture,
+				forbiddenPatterns: ['**/temp/**', '**/scratch/**']
+			}
+		};
+
+		const engine = new StandardsEngine(customStandards);
+		const analysis = createMockAnalysis({
+			structure: {
+				...createMockAnalysis().structure,
+				files: [
+					{
+						relativePath: 'src/temp/test.ts',
+						name: 'test.ts',
+						extension: 'ts',
+						type: 'typescript' as const,
+						size: 100,
+						lines: 10
+					}
+				]
+			}
+		});
+
+		const result = engine.evaluate(analysis);
+
+		const forbiddenRule = result.categories.architecture.rules.find(
+			(r) => r.ruleId === 'no-forbidden-patterns'
+		);
+		expect(forbiddenRule).toBeDefined();
+		expect(forbiddenRule?.passed).toBe(false); // File matches forbidden pattern
+	});
+});
