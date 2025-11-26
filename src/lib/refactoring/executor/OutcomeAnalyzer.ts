@@ -217,7 +217,7 @@ export class OutcomeAnalyzer {
 		const lastTask = lastPhase?.tasks[lastPhase.tasks.length - 1];
 
 		const allTestsPassed = lastTask?.verification?.passed ?? false;
-		const buildSucceeded = lastTask?.verification?.errors.length === 0 ?? false;
+		const buildSucceeded = lastTask?.verification ? lastTask.verification.errors.length === 0 : false;
 		const noRegressions = gatesFailed === 0;
 
 		return {
