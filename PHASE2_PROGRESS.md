@@ -108,25 +108,45 @@ Phase 2 focuses on improving code quality through type safety, testing, and Svel
 
 ---
 
-## 📋 Pending Tasks
+### ✅ Task 2.1: Unit Tests for Rune-Based Stores
+**Status:** COMPLETE (321 tests passing)
+**Test Infrastructure:**
+- Configured Vitest with jsdom environment
+- Set up Svelte 5 runes testing support
+- Mocked SvelteKit $app/environment module
+- Mocked Tauri API calls
+- Mocked localStorage for persistence tests
 
-### Task 2.1: Unit Tests for Rune-Based Stores
-**Status:** Not Started
-**Requirements:**
-- Set up Vitest test environment if not configured
-- Write tests for all stores in `src/lib/core/stores/`:
-  - theme.svelte.ts
-  - workspace.svelte.ts
-  - contextBlocks.svelte.ts
-  - prompt.svelte.ts
-  - models.svelte.ts
-  - runs.svelte.ts
-  - tools.svelte.ts
-- Focus on reactivity, actions, and edge cases
-- Test localStorage persistence
-- Test derived state computations
+**Test Suites Created:**
+1. `theme.test.ts` - 15 tests (initialization, toggle, localStorage)
+2. `workspace.test.ts` - 41 tests (CRUD, API integration, selection)
+3. `contextBlocks.test.ts` - 45 tests (blocks, active state, reordering, tokens)
+4. `prompt.test.ts` - 54 tests (text, variables, templates, resolution)
+5. `models.test.ts` - 51 tests (models, selection, cost estimation, providers)
+6. `runs.test.ts` - 58 tests (execution, history, filtering, status tracking)
+7. `tools.test.ts` - 57 tests (MCP servers, tools, invocations, derived state)
+
+**Coverage Areas:**
+- ✅ Initialization and empty states
+- ✅ CRUD operations (create, read, update, delete)
+- ✅ Derived state computations ($derived runes)
+- ✅ localStorage persistence
+- ✅ API integrations (mocked)
+- ✅ Error handling
+- ✅ Utility functions
+- ✅ Integration scenarios
+
+**Commits:**
+- `b6e2b76` - test: fix vitest config and add workspace tests (41 tests)
+- `ffdb83c` - test: add contextBlocks store tests (45 tests)
+- `1cfd8da` - test: add prompt store tests (54 tests)
+- `d12be42` - test: add models store tests (51 tests)
+- `e8fa31b` - test: add runs store tests (58 tests)
+- `a3a13fe` - test: add tools store tests (57 tests)
 
 ---
+
+## 📋 Pending Tasks
 
 ### Task 2.2: Component Tests for Workbench Columns
 **Status:** Not Started
@@ -158,7 +178,7 @@ Phase 2 focuses on improving code quality through type safety, testing, and Svel
 - ✅ Task 2.4: Theme Store Migration - COMPLETE
 - ✅ Task 2.5: Remove 'any' Types - 95% COMPLETE
 - ✅ Theme Import Migration - COMPLETE (46 files)
-- ⏳ Task 2.1: Unit Tests - Pending
+- ✅ Task 2.1: Unit Tests - COMPLETE (321 tests)
 - ⏳ Task 2.2: Component Tests - Pending
 - ⏳ Task 2.3: E2E Tests - Pending
 
@@ -166,10 +186,11 @@ Phase 2 focuses on improving code quality through type safety, testing, and Svel
 - Type safety: 95% coverage (37/39 'any' types removed)
 - Store architecture: Unified Svelte 5 runes pattern
 - Import consistency: 46 files migrated to centralized exports
-- Total commits: 6 commits across Phase 2
+- Test coverage: 321 unit tests for all 7 stores
+- Total commits: 12 commits across Phase 2
 
 **Next Steps:**
-1. Begin Task 2.1: Write comprehensive unit tests for stores
+1. ~~Begin Task 2.1: Write comprehensive unit tests for stores~~ ✅ COMPLETE
 2. Set up component testing infrastructure (Task 2.2)
 3. Configure Playwright for E2E tests (Task 2.3)
 4. Consider migrating additional stores to Svelte 5 runes (presets, dataforge)
