@@ -13,8 +13,10 @@ import type { WizardData, ProjectType } from "$lib/workbench/types/wizard";
 import { ALL_STACKS } from "$lib/data/stack-profiles";
 
 // Conditionally import Tauri APIs (only available in Tauri environment)
-let invoke: any = () => Promise.reject(new Error("Tauri not available"));
-let open: any = () => Promise.reject(new Error("Tauri not available"));
+type TauriInvoke = <T>(cmd: string, args?: Record<string, unknown>) => Promise<T>;
+type TauriOpen = (path: string) => Promise<void>;
+let invoke: TauriInvoke = () => Promise.reject(new Error("Tauri not available"));
+let open: TauriOpen = () => Promise.reject(new Error("Tauri not available"));
 
 if (typeof window !== "undefined" && "__TAURI__" in window) {
   try {
