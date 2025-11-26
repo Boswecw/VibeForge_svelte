@@ -5,11 +5,20 @@ Displays cost breakdown with pie charts, line charts, and provider/category anal
 <script lang="ts">
   import { onMount } from "svelte";
   import { costTracker } from "$lib/services/modelRouter";
+  import type { CostEntry } from "$lib/services/modelRouter/types";
 
   export let dateRange: { start: Date; end: Date };
   export let compact = false;
 
-  let summary: any = null;
+  interface CostSummary {
+    totalCost: number;
+    totalTokens: number;
+    totalRequests: number;
+    byProvider: Record<string, { cost: number; tokens: number; requests: number }>;
+    byCategory: Record<string, { cost: number; tokens: number; requests: number }>;
+  }
+
+  let summary: CostSummary | null = null;
   let costByProvider: Map<string, number> = new Map();
   let costByCategory: Map<string, number> = new Map();
   let costByModel: Map<string, number> = new Map();

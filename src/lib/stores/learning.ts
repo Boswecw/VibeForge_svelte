@@ -109,7 +109,7 @@ function createLearningStore() {
       try {
         const project = await learningClient.createProject({
           ...projectData,
-          project_type: projectData.project_type as any,
+          project_type: projectData.project_type,
         });
 
         update((state) => ({

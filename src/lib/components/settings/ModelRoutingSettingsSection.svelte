@@ -5,7 +5,7 @@ Configure intelligent model selection, cost tracking, and performance monitoring
 <script lang="ts">
   import { onMount } from "svelte";
   import { costTracker, performanceMetrics } from "$lib/services/modelRouter";
-  import type { RoutingStrategy } from "$lib/services/modelRouter/types";
+  import type { RoutingStrategy, CostBudget, CostEntry } from "$lib/services/modelRouter/types";
 
   // Routing settings
   let strategy: RoutingStrategy = "balanced";
@@ -20,8 +20,8 @@ Configure intelligent model selection, cost tracking, and performance monitoring
   let warningThreshold = 0.8;
 
   // Cost tracking
-  let currentBudget: any = null;
-  let costHistory: any[] = [];
+  let currentBudget: CostBudget | null = null;
+  let costHistory: CostEntry[] = [];
   let showCostHistory = false;
 
   // Performance stats
