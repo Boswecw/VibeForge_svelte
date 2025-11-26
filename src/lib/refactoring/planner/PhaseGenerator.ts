@@ -65,13 +65,22 @@ export class PhaseGenerator {
 
 		return {
 			id: `phase-${number}`,
+			phase: number,
+			number, // Legacy alias
 			name,
 			description: this.generatePhaseDescription(tasks),
-			number,
+			required,
 			tasks,
+			gate: {
+				id: `gate-${number}`,
+				name: `${name} Quality Gate`,
+				description: `Quality checks for ${name.toLowerCase()}`,
+				phase: number,
+				checks: [],
+				required
+			},
 			estimatedHours: totalEstimatedHours,
-			status: 'pending',
-			required
+			status: 'pending'
 		};
 	}
 

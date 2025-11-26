@@ -7,8 +7,9 @@
 import type { RefactoringPlan, RefactoringPhase, RefactoringTask } from './planning';
 import type { GateVerificationResult } from './standards';
 
-// Re-export learning types for convenience
+// Re-export for convenience
 export type { RefactoringOutcome, OutcomeRating } from './learning';
+export type { RefactoringPlan, RefactoringPhase, RefactoringTask } from './planning';
 
 export type ExecutionStatus =
 	| 'idle'
