@@ -26,10 +26,10 @@ test.describe('Skip Wizard Preference - Default Behavior', () => {
 
   test('should open full wizard with Cmd+N when skipWizard is false', async ({ page }) => {
     // Press Cmd+N
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
+    await page.keyboard.press('Meta+N');
 
     // Should open full wizard (not Quick Create)
-    await expect(page.locator('text=Project Intent')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible({ timeout: 5000 });
     await expect(page.locator('text=Quick Create')).not.toBeVisible();
   });
 
@@ -38,17 +38,17 @@ test.describe('Skip Wizard Preference - Default Behavior', () => {
     await page.click('button:has-text("New Project")');
 
     // Should open full wizard
-    await expect(page.locator('text=Project Intent')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible({ timeout: 5000 });
     await expect(page.locator('text=Quick Create')).not.toBeVisible();
   });
 
   test('should always open Quick Create with Cmd+Shift+N even when skipWizard is false', async ({ page }) => {
     // Press Cmd+Shift+N
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+Shift+N' : 'Control+Shift+N');
+    await page.keyboard.press('Meta+Shift+N');
 
     // Should open Quick Create (not wizard)
     await expect(page.locator('text=Quick Create')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('text=Project Intent')).not.toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).not.toBeVisible();
   });
 });
 
@@ -71,11 +71,11 @@ test.describe('Skip Wizard Preference - Enabled (skipWizard = true)', () => {
 
   test('should open Quick Create with Cmd+N when skipWizard is true', async ({ page }) => {
     // Press Cmd+N
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
+    await page.keyboard.press('Meta+N');
 
     // Should open Quick Create (not wizard)
     await expect(page.locator('text=Quick Create')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('text=Project Intent')).not.toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).not.toBeVisible();
   });
 
   test('should open Quick Create via New Project button when skipWizard is true', async ({ page }) => {
@@ -84,12 +84,12 @@ test.describe('Skip Wizard Preference - Enabled (skipWizard = true)', () => {
 
     // Should open Quick Create
     await expect(page.locator('text=Quick Create')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('text=Project Intent')).not.toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).not.toBeVisible();
   });
 
   test('should still open Quick Create with Cmd+Shift+N when skipWizard is true', async ({ page }) => {
     // Press Cmd+Shift+N
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+Shift+N' : 'Control+Shift+N');
+    await page.keyboard.press('Meta+Shift+N');
 
     // Should open Quick Create
     await expect(page.locator('text=Quick Create')).toBeVisible({ timeout: 5000 });
@@ -97,7 +97,7 @@ test.describe('Skip Wizard Preference - Enabled (skipWizard = true)', () => {
 
   test('should open full wizard via command palette when searching "New Project" with skipWizard true', async ({ page }) => {
     // Open command palette
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');
+    await page.keyboard.press('Meta+K');
 
     // Type "new project"
     await page.keyboard.type('new project');
@@ -108,7 +108,7 @@ test.describe('Skip Wizard Preference - Enabled (skipWizard = true)', () => {
     // Depending on implementation, might respect preference or always open wizard
     // This test verifies the actual behavior
     const quickCreateVisible = await page.locator('text=Quick Create').isVisible({ timeout: 2000 }).catch(() => false);
-    const wizardVisible = await page.locator('text=Project Intent').isVisible({ timeout: 2000 }).catch(() => false);
+    const wizardVisible = await page.getByRole('heading', { name: 'Project Intent' }).isVisible({ timeout: 2000 }).catch(() => false);
 
     // Should open one or the other
     expect(quickCreateVisible || wizardVisible).toBeTruthy();
@@ -140,7 +140,7 @@ test.describe('Skip Wizard Preference - Toggling', () => {
     expect(prefs?.skipWizard).toBe(true);
 
     // Cmd+N should open Quick Create
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
+    await page.keyboard.press('Meta+N');
     await expect(page.locator('text=Quick Create')).toBeVisible({ timeout: 5000 });
   });
 
@@ -156,8 +156,8 @@ test.describe('Skip Wizard Preference - Toggling', () => {
     });
 
     // Cmd+N opens wizard
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
-    await expect(page.locator('text=Project Intent')).toBeVisible({ timeout: 5000 });
+    await page.keyboard.press('Meta+N');
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible({ timeout: 5000 });
 
     // Close wizard
     await page.keyboard.press('Escape');
@@ -174,9 +174,9 @@ test.describe('Skip Wizard Preference - Toggling', () => {
     await page.waitForLoadState('networkidle');
 
     // Now Cmd+N should open Quick Create
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
+    await page.keyboard.press('Meta+N');
     await expect(page.locator('text=Quick Create')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('text=Project Intent')).not.toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).not.toBeVisible();
   });
 });
 
@@ -188,7 +188,7 @@ test.describe('Skip Wizard Preference - Command Palette Integration', () => {
 
   test('should have separate commands for wizard and Quick Create', async ({ page }) => {
     // Open command palette
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');
+    await page.keyboard.press('Meta+K');
 
     // Should show both commands
     const paletteText = await page.textContent('body');
@@ -212,7 +212,7 @@ test.describe('Skip Wizard Preference - Command Palette Integration', () => {
     await page.waitForLoadState('networkidle');
 
     // Open command palette
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');
+    await page.keyboard.press('Meta+K');
 
     // Type "new project" (should match wizard command)
     await page.keyboard.type('new project');
@@ -223,7 +223,7 @@ test.describe('Skip Wizard Preference - Command Palette Integration', () => {
     // Depending on implementation, might respect preference
     // Verify which one opens
     const quickCreateVisible = await page.locator('text=Quick Create').isVisible({ timeout: 3000 }).catch(() => false);
-    const wizardVisible = await page.locator('text=Project Intent').isVisible({ timeout: 3000 }).catch(() => false);
+    const wizardVisible = await page.getByRole('heading', { name: 'Project Intent' }).isVisible({ timeout: 3000 }).catch(() => false);
 
     expect(quickCreateVisible || wizardVisible).toBeTruthy();
   });
@@ -240,7 +240,7 @@ test.describe('Skip Wizard Preference - Command Palette Integration', () => {
     await page.waitForLoadState('networkidle');
 
     // Open command palette
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');
+    await page.keyboard.press('Meta+K');
 
     // Type "quick create"
     await page.keyboard.type('quick create');

@@ -29,6 +29,7 @@ class ShortcutManager {
    */
   register(action: ShortcutAction) {
     const key = this.getShortcutKey(action.shortcut);
+    console.log(`[ShortcutManager] Registering: ${action.id} with key: ${key}`);
     this.shortcuts.set(key, action);
   }
 
@@ -45,15 +46,20 @@ class ShortcutManager {
    */
   handleKeyDown(event: KeyboardEvent): boolean {
     const key = this.getEventKey(event);
+    console.log(`[ShortcutManager] handleKeyDown - key: ${key}`);
     const action = this.shortcuts.get(key);
 
     if (action) {
+      console.log(`[ShortcutManager] Found action: ${action.id}`);
       event.preventDefault();
       event.stopPropagation();
+      console.log(`[ShortcutManager] Calling handler for: ${action.id}`);
       action.handler();
+      console.log(`[ShortcutManager] Handler completed for: ${action.id}`);
       return true;
     }
 
+    console.log(`[ShortcutManager] No action found for key: ${key}`);
     return false;
   }
 

@@ -7,7 +7,7 @@
 <script lang="ts">
   import { fade, fly } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
-  import { projectStore } from '../../stores';
+  import { projectStore, wizardStore } from '../../stores';
   import { ALL_STACKS } from '$lib/data/stack-profiles';
   import { LANGUAGES } from '$lib/data/languages';
   import type { ProjectType } from '../../types/wizard';
@@ -17,7 +17,11 @@
     onClose?: () => void;
   }
 
-  let { isOpen = false, onClose }: Props = $props();
+  // Use props object directly
+  const props = $props<Props>();
+
+  // Helper for isOpen with default
+  const isOpen = $derived(props.isOpen ?? false);
 
   // Quick create state (minimal fields)
   let projectName = $state('');
@@ -88,7 +92,7 @@
 
       // Success - close dialog
       reset();
-      onClose?.();
+      props.onClose?.();
     } catch (e) {
       console.error('Quick create failed:', e);
       error = e instanceof Error ? e.message : 'Failed to create project';
@@ -108,7 +112,16 @@
   function handleClose(): void {
     if (!isCreating) {
       reset();
-      onClose?.();
+      props.onClose?.();
+    }
+  }
+
+  function handleOpenWizard(): void {
+    if (!isCreating) {
+      reset();
+      props.onClose?.();
+      // Open wizard after Quick Create closes
+      wizardStore.open();
     }
   }
 
@@ -315,7 +328,7 @@
       <!-- Footer -->
       <footer class="flex items-center justify-between px-6 py-4 border-t border-gunmetal-700 bg-gunmetal-900/50">
         <div class="text-xs text-zinc-500">
-          Need more options? <button type="button" class="text-ember-400 hover:text-ember-300" on:click={handleClose}>Use wizard</button>
+          Need more options? <button type="button" class="text-ember-400 hover:text-ember-300" on:click={handleOpenWizard}>Use wizard</button>
         </div>
 
         <button
