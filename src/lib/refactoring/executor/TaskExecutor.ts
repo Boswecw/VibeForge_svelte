@@ -10,7 +10,9 @@ import type {
 	ExecutionStatus,
 	PhaseExecution,
 	TaskExecution,
-	GitCheckpoint
+	GitCheckpoint,
+	AIExecutionMetrics,
+	ExecutorType
 } from '../types/execution';
 import type { CodebaseAnalysis } from '../types/analysis';
 import type { RefactoringOutcome } from '../types/learning';
@@ -44,6 +46,16 @@ export interface ExecutorConfig {
 	 * Whether to auto-verify gates
 	 */
 	autoVerifyGates?: boolean;
+
+	/**
+	 * Executor type (human or AI)
+	 */
+	executorType?: ExecutorType;
+
+	/**
+	 * Whether to capture AI execution metrics
+	 */
+	captureAIMetrics?: boolean;
 }
 
 /**
@@ -205,6 +217,7 @@ export class TaskExecutor {
 		// Update task status
 		taskExecution.status = 'running';
 		taskExecution.startedAt = new Date().toISOString();
+		const startTime = Date.now();
 
 		// Simulate task execution (in real implementation, this would:
 		// 1. Generate Claude Code prompt
@@ -214,10 +227,22 @@ export class TaskExecutor {
 		// 5. Verify acceptance criteria
 		// For now, we'll just mark it as completed after a delay
 
+		// Capture AI metrics if configured
+		let aiMetrics: AIExecutionMetrics | undefined;
+		if (this.config.captureAIMetrics && this.config.executorType?.startsWith('ai-')) {
+			aiMetrics = this.captureAIMetrics(planTask, startTime);
+		}
+
 		// Mark as completed
 		taskExecution.status = 'completed';
 		taskExecution.completedAt = new Date().toISOString();
-		taskExecution.duration = 60; // Simulated 1 minute
+		const endTime = Date.now();
+		taskExecution.duration = Math.floor((endTime - startTime) / 1000); // Seconds
+
+		// Store AI metrics if captured
+		if (aiMetrics) {
+			taskExecution.aiMetrics = aiMetrics;
+		}
 
 		taskExecution.verification = {
 			passed: true,
@@ -443,5 +468,49 @@ export class TaskExecutor {
 	 */
 	getOutcomeAnalyzer(): OutcomeAnalyzer {
 		return this.outcomeAnalyzer;
+	}
+
+	/**
+	 * Captures AI execution metrics for a task
+	 * In real implementation, this would collect actual metrics from Claude Code API
+	 * For now, we simulate realistic metrics
+	 */
+	private captureAIMetrics(
+		task: import('../types/planning').RefactoringTask,
+		startTime: number
+	): AIExecutionMetrics {
+		const endTime = Date.now();
+		const actualMinutes = Math.ceil((endTime - startTime) / 60000);
+
+		// Simulate token usage based on task complexity
+		const estimatedTokens = task.files.length * 1000 + task.description.length * 2;
+		const inputTokens = Math.floor(estimatedTokens * 0.6);
+		const outputTokens = Math.floor(estimatedTokens * 0.4);
+		const totalTokens = inputTokens + outputTokens;
+
+		// Simulate cost (rough estimate: $3 per million tokens for Sonnet)
+		const costPerMillionTokens = 3;
+		const actualCost = (totalTokens / 1_000_000) * costPerMillionTokens;
+
+		// Quality indicators - in real implementation, these would be tracked
+		const firstPassSuccess = Math.random() > 0.2; // 80% success rate
+		const iterationCount = firstPassSuccess ? 1 : Math.floor(Math.random() * 3) + 1;
+		const testPassedOnFirst = firstPassSuccess && Math.random() > 0.1; // 90% if first pass succeeds
+
+		return {
+			executorType: this.config.executorType || 'ai-claude-code',
+			estimatedMinutes: task.estimatedMinutesAI,
+			actualMinutes,
+			totalTokens,
+			inputTokens,
+			outputTokens,
+			apiCalls: iterationCount,
+			retryCount: iterationCount - 1,
+			estimatedCost: (task.estimatedMinutesAI / actualMinutes) * actualCost,
+			actualCost,
+			firstPassSuccess,
+			iterationCount,
+			testPassedOnFirst
+		};
 	}
 }
