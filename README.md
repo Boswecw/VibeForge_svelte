@@ -152,13 +152,31 @@ VibeForge connects to commercial Forge backend services:
 
 ## 📚 Documentation
 
-| Document                                 | Purpose                                     |
-| ---------------------------------------- | ------------------------------------------- |
-| **[SETUP.md](./SETUP.md)**               | Installation and configuration guide        |
-| **[ARCHITECTURE.md](./ARCHITECTURE.md)** | Technical architecture and design patterns  |
-| **[FEATURES.md](./FEATURES.md)**         | Feature documentation and user guides       |
-| **[DEVELOPMENT.md](./DEVELOPMENT.md)**   | Development workflow and contribution guide |
-| **[TESTING.md](./TESTING.md)**           | Testing procedures and checklists           |
+### Getting Started
+
+| Document                                             | Purpose                                    |
+| ---------------------------------------------------- | ------------------------------------------ |
+| **[SETUP.md](./SETUP.md)**                           | Installation and configuration guide       |
+| **[USER_GUIDE.md](./docs/USER_GUIDE.md)**            | Complete user guide for workbench workflow |
+| **[FEATURES.md](./FEATURES.md)**                     | Feature documentation and user guides      |
+
+### Developer Documentation
+
+| Document                                                   | Purpose                                              |
+| ---------------------------------------------------------- | ---------------------------------------------------- |
+| **[DEVELOPER_GUIDE.md](./docs/DEVELOPER_GUIDE.md)**        | Complete developer onboarding guide                  |
+| **[ARCHITECTURE.md](./ARCHITECTURE.md)**                   | Technical architecture and design patterns           |
+| **[API Reference](./docs/api/README.md)**                  | Complete API documentation for all stores            |
+| **[DEVELOPMENT.md](./DEVELOPMENT.md)**                     | Development workflow and contribution guide          |
+| **[TESTING.md](./TESTING.md)**                             | Testing procedures and checklists                    |
+
+### Integration & Advanced
+
+| Document                                             | Purpose                                    |
+| ---------------------------------------------------- | ------------------------------------------ |
+| **[MCP_GUIDE.md](./docs/MCP_GUIDE.md)**              | Model Context Protocol integration guide   |
+| **[Phase 2 Completion](./PHASE2_COMPLETE.md)**       | Phase 2 achievements and test coverage     |
+| **[Phase 3 Completion](./PHASE3_COMPLETE.md)**       | Phase 3 documentation enhancement          |
 
 ---
 
@@ -1226,11 +1244,22 @@ For advanced features, consider:
 
 ### Documentation
 
+**Getting Started:**
 - **📚 Setup Guide**: [SETUP.md](./SETUP.md)
-- **🏛️ Architecture**: [ARCHITECTURE.md](./ARCHITECTURE.md)
+- **📖 User Guide**: [USER_GUIDE.md](./docs/USER_GUIDE.md)
 - **✨ Features**: [FEATURES.md](./FEATURES.md)
+
+**Developer Resources:**
+- **👨‍💻 Developer Guide**: [DEVELOPER_GUIDE.md](./docs/DEVELOPER_GUIDE.md)
+- **🔧 API Reference**: [docs/api/README.md](./docs/api/README.md)
+- **🏛️ Architecture**: [ARCHITECTURE.md](./ARCHITECTURE.md)
 - **🛠️ Development**: [DEVELOPMENT.md](./DEVELOPMENT.md)
 - **🪧 Testing**: [TESTING.md](./TESTING.md)
+
+**Integration & Advanced:**
+- **🔌 MCP Guide**: [MCP_GUIDE.md](./docs/MCP_GUIDE.md)
+- **🎯 Phase 2 Complete**: [PHASE2_COMPLETE.md](./PHASE2_COMPLETE.md)
+- **📚 Phase 3 Complete**: [PHASE3_COMPLETE.md](./PHASE3_COMPLETE.md)
 - **🗺️ Roadmap**: [VIBEFORGE_ROADMAP.md](./VIBEFORGE_ROADMAP.md)
 - **📚 INDEX**: [INDEX.md](./INDEX.md)
 
