@@ -22,11 +22,11 @@ test.describe('Wizard Modal - Opening and Closing', () => {
 
   test('should open wizard with Cmd+N keyboard shortcut', async ({ page }) => {
     // Press Cmd+N (or Ctrl+N on non-Mac)
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
+    await page.keyboard.press('Meta+N');
 
     // Wizard should be visible
-    await expect(page.locator('text=New Project')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('text=Project Intent')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'New Project' })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible();
   });
 
   test('should open wizard via New Project button in TopBar', async ({ page }) => {
@@ -34,12 +34,12 @@ test.describe('Wizard Modal - Opening and Closing', () => {
     await page.click('button:has-text("New Project")');
 
     // Wizard should open
-    await expect(page.locator('text=Project Intent')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible({ timeout: 5000 });
   });
 
   test('should open wizard via command palette', async ({ page }) => {
     // Open command palette with Cmd+K
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');
+    await page.keyboard.press('Meta+K');
 
     // Wait for palette to open
     await page.waitForSelector('input[placeholder*="command" i], input[placeholder*="search" i]', { timeout: 5000 });
@@ -51,31 +51,31 @@ test.describe('Wizard Modal - Opening and Closing', () => {
     await page.keyboard.press('Enter');
 
     // Wizard should open
-    await expect(page.locator('text=Project Intent')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible({ timeout: 5000 });
   });
 
   test('should close wizard with ESC key', async ({ page }) => {
     // Open wizard
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
-    await expect(page.locator('text=Project Intent')).toBeVisible();
+    await page.keyboard.press('Meta+N');
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible();
 
     // Press ESC to close
     await page.keyboard.press('Escape');
 
     // Wizard should close
-    await expect(page.locator('text=Project Intent')).not.toBeVisible({ timeout: 3000 });
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).not.toBeVisible({ timeout: 3000 });
   });
 
   test('should close wizard by clicking backdrop', async ({ page }) => {
     // Open wizard
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
-    await expect(page.locator('text=Project Intent')).toBeVisible();
+    await page.keyboard.press('Meta+N');
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible();
 
     // Click backdrop (outside modal)
     await page.click('.bg-black\\/50, [role="dialog"] ~ div', { force: true });
 
     // Wizard should close
-    await expect(page.locator('text=Project Intent')).not.toBeVisible({ timeout: 3000 });
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).not.toBeVisible({ timeout: 3000 });
   });
 });
 
@@ -85,8 +85,8 @@ test.describe('Wizard Modal - Step Navigation', () => {
     await page.waitForLoadState('networkidle');
 
     // Open wizard
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
-    await expect(page.locator('text=Project Intent')).toBeVisible();
+    await page.keyboard.press('Meta+N');
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible();
   });
 
   test('should show all 5 wizard steps', async ({ page }) => {
@@ -99,11 +99,11 @@ test.describe('Wizard Modal - Step Navigation', () => {
     ];
 
     // Check that step 1 is active
-    await expect(page.locator('text=Project Intent')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible();
 
     // Verify all steps are shown in progress indicator
     for (const step of steps) {
-      await expect(page.locator(`text=${step}`)).toBeVisible();
+      await expect(page.locator(`text=${step}`).first()).toBeVisible();
     }
   });
 
@@ -159,7 +159,7 @@ test.describe('Wizard Modal - Step Navigation', () => {
     await page.click('button:has-text("Back")');
 
     // Should be back on Step 1
-    await expect(page.locator('text=Project Intent')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible();
     await expect(page.locator('input[name="projectName"], input[id="project-name"]')).toHaveValue('Test Project');
   });
 
@@ -182,8 +182,8 @@ test.describe('Wizard Modal - Form Validation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
-    await expect(page.locator('text=Project Intent')).toBeVisible();
+    await page.keyboard.press('Meta+N');
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible();
   });
 
   test('should validate project name is required', async ({ page }) => {
@@ -231,7 +231,7 @@ test.describe('Wizard Modal - Draft Persistence', () => {
     await page.waitForLoadState('networkidle');
 
     // Open wizard and fill some data
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
+    await page.keyboard.press('Meta+N');
     await page.fill('input[name="projectName"], input[id="project-name"]', 'Draft Project');
 
     // Wait a bit for auto-save
@@ -252,7 +252,7 @@ test.describe('Wizard Modal - Draft Persistence', () => {
     await page.waitForLoadState('networkidle');
 
     // First session: Create draft
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
+    await page.keyboard.press('Meta+N');
     await page.fill('input[name="projectName"], input[id="project-name"]', 'Restored Project');
     await page.keyboard.press('Escape');
 
@@ -260,7 +260,7 @@ test.describe('Wizard Modal - Draft Persistence', () => {
     await page.waitForTimeout(1000);
 
     // Second session: Reopen wizard
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
+    await page.keyboard.press('Meta+N');
 
     // Should restore draft
     const input = page.locator('input[name="projectName"], input[id="project-name"]');
@@ -272,8 +272,8 @@ test.describe('Wizard Modal - Keyboard Shortcuts', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+N' : 'Control+N');
-    await expect(page.locator('text=Project Intent')).toBeVisible();
+    await page.keyboard.press('Meta+N');
+    await expect(page.getByRole('heading', { name: 'Project Intent' })).toBeVisible();
   });
 
   test('should advance to next step with Cmd+Enter', async ({ page }) => {
@@ -281,7 +281,7 @@ test.describe('Wizard Modal - Keyboard Shortcuts', () => {
     await page.fill('input[name="projectName"], input[id="project-name"]', 'Test Project');
 
     // Press Cmd+Enter to advance
-    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+Enter' : 'Control+Enter');
+    await page.keyboard.press('Meta+Enter');
 
     // Should be on Step 2
     await expect(page.locator('text=Select Languages')).toBeVisible({ timeout: 5000 });

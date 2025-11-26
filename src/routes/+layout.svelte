@@ -21,10 +21,24 @@
   import { shortcutManager } from "$lib/core/shortcuts";
   import type { Command } from "$lib/stores/palette";
   import { initAuth, isAuthenticated, currentUser } from "$lib/auth";
+  import { writable } from "svelte/store";
 
   let showShortcuts = $state(false);
   let sidebarVisible = $state(true);
+
+  // Use writable store for better cross-component reactivity
+  const showQuickCreateStore = writable(false);
   let showQuickCreate = $state(false);
+
+  // Sync store to state
+  $effect(() => {
+    const unsubscribe = showQuickCreateStore.subscribe(value => {
+      showQuickCreate = value;
+      console.log('[+layout] showQuickCreate reactive value:', value);
+    });
+    return unsubscribe;
+  });
+
   let isLoginPage = $derived($page.url.pathname === "/login");
 
   // Initialize auth and check authentication
@@ -50,24 +64,31 @@
       console.error("Failed to load prompts:", err);
     });
 
-    return unsubscribe;
-
     // Register global commands
+    console.log('[VibeForge] Registering commands...');
     registerCommands();
 
     // Register global shortcuts
+    console.log('[VibeForge] Registering shortcuts...');
     registerShortcuts();
+
+    console.log('[VibeForge] Initialization complete!');
+    return unsubscribe;
   });
 
   /**
    * Handle new project trigger - respects user preference to skip wizard
    */
   function handleNewProject() {
+    console.log('[VibeForge] handleNewProject triggered! skipWizard:', userPreferencesStore.skipWizard);
     if (userPreferencesStore.skipWizard) {
-      showQuickCreate = true;
+      console.log('[VibeForge] Opening Quick Create...');
+      showQuickCreateStore.set(true);
     } else {
+      console.log('[VibeForge] Opening Wizard...');
       wizardStore.open();
     }
+    console.log('[VibeForge] showQuickCreate:', showQuickCreate, 'wizardStore.isOpen:', wizardStore.isOpen);
   }
 
   function registerCommands() {
@@ -91,7 +112,7 @@
         shortcut: ["meta", "shift", "n"],
         keywords: ["create", "quick", "fast", "project"],
         handler: () => {
-          showQuickCreate = true;
+          showQuickCreateStore.set(true);
         },
       },
       {
@@ -222,6 +243,8 @@
   }
 
   function registerShortcuts() {
+    console.log('[VibeForge] Registering keyboard shortcuts...');
+
     // Cmd+N - New Project (respects skip wizard preference)
     shortcutManager.register({
       id: "new-project",
@@ -240,9 +263,13 @@
       category: "project",
       shortcut: ["meta", "shift", "n"],
       handler: () => {
-        showQuickCreate = true;
+        console.log('[VibeForge] Quick Create handler triggered!');
+        showQuickCreateStore.set(true);
+        console.log('[VibeForge] showQuickCreate store set to: true');
       },
     });
+
+    console.log('[VibeForge] Shortcuts registered:', shortcutManager.getAllShortcuts().length);
 
     // Cmd+K - Open command palette
     shortcutManager.register({
@@ -318,14 +345,17 @@
   }
 
   function handleGlobalKeyDown(event: KeyboardEvent) {
-    shortcutManager.handleKeyDown(event);
+    const key = `${event.metaKey ? 'meta+' : ''}${event.ctrlKey ? 'ctrl+' : ''}${event.shiftKey ? 'shift+' : ''}${event.altKey ? 'alt+' : ''}${event.key}`;
+    console.log('[VibeForge] Key pressed:', key);
+    const handled = shortcutManager.handleKeyDown(event);
+    console.log('[VibeForge] Shortcut handled:', handled);
   }
 
   /**
    * Listen for custom events to show Quick Create
    */
   function handleShowQuickCreate() {
-    showQuickCreate = true;
+    showQuickCreateStore.set(true);
   }
 </script>
 
@@ -368,8 +398,10 @@
   />
   <ToastContainer />
   <NewProjectWizard />
-  <QuickCreateDialog
-    isOpen={showQuickCreate}
-    onClose={() => (showQuickCreate = false)}
-  />
 {/if}
+
+<!-- Global modals - render outside conditional to avoid reactivity issues -->
+<QuickCreateDialog
+  isOpen={showQuickCreate}
+  onClose={() => showQuickCreateStore.set(false)}
+/>
