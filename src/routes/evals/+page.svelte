@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
   import EvaluationsHeader from "$lib/components/evaluations/EvaluationsHeader.svelte";
   import EvaluationsFilters from "$lib/components/evaluations/EvaluationsFilters.svelte";
   import EvaluationsList from "$lib/components/evaluations/EvaluationsList.svelte";
@@ -279,7 +279,7 @@
           {:else}
             <div
               class={`rounded-lg border p-8 flex items-center justify-center text-center h-full transition-colors ${
-                $theme === "dark"
+                themeStore.current === "dark"
                   ? "bg-slate-900 border-slate-700"
                   : "bg-white border-slate-200 shadow-sm"
               }`}
@@ -287,14 +287,14 @@
               <div class="flex flex-col gap-2 max-w-sm">
                 <p
                   class={`text-sm font-medium ${
-                    $theme === "dark" ? "text-slate-300" : "text-slate-700"
+                    themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
                   }`}
                 >
                   Select an evaluation to begin
                 </p>
                 <p
                   class={`text-xs ${
-                    $theme === "dark" ? "text-slate-500" : "text-slate-600"
+                    themeStore.current === "dark" ? "text-slate-500" : "text-slate-600"
                   }`}
                 >
                   Choose an evaluation session from the list to compare model

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
   import SettingsHeader from "$lib/components/settings/SettingsHeader.svelte";
   import WorkspaceSettingsSection from "$lib/components/settings/WorkspaceSettingsSection.svelte";
   import AppearanceSettingsSection from "$lib/components/settings/AppearanceSettingsSection.svelte";

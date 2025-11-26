@@ -6,7 +6,7 @@
 Results panel: displays outputs from each selected model side-by-side (or stacked on mobile)
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   interface QuickOutput {
     id: string;
@@ -27,7 +27,7 @@ Results panel: displays outputs from each selected model side-by-side (or stacke
 <!-- Quick Run outputs panel -->
 <section
   class={`rounded-lg border p-4 flex flex-col gap-3 transition-colors ${
-    $theme === "dark"
+    themeStore.current === "dark"
       ? "bg-slate-900 border-slate-700"
       : "bg-white border-slate-200 shadow-sm"
   }`}
@@ -35,19 +35,19 @@ Results panel: displays outputs from each selected model side-by-side (or stacke
   <!-- Header -->
   <header
     class="flex items-center justify-between gap-2 pb-2 border-b"
-    class:border-slate-700={$theme === "dark"}
-    class:border-slate-200={$theme !== "dark"}
+    class:border-slate-700={themeStore.current === "dark"}
+    class:border-slate-200={themeStore.current !== "dark"}
   >
     <h2
       class={`text-xs font-semibold ${
-        $theme === "dark" ? "text-slate-100" : "text-slate-900"
+        themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
       }`}
     >
       Outputs
     </h2>
     <p
       class={`text-[11px] ${
-        $theme === "dark" ? "text-slate-400" : "text-slate-500"
+        themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
       }`}
     >
       Results from each selected model
@@ -60,14 +60,14 @@ Results panel: displays outputs from each selected model side-by-side (or stacke
       <div class="flex flex-col items-center gap-2">
         <div
           class={`animate-spin rounded-full h-6 w-6 border-2 ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "border-slate-600 border-t-amber-500"
               : "border-slate-300 border-t-amber-500"
           }`}
         />
         <p
           class={`text-xs ${
-            $theme === "dark" ? "text-slate-400" : "text-slate-500"
+            themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
           }`}
         >
           Running prompts…
@@ -78,7 +78,7 @@ Results panel: displays outputs from each selected model side-by-side (or stacke
     <div class="flex items-center justify-center py-12">
       <p
         class={`text-[11px] ${
-          $theme === "dark" ? "text-slate-400" : "text-slate-500"
+          themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
         }`}
       >
         Run a prompt to see results here.
@@ -89,7 +89,7 @@ Results panel: displays outputs from each selected model side-by-side (or stacke
       {#each outputs as output (output.id)}
         <article
           class={`rounded-md border p-3 flex flex-col gap-2 text-xs leading-relaxed transition-colors ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "bg-slate-950 border-slate-800"
               : "bg-slate-50 border-slate-200"
           }`}
@@ -97,19 +97,19 @@ Results panel: displays outputs from each selected model side-by-side (or stacke
           <!-- Output header -->
           <header
             class="flex items-center justify-between gap-2 pb-2 border-b"
-            class:border-slate-700={$theme === "dark"}
-            class:border-slate-200={$theme !== "dark"}
+            class:border-slate-700={themeStore.current === "dark"}
+            class:border-slate-200={themeStore.current !== "dark"}
           >
             <span
               class={`font-semibold ${
-                $theme === "dark" ? "text-slate-100" : "text-slate-900"
+                themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
               }`}
             >
               {output.model}
             </span>
             <span
               class={`text-[11px] ${
-                $theme === "dark" ? "text-slate-400" : "text-slate-500"
+                themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
               }`}
             >
               {output.tokens} tokens · ${output.cost.toFixed(4)}
@@ -119,7 +119,7 @@ Results panel: displays outputs from each selected model side-by-side (or stacke
           <!-- Output content -->
           <div
             class={`rounded-sm border p-2 max-h-[260px] overflow-y-auto text-[11px] leading-relaxed whitespace-pre-wrap ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "bg-slate-900 border-slate-700 text-slate-200"
                 : "bg-white border-slate-300 text-slate-800"
             }`}

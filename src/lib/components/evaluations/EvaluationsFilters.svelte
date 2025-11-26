@@ -14,7 +14,7 @@
 no description yet
 -->
 <script lang="ts">
-  import { theme } from '$lib/stores/themeStore';
+  import { themeStore } from '$lib/core/stores';
   import type { EvaluationStatus } from '$lib/types/evaluation';
 
   interface Props {
@@ -52,7 +52,7 @@ no description yet
 <!-- Compact filters panel -->
 <section
   class={`rounded-lg border p-3 flex flex-col gap-3 transition-colors ${
-    $theme === 'dark'
+    themeStore.current === 'dark'
       ? 'bg-slate-900 border-slate-700'
       : 'bg-white border-slate-200 shadow-sm'
   }`}
@@ -60,7 +60,7 @@ no description yet
   <!-- Search input -->
   <div class="flex flex-col gap-1">
     <label class={`text-xs font-medium ${
-      $theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+      themeStore.current === 'dark' ? 'text-slate-300' : 'text-slate-700'
     }`}>
       Search
     </label>
@@ -73,7 +73,7 @@ no description yet
         onSearchChange(searchQuery);
       }}
       class={`w-full border rounded-md px-2.5 py-1.5 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors ${
-        $theme === 'dark'
+        themeStore.current === 'dark'
           ? 'bg-slate-950 border-slate-700 text-slate-100'
           : 'bg-slate-50 border-slate-200 text-slate-900'
       }`}
@@ -83,7 +83,7 @@ no description yet
   <!-- Workspace selector -->
   <div class="flex flex-col gap-1">
     <label class={`text-xs font-medium ${
-      $theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+      themeStore.current === 'dark' ? 'text-slate-300' : 'text-slate-700'
     }`}>
       Workspace
     </label>
@@ -94,7 +94,7 @@ no description yet
         onWorkspaceChange(workspace);
       }}
       class={`w-full border rounded-md px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors ${
-        $theme === 'dark'
+        themeStore.current === 'dark'
           ? 'bg-slate-950 border-slate-700 text-slate-100'
           : 'bg-slate-50 border-slate-200 text-slate-900'
       }`}
@@ -108,7 +108,7 @@ no description yet
   <!-- Model filter chips -->
   <div class="flex flex-col gap-1">
     <label class={`text-xs font-medium ${
-      $theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+      themeStore.current === 'dark' ? 'text-slate-300' : 'text-slate-700'
     }`}>
       Models
     </label>
@@ -119,10 +119,10 @@ no description yet
           type="button"
           class={`px-2.5 py-1 rounded-md text-xs font-medium border transition-colors ${
             isActive
-              ? $theme === 'dark'
+              ? themeStore.current === 'dark'
                 ? 'bg-amber-500/20 border-amber-500 text-amber-400'
                 : 'bg-amber-50 border-amber-500 text-amber-700'
-              : $theme === 'dark'
+              : themeStore.current === 'dark'
                 ? 'bg-slate-950 border-slate-700 text-slate-300 hover:bg-slate-900'
                 : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-white'
           }`}
@@ -140,7 +140,7 @@ no description yet
   <!-- Status filter chips -->
   <div class="flex flex-col gap-1">
     <label class={`text-xs font-medium ${
-      $theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+      themeStore.current === 'dark' ? 'text-slate-300' : 'text-slate-700'
     }`}>
       Status
     </label>
@@ -151,10 +151,10 @@ no description yet
           type="button"
           class={`px-2.5 py-1 rounded-md text-xs font-medium border transition-colors ${
             isActive
-              ? $theme === 'dark'
+              ? themeStore.current === 'dark'
                 ? 'bg-amber-500/20 border-amber-500 text-amber-400'
                 : 'bg-amber-50 border-amber-500 text-amber-700'
-              : $theme === 'dark'
+              : themeStore.current === 'dark'
                 ? 'bg-slate-950 border-slate-700 text-slate-300 hover:bg-slate-900'
                 : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-white'
           }`}
@@ -172,7 +172,7 @@ no description yet
   <!-- Date range filter chips -->
   <div class="flex flex-col gap-1">
     <label class={`text-xs font-medium ${
-      $theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+      themeStore.current === 'dark' ? 'text-slate-300' : 'text-slate-700'
     }`}>
       Date Range
     </label>
@@ -183,10 +183,10 @@ no description yet
           type="button"
           class={`px-2.5 py-1 rounded-md text-xs font-medium border transition-colors ${
             isActive
-              ? $theme === 'dark'
+              ? themeStore.current === 'dark'
                 ? 'bg-amber-500/20 border-amber-500 text-amber-400'
                 : 'bg-amber-50 border-amber-500 text-amber-700'
-              : $theme === 'dark'
+              : themeStore.current === 'dark'
                 ? 'bg-slate-950 border-slate-700 text-slate-300 hover:bg-slate-900'
                 : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-white'
           }`}

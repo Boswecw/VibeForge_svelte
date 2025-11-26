@@ -10,7 +10,7 @@
 Reusable status bar displaying workspace, models, metrics, and system health
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   interface Props {
     workspace?: string;
@@ -42,7 +42,7 @@ Reusable status bar displaying workspace, models, metrics, and system health
 <!-- Status bar: workspace, models, metrics, connection -->
 <footer
   class={`rounded-lg border p-3 flex items-center justify-between gap-4 text-xs transition-colors ${
-    $theme === "dark"
+    themeStore.current === "dark"
       ? "bg-slate-900 border-slate-700"
       : "bg-white border-slate-200 shadow-sm"
   }`}
@@ -52,14 +52,14 @@ Reusable status bar displaying workspace, models, metrics, and system health
     <div class="flex flex-col gap-0.5 min-w-0">
       <span
         class={`text-[11px] font-semibold truncate ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         {workspace}
       </span>
       <span
         class={`text-[10px] truncate ${
-          $theme === "dark" ? "text-slate-400" : "text-slate-500"
+          themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
         }`}
       >
         {project}
@@ -70,12 +70,12 @@ Reusable status bar displaying workspace, models, metrics, and system health
     {#if activeModels.length > 0}
       <div
         class="flex items-center gap-1 pl-3 border-l"
-        class:border-slate-700={$theme === "dark"}
-        class:border-slate-300={$theme !== "dark"}
+        class:border-slate-700={themeStore.current === "dark"}
+        class:border-slate-300={themeStore.current !== "dark"}
       >
         <span
           class={`text-[10px] ${
-            $theme === "dark" ? "text-slate-400" : "text-slate-500"
+            themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
           }`}
         >
           Models:
@@ -84,7 +84,7 @@ Reusable status bar displaying workspace, models, metrics, and system health
           {#each activeModels as model (model)}
             <span
               class={`text-[10px] font-medium px-1.5 py-0.5 rounded-sm ${
-                $theme === "dark"
+                themeStore.current === "dark"
                   ? "bg-slate-800 text-amber-400"
                   : "bg-amber-50 text-amber-700"
               }`}
@@ -100,26 +100,26 @@ Reusable status bar displaying workspace, models, metrics, and system health
     {#if lastRunTokens > 0}
       <div
         class="flex items-center gap-2 pl-3 border-l"
-        class:border-slate-700={$theme === "dark"}
-        class:border-slate-300={$theme !== "dark"}
+        class:border-slate-700={themeStore.current === "dark"}
+        class:border-slate-300={themeStore.current !== "dark"}
       >
         <span
           class={`text-[10px] ${
-            $theme === "dark" ? "text-slate-400" : "text-slate-500"
+            themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
           }`}
         >
           Last run:
         </span>
         <span
           class={`text-[10px] font-mono ${
-            $theme === "dark" ? "text-slate-300" : "text-slate-700"
+            themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
           }`}
         >
           {lastRunTokens} tokens
         </span>
         <span
           class={`text-[10px] font-mono ${
-            $theme === "dark" ? "text-slate-300" : "text-slate-700"
+            themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
           }`}
         >
           ${lastRunCost.toFixed(4)}
@@ -131,20 +131,20 @@ Reusable status bar displaying workspace, models, metrics, and system health
   <!-- Connection Status -->
   <div
     class="flex items-center gap-2 pl-3 border-l shrink-0"
-    class:border-slate-700={$theme === "dark"}
-    class:border-slate-300={$theme !== "dark"}
+    class:border-slate-700={themeStore.current === "dark"}
+    class:border-slate-300={themeStore.current !== "dark"}
   >
     <span
       class={`text-[10px] flex items-center gap-1 font-medium ${
         status.color === "emerald"
-          ? $theme === "dark"
+          ? themeStore.current === "dark"
             ? "text-emerald-400"
             : "text-emerald-700"
           : status.color === "amber"
-          ? $theme === "dark"
+          ? themeStore.current === "dark"
             ? "text-amber-400"
             : "text-amber-700"
-          : $theme === "dark"
+          : themeStore.current === "dark"
           ? "text-rose-400"
           : "text-rose-700"
       }`}

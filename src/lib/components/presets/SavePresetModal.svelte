@@ -16,7 +16,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
 -->
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
   import { presets } from "$lib/stores/presets";
   import type { Preset, PresetCategory, ContextRef } from "$lib/stores/presets";
 
@@ -137,7 +137,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
     <!-- Panel -->
     <div
       class={`relative w-full max-w-lg rounded-lg border shadow-lg mx-4 transition-colors ${
-        $theme === "dark"
+        themeStore.current === "dark"
           ? "bg-slate-950 border-slate-800"
           : "bg-white border-slate-200"
       }`}
@@ -145,20 +145,20 @@ Save current Workbench/Quick Run configuration as a reusable preset
       <!-- Header -->
       <header
         class={`flex items-center justify-between px-4 py-3 border-b ${
-          $theme === "dark" ? "border-slate-800" : "border-slate-200"
+          themeStore.current === "dark" ? "border-slate-800" : "border-slate-200"
         }`}
       >
         <div class="flex flex-col gap-0.5">
           <h2
             class={`text-sm font-semibold ${
-              $theme === "dark" ? "text-slate-100" : "text-slate-900"
+              themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
             }`}
           >
             {initialPreset ? "Edit preset" : "Save as preset"}
           </h2>
           <p
             class={`text-[11px] ${
-              $theme === "dark" ? "text-slate-400" : "text-slate-500"
+              themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
             }`}
           >
             Capture this configuration as a reusable favorite.
@@ -167,7 +167,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
         <button
           type="button"
           class={`text-[11px] transition-colors ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "text-slate-400 hover:text-slate-100"
               : "text-slate-500 hover:text-slate-900"
           }`}
@@ -181,14 +181,14 @@ Save current Workbench/Quick Run configuration as a reusable preset
       <!-- Body: Form fields -->
       <div
         class={`px-4 py-3 flex flex-col gap-3 text-xs border-b ${
-          $theme === "dark" ? "border-slate-800" : "border-slate-200"
+          themeStore.current === "dark" ? "border-slate-800" : "border-slate-200"
         } max-h-[60vh] overflow-y-auto`}
       >
         <!-- Name -->
         <div class="flex flex-col gap-1">
           <label
             class={`text-xs font-semibold ${
-              $theme === "dark" ? "text-slate-100" : "text-slate-900"
+              themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
             }`}
           >
             Name *
@@ -196,7 +196,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
           <input
             type="text"
             class={`rounded-md border px-2 py-1.5 text-xs transition-colors ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "bg-slate-900 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-amber-500 focus:outline-none"
                 : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none"
             }`}
@@ -209,14 +209,14 @@ Save current Workbench/Quick Run configuration as a reusable preset
         <div class="flex flex-col gap-1">
           <label
             class={`text-xs font-semibold ${
-              $theme === "dark" ? "text-slate-100" : "text-slate-900"
+              themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
             }`}
           >
             Description
           </label>
           <textarea
             class={`rounded-md border px-2 py-1.5 text-xs leading-relaxed resize-y min-h-[60px] transition-colors ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "bg-slate-900 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-amber-500 focus:outline-none"
                 : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none"
             }`}
@@ -229,7 +229,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
         <div class="flex flex-col gap-1">
           <label
             class={`text-xs font-semibold ${
-              $theme === "dark" ? "text-slate-100" : "text-slate-900"
+              themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
             }`}
           >
             Category
@@ -241,7 +241,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
                 class={`px-3 py-1.5 rounded-full border transition-colors ${
                   category === option
                     ? "bg-amber-500 text-slate-900 border-amber-500 font-medium"
-                    : $theme === "dark"
+                    : themeStore.current === "dark"
                     ? "bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800 hover:border-slate-600"
                     : "bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:border-slate-300"
                 }`}
@@ -257,7 +257,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
         <div class="flex flex-col gap-1">
           <label
             class={`text-xs font-semibold ${
-              $theme === "dark" ? "text-slate-100" : "text-slate-900"
+              themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
             }`}
           >
             Workspace
@@ -265,7 +265,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
           <input
             type="text"
             class={`rounded-md border px-2 py-1.5 text-xs transition-colors ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "bg-slate-900 border-slate-700 text-slate-100"
                 : "bg-slate-50 border-slate-300 text-slate-900"
             }`}
@@ -274,7 +274,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
           />
           <p
             class={`text-[11px] ${
-              $theme === "dark" ? "text-slate-400" : "text-slate-500"
+              themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
             }`}
           >
             Preset will be associated with this workspace.
@@ -285,7 +285,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
         <div class="flex flex-col gap-1">
           <label
             class={`text-xs font-semibold ${
-              $theme === "dark" ? "text-slate-100" : "text-slate-900"
+              themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
             }`}
           >
             Tags
@@ -293,7 +293,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
           <input
             type="text"
             class={`rounded-md border px-2 py-1.5 text-xs transition-colors ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "bg-slate-900 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-amber-500 focus:outline-none"
                 : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none"
             }`}
@@ -302,7 +302,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
           />
           <p
             class={`text-[11px] ${
-              $theme === "dark" ? "text-slate-400" : "text-slate-500"
+              themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
             }`}
           >
             Comma-separated. Example: <code>story, outline, evaluation</code>
@@ -312,7 +312,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
         <!-- Pinned toggle -->
         <div
           class={`flex items-center justify-between py-1 ${
-            $theme === "dark" ? "text-slate-300" : "text-slate-700"
+            themeStore.current === "dark" ? "text-slate-300" : "text-slate-700"
           }`}
         >
           <label
@@ -323,7 +323,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
           </label>
           <span
             class={`text-[11px] ${
-              $theme === "dark" ? "text-slate-400" : "text-slate-500"
+              themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
             }`}
           >
             Pinned presets show up first in the drawer.
@@ -335,7 +335,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
           <div class="flex flex-col gap-1 text-[11px]">
             <h3
               class={`font-semibold ${
-                $theme === "dark" ? "text-slate-100" : "text-slate-900"
+                themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
               }`}
             >
               Models
@@ -345,7 +345,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
                 {#each models as model (model)}
                   <span
                     class={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] ${
-                      $theme === "dark"
+                      themeStore.current === "dark"
                         ? "bg-slate-900 border-slate-700 text-slate-200"
                         : "bg-slate-50 border-slate-300 text-slate-700"
                     }`}
@@ -357,7 +357,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
             {:else}
               <p
                 class={`text-[11px] ${
-                  $theme === "dark" ? "text-slate-400" : "text-slate-500"
+                  themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
                 }`}
               >
                 No models selected.
@@ -369,7 +369,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
           <div class="flex flex-col gap-1 text-[11px]">
             <h3
               class={`font-semibold ${
-                $theme === "dark" ? "text-slate-100" : "text-slate-900"
+                themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
               }`}
             >
               Context refs
@@ -379,7 +379,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
                 {#each contextRefs as ctx (ctx.id)}
                   <span
                     class={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] ${
-                      $theme === "dark"
+                      themeStore.current === "dark"
                         ? "bg-slate-900 border-slate-700 text-slate-200"
                         : "bg-slate-50 border-slate-300 text-slate-700"
                     }`}
@@ -391,7 +391,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
             {:else}
               <p
                 class={`text-[11px] ${
-                  $theme === "dark" ? "text-slate-400" : "text-slate-500"
+                  themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
                 }`}
               >
                 No extra context attached.
@@ -404,14 +404,14 @@ Save current Workbench/Quick Run configuration as a reusable preset
         <div class="flex flex-col gap-1 text-[11px]">
           <h3
             class={`font-semibold ${
-              $theme === "dark" ? "text-slate-100" : "text-slate-900"
+              themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
             }`}
           >
             Base prompt
           </h3>
           <div
             class={`rounded-md border p-2 font-mono leading-relaxed max-h-[120px] overflow-y-auto whitespace-pre-wrap text-[10px] ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "bg-slate-900 border-slate-700 text-slate-300"
                 : "bg-slate-50 border-slate-300 text-slate-700"
             }`}
@@ -424,13 +424,13 @@ Save current Workbench/Quick Run configuration as a reusable preset
       <!-- Footer: Actions -->
       <footer
         class={`flex items-center justify-between px-4 py-3 border-t ${
-          $theme === "dark" ? "border-slate-800" : "border-slate-200"
+          themeStore.current === "dark" ? "border-slate-800" : "border-slate-200"
         }`}
       >
         <button
           type="button"
           class={`px-3 py-1.5 rounded-md border text-[11px] font-medium transition-colors ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "border-slate-600 text-slate-300 hover:bg-slate-800"
               : "border-slate-300 text-slate-600 hover:bg-slate-100"
           }`}

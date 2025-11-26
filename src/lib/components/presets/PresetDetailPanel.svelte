@@ -7,7 +7,7 @@
 Detail panel showing full preset info and apply action
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
   import type { Preset } from "$lib/stores/presets";
 
   interface Props {
@@ -29,7 +29,7 @@ Detail panel showing full preset info and apply action
 <!-- Preset detail panel -->
 <section
   class={`border-t px-4 py-3 flex flex-col gap-3 text-xs ${
-    $theme === "dark"
+    themeStore.current === "dark"
       ? "border-slate-800 bg-slate-950"
       : "border-slate-200 bg-slate-50"
   }`}
@@ -40,14 +40,14 @@ Detail panel showing full preset info and apply action
       <div class="flex flex-col gap-0.5 flex-1 min-w-0">
         <h3
           class={`text-xs font-semibold truncate ${
-            $theme === "dark" ? "text-slate-100" : "text-slate-900"
+            themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
           }`}
         >
           {preset.name}
         </h3>
         <p
           class={`text-[10px] truncate ${
-            $theme === "dark" ? "text-slate-400" : "text-slate-500"
+            themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
           }`}
         >
           {preset.workspace} · {preset.category}
@@ -61,7 +61,7 @@ Detail panel showing full preset info and apply action
         {#each preset.tags as tag (tag)}
           <span
             class={`inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "border-slate-700 text-slate-300"
                 : "border-slate-300 text-slate-600"
             }`}
@@ -76,14 +76,14 @@ Detail panel showing full preset info and apply action
     <section class="flex flex-col gap-1">
       <h4
         class={`text-[10px] font-semibold ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Base prompt
       </h4>
       <div
         class={`rounded-md border p-2 text-[10px] font-mono leading-relaxed whitespace-pre-wrap max-h-[120px] overflow-y-auto ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "bg-slate-900 border-slate-700 text-slate-200"
             : "bg-white border-slate-300 text-slate-800"
         }`}
@@ -96,7 +96,7 @@ Detail panel showing full preset info and apply action
     <section class="flex flex-col gap-1">
       <h4
         class={`text-[10px] font-semibold ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Context refs
@@ -106,7 +106,7 @@ Detail panel showing full preset info and apply action
           {#each preset.contextRefs as ctx (ctx.id)}
             <span
               class={`inline-flex items-center rounded-full border px-2 py-0.5 ${
-                $theme === "dark"
+                themeStore.current === "dark"
                   ? "border-slate-700 text-slate-300"
                   : "border-slate-300 text-slate-600"
               }`}
@@ -118,7 +118,7 @@ Detail panel showing full preset info and apply action
       {:else}
         <p
           class={`text-[10px] ${
-            $theme === "dark" ? "text-slate-400" : "text-slate-500"
+            themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
           }`}
         >
           None
@@ -130,7 +130,7 @@ Detail panel showing full preset info and apply action
     <section class="flex flex-col gap-1">
       <h4
         class={`text-[10px] font-semibold ${
-          $theme === "dark" ? "text-slate-100" : "text-slate-900"
+          themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
         }`}
       >
         Models
@@ -139,7 +139,7 @@ Detail panel showing full preset info and apply action
         {#each preset.models as model (model)}
           <span
             class={`inline-flex items-center rounded-full border px-2 py-0.5 ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "border-slate-700 text-slate-300"
                 : "border-slate-300 text-slate-600"
             }`}
@@ -153,8 +153,8 @@ Detail panel showing full preset info and apply action
     <!-- Actions -->
     <footer
       class="flex items-center justify-between gap-2 text-[10px] pt-2 border-t"
-      class:border-slate-800={$theme === "dark"}
-      class:border-slate-200={$theme !== "dark"}
+      class:border-slate-800={themeStore.current === "dark"}
+      class:border-slate-200={themeStore.current !== "dark"}
     >
       <div class="flex gap-2">
         <button
@@ -166,7 +166,7 @@ Detail panel showing full preset info and apply action
         </button>
         <button
           class={`px-3 py-1.5 rounded-md border text-[11px] transition-colors ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "border-slate-700 text-slate-300 hover:bg-slate-900"
               : "border-slate-300 text-slate-600 hover:bg-slate-100"
           }`}
@@ -178,7 +178,7 @@ Detail panel showing full preset info and apply action
       </div>
       <span
         class={`text-[9px] ${
-          $theme === "dark" ? "text-slate-500" : "text-slate-400"
+          themeStore.current === "dark" ? "text-slate-500" : "text-slate-400"
         }`}
       >
         {preset.id}
@@ -188,7 +188,7 @@ Detail panel showing full preset info and apply action
     <div class="flex items-center justify-center py-6">
       <p
         class={`text-[11px] ${
-          $theme === "dark" ? "text-slate-400" : "text-slate-500"
+          themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
         }`}
       >
         Select a preset to view details.

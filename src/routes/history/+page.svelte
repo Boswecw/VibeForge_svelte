@@ -3,7 +3,7 @@
   import HistoryFilters from "$lib/components/history/HistoryFilters.svelte";
   import HistoryTable from "$lib/components/history/HistoryTable.svelte";
   import HistoryDetailPanel from "$lib/components/history/HistoryDetailPanel.svelte";
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   // History run type definitions
   type RunStatus = "success" | "error" | "partial";

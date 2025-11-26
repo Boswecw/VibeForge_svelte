@@ -9,7 +9,7 @@
 no description yet
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   interface Props {
     open: boolean;
@@ -162,7 +162,7 @@ Check pacing: does each beat land at expected story % mark?`,
     <!-- Panel -->
     <aside
       class={`w-full max-w-md h-full border-l flex flex-col transition-all ${
-        $theme === "dark"
+        themeStore.current === "dark"
           ? "bg-slate-950 border-slate-800"
           : "bg-white border-slate-200"
       }`}
@@ -170,14 +170,14 @@ Check pacing: does each beat land at expected story % mark?`,
       <!-- Header -->
       <header
         class={`flex items-center justify-between px-4 py-3 border-b ${
-          $theme === "dark" ? "border-slate-800" : "border-slate-200"
+          themeStore.current === "dark" ? "border-slate-800" : "border-slate-200"
         }`}
       >
         <div class="flex flex-col gap-0.5">
           <h2 class="text-sm font-semibold">Research & Assist</h2>
           <p
             class={`text-[11px] ${
-              $theme === "dark" ? "text-slate-400" : "text-slate-500"
+              themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
             }`}
           >
             Notes, snippets, and tips for this workspace.
@@ -186,14 +186,14 @@ Check pacing: does each beat land at expected story % mark?`,
         <div class="flex items-center gap-2">
           <span
             class={`text-[10px] ${
-              $theme === "dark" ? "text-slate-500" : "text-slate-400"
+              themeStore.current === "dark" ? "text-slate-500" : "text-slate-400"
             }`}
           >
             {workspace}
           </span>
           <button
             class={`text-[11px] ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "text-slate-400 hover:text-slate-100"
                 : "text-slate-500 hover:text-slate-900"
             }`}
@@ -209,14 +209,14 @@ Check pacing: does each beat land at expected story % mark?`,
       <!-- Tabs -->
       <nav
         class={`px-4 pt-3 pb-2 flex gap-2 text-[11px] border-b ${
-          $theme === "dark" ? "border-slate-800" : "border-slate-200"
+          themeStore.current === "dark" ? "border-slate-800" : "border-slate-200"
         }`}
       >
         <button
           class={`px-3 py-1.5 rounded-full border font-medium transition-colors ${
             activeTab === "notes"
               ? "bg-amber-500 text-slate-900 border-amber-500"
-              : $theme === "dark"
+              : themeStore.current === "dark"
               ? "bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800"
               : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
           }`}
@@ -231,7 +231,7 @@ Check pacing: does each beat land at expected story % mark?`,
           class={`px-3 py-1.5 rounded-full border font-medium transition-colors ${
             activeTab === "snippets"
               ? "bg-amber-500 text-slate-900 border-amber-500"
-              : $theme === "dark"
+              : themeStore.current === "dark"
               ? "bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800"
               : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
           }`}
@@ -246,7 +246,7 @@ Check pacing: does each beat land at expected story % mark?`,
           class={`px-3 py-1.5 rounded-full border font-medium transition-colors ${
             activeTab === "suggestions"
               ? "bg-amber-500 text-slate-900 border-amber-500"
-              : $theme === "dark"
+              : themeStore.current === "dark"
               ? "bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800"
               : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
           }`}
@@ -268,7 +268,7 @@ Check pacing: does each beat land at expected story % mark?`,
               <h3 class="text-xs font-semibold mb-1">Workspace Notes</h3>
               <p
                 class={`text-[11px] ${
-                  $theme === "dark" ? "text-slate-400" : "text-slate-500"
+                  themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
                 }`}
               >
                 Keep rough research notes, links, and references here while you
@@ -278,7 +278,7 @@ Check pacing: does each beat land at expected story % mark?`,
 
             <textarea
               class={`w-full min-h-60 resize-y rounded-md border px-3 py-2 text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-amber-500 ${
-                $theme === "dark"
+                themeStore.current === "dark"
                   ? "bg-slate-900 border-slate-700 text-slate-100 placeholder:text-slate-500"
                   : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400"
               }`}
@@ -288,7 +288,7 @@ Check pacing: does each beat land at expected story % mark?`,
 
             <p
               class={`text-[10px] ${
-                $theme === "dark" ? "text-slate-500" : "text-slate-400"
+                themeStore.current === "dark" ? "text-slate-500" : "text-slate-400"
               }`}
             >
               Notes are stored locally for now. TODO: sync per workspace.
@@ -301,7 +301,7 @@ Check pacing: does each beat land at expected story % mark?`,
               <h3 class="text-xs font-semibold mb-1">Snippets</h3>
               <p
                 class={`text-[11px] ${
-                  $theme === "dark" ? "text-slate-400" : "text-slate-500"
+                  themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
                 }`}
               >
                 Reusable blocks you can insert into your prompt.
@@ -312,7 +312,7 @@ Check pacing: does each beat land at expected story % mark?`,
               {#each snippets as snippet}
                 <article
                   class={`rounded-md border p-3 flex flex-col gap-2 ${
-                    $theme === "dark"
+                    themeStore.current === "dark"
                       ? "bg-slate-900 border-slate-700"
                       : "bg-white border-slate-200"
                   }`}
@@ -324,7 +324,7 @@ Check pacing: does each beat land at expected story % mark?`,
                       >
                       <span
                         class={`text-[10px] ${
-                          $theme === "dark"
+                          themeStore.current === "dark"
                             ? "text-slate-400"
                             : "text-slate-500"
                         }`}
@@ -346,7 +346,7 @@ Check pacing: does each beat land at expected story % mark?`,
                       {#each snippet.tags as tag}
                         <span
                           class={`inline-flex items-center rounded-full border px-2 py-0.5 ${
-                            $theme === "dark"
+                            themeStore.current === "dark"
                               ? "bg-slate-800 border-slate-700 text-slate-300"
                               : "bg-slate-100 border-slate-300 text-slate-700"
                           }`}
@@ -359,7 +359,7 @@ Check pacing: does each beat land at expected story % mark?`,
 
                   <div
                     class={`rounded-sm border px-2 py-1 text-[11px] leading-relaxed max-h-[120px] overflow-y-auto whitespace-pre-wrap text-left ${
-                      $theme === "dark"
+                      themeStore.current === "dark"
                         ? "bg-slate-950 border-slate-800 text-slate-200"
                         : "bg-slate-50 border-slate-200 text-slate-900"
                     }`}
@@ -369,7 +369,7 @@ Check pacing: does each beat land at expected story % mark?`,
 
                   <p
                     class={`text-[10px] ${
-                      $theme === "dark" ? "text-slate-500" : "text-slate-400"
+                      themeStore.current === "dark" ? "text-slate-500" : "text-slate-400"
                     }`}
                   >
                     Updated {snippet.updatedAt}
@@ -385,7 +385,7 @@ Check pacing: does each beat land at expected story % mark?`,
               <h3 class="text-xs font-semibold mb-1">Suggestions</h3>
               <p
                 class={`text-[11px] ${
-                  $theme === "dark" ? "text-slate-400" : "text-slate-500"
+                  themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
                 }`}
               >
                 Prompting tips and reminders to improve runs.
@@ -396,7 +396,7 @@ Check pacing: does each beat land at expected story % mark?`,
               {#each suggestions as suggestion}
                 <article
                   class={`rounded-md border p-3 flex flex-col gap-1.5 ${
-                    $theme === "dark"
+                    themeStore.current === "dark"
                       ? "bg-slate-900 border-slate-700"
                       : "bg-white border-slate-200"
                   }`}
@@ -407,7 +407,7 @@ Check pacing: does each beat land at expected story % mark?`,
                     </h4>
                     <p
                       class={`text-[10px] ${
-                        $theme === "dark" ? "text-slate-400" : "text-slate-500"
+                        themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
                       }`}
                     >
                       {suggestion.category}
@@ -415,7 +415,7 @@ Check pacing: does each beat land at expected story % mark?`,
                   </div>
                   <p
                     class={`text-[11px] leading-relaxed ${
-                      $theme === "dark" ? "text-slate-200" : "text-slate-700"
+                      themeStore.current === "dark" ? "text-slate-200" : "text-slate-700"
                     }`}
                   >
                     {suggestion.body}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { theme } from '$lib/stores/themeStore';
+  import { themeStore } from '$lib/core/stores';
 
   type RunStatus = 'success' | 'error' | 'partial';
   type DateRange = '24h' | '7d' | '30d' | 'all';
@@ -49,14 +49,14 @@
 
 <!-- Filters panel: workspace, model, status, date range, and search -->
 <section class={`rounded-lg border p-3 flex flex-col gap-3 transition-colors ${
-  $theme === 'dark'
+  themeStore.current === 'dark'
     ? 'border-slate-700 bg-slate-900'
     : 'border-slate-200 bg-white shadow-sm'
 }`}>
   <!-- Section header -->
   <div class="flex items-center justify-between">
     <h2 class={`text-xs font-semibold ${
-      $theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+      themeStore.current === 'dark' ? 'text-slate-300' : 'text-slate-700'
     }`}>
       Filters
     </h2>
@@ -64,7 +64,7 @@
       <button
         type="button"
         class={`text-xs transition-colors ${
-          $theme === 'dark'
+          themeStore.current === 'dark'
             ? 'text-amber-400 hover:text-amber-300'
             : 'text-amber-600 hover:text-amber-700'
         }`}
@@ -78,7 +78,7 @@
   <!-- Search input -->
   <div>
     <label class={`block text-xs mb-1.5 ${
-      $theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+      themeStore.current === 'dark' ? 'text-slate-400' : 'text-slate-600'
     }`}>
       Search
     </label>
@@ -86,7 +86,7 @@
       type="text"
       placeholder="Search by prompt or label..."
       class={`w-full px-3 py-1.5 rounded-md border text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 ${
-        $theme === 'dark'
+        themeStore.current === 'dark'
           ? 'bg-slate-950 border-slate-700 text-slate-100 placeholder-slate-500'
           : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
       }`}
@@ -97,7 +97,7 @@
   <!-- Date Range filter -->
   <div>
     <label class={`block text-xs mb-1.5 ${
-      $theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+      themeStore.current === 'dark' ? 'text-slate-400' : 'text-slate-600'
     }`}>
       Date Range
     </label>
@@ -107,10 +107,10 @@
           type="button"
           class={`flex-1 px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
             selectedDateRange === option.value
-              ? $theme === 'dark'
+              ? themeStore.current === 'dark'
                 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                 : 'bg-amber-50 text-amber-700 border border-amber-200'
-              : $theme === 'dark'
+              : themeStore.current === 'dark'
                 ? 'bg-slate-950 text-slate-400 border border-slate-700 hover:bg-slate-800'
                 : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100'
           }`}
@@ -125,13 +125,13 @@
   <!-- Workspace filter -->
   <div>
     <label class={`block text-xs mb-1.5 ${
-      $theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+      themeStore.current === 'dark' ? 'text-slate-400' : 'text-slate-600'
     }`}>
       Workspace
     </label>
     <select
       class={`w-full px-3 py-1.5 rounded-md border text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 ${
-        $theme === 'dark'
+        themeStore.current === 'dark'
           ? 'bg-slate-950 border-slate-700 text-slate-100'
           : 'bg-white border-slate-300 text-slate-900'
       }`}
@@ -147,7 +147,7 @@
   <!-- Model filter -->
   <div>
     <label class={`block text-xs mb-1.5 ${
-      $theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+      themeStore.current === 'dark' ? 'text-slate-400' : 'text-slate-600'
     }`}>
       Model
     </label>
@@ -156,10 +156,10 @@
         type="button"
         class={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
           selectedModel === 'all'
-            ? $theme === 'dark'
+            ? themeStore.current === 'dark'
               ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
               : 'bg-amber-50 text-amber-700 border border-amber-200'
-            : $theme === 'dark'
+            : themeStore.current === 'dark'
               ? 'bg-slate-950 text-slate-400 border border-slate-700 hover:bg-slate-800'
               : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100'
         }`}
@@ -172,10 +172,10 @@
           type="button"
           class={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
             selectedModel === model
-              ? $theme === 'dark'
+              ? themeStore.current === 'dark'
                 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                 : 'bg-amber-50 text-amber-700 border border-amber-200'
-              : $theme === 'dark'
+              : themeStore.current === 'dark'
                 ? 'bg-slate-950 text-slate-400 border border-slate-700 hover:bg-slate-800'
                 : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100'
           }`}
@@ -190,7 +190,7 @@
   <!-- Status filter -->
   <div>
     <label class={`block text-xs mb-1.5 ${
-      $theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+      themeStore.current === 'dark' ? 'text-slate-400' : 'text-slate-600'
     }`}>
       Status
     </label>
@@ -200,10 +200,10 @@
           type="button"
           class={`flex-1 px-2.5 py-1 rounded-md text-xs font-medium capitalize transition-colors ${
             selectedStatus === option.value
-              ? $theme === 'dark'
+              ? themeStore.current === 'dark'
                 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                 : 'bg-amber-50 text-amber-700 border border-amber-200'
-              : $theme === 'dark'
+              : themeStore.current === 'dark'
                 ? 'bg-slate-950 text-slate-400 border border-slate-700 hover:bg-slate-800'
                 : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100'
           }`}

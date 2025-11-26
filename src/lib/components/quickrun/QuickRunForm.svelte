@@ -12,7 +12,7 @@
 Quick Run form: prompt input, optional context, model selection, action buttons
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   interface ContextOption {
     id: string;
@@ -62,7 +62,7 @@ Quick Run form: prompt input, optional context, model selection, action buttons
 <!-- Quick Run form panel -->
 <section
   class={`rounded-lg border p-4 flex flex-col gap-4 transition-colors ${
-    $theme === "dark"
+    themeStore.current === "dark"
       ? "bg-slate-900 border-slate-700"
       : "bg-white border-slate-200 shadow-sm"
   }`}
@@ -72,7 +72,7 @@ Quick Run form: prompt input, optional context, model selection, action buttons
     <label
       for="quick-prompt"
       class={`text-xs font-semibold ${
-        $theme === "dark" ? "text-slate-100" : "text-slate-900"
+        themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
       }`}
     >
       Prompt
@@ -84,14 +84,14 @@ Quick Run form: prompt input, optional context, model selection, action buttons
       oninput={(e) => onPromptChange((e.target as HTMLTextAreaElement).value)}
       placeholder="Write a short instruction for the model…"
       class={`w-full min-h-[160px] resize-y rounded-md border text-sm font-mono leading-relaxed p-3 transition-colors ${
-        $theme === "dark"
+        themeStore.current === "dark"
           ? "bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-amber-500 focus:outline-none"
           : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none"
       }`}
     />
     <p
       class={`text-[11px] ${
-        $theme === "dark" ? "text-slate-400" : "text-slate-500"
+        themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
       }`}
     >
       Keep it concise. For heavier flows, use the full Workbench.
@@ -102,7 +102,7 @@ Quick Run form: prompt input, optional context, model selection, action buttons
   <div class="flex flex-col gap-2">
     <label
       class={`text-xs font-semibold ${
-        $theme === "dark" ? "text-slate-100" : "text-slate-900"
+        themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
       }`}
     >
       Optional context
@@ -113,7 +113,7 @@ Quick Run form: prompt input, optional context, model selection, action buttons
           class={`inline-flex items-center rounded-full border px-3 py-1 transition-colors ${
             selectedContextIds.includes(ctx.id)
               ? "bg-amber-500 text-slate-900 border-amber-500 font-medium"
-              : $theme === "dark"
+              : themeStore.current === "dark"
                 ? "bg-slate-950 border-slate-700 text-slate-200 hover:bg-slate-900 hover:border-slate-600"
                 : "bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:border-slate-400"
           }`}
@@ -131,7 +131,7 @@ Quick Run form: prompt input, optional context, model selection, action buttons
   <div class="flex flex-col gap-2">
     <label
       class={`text-xs font-semibold ${
-        $theme === "dark" ? "text-slate-100" : "text-slate-900"
+        themeStore.current === "dark" ? "text-slate-100" : "text-slate-900"
       }`}
     >
       Models
@@ -142,7 +142,7 @@ Quick Run form: prompt input, optional context, model selection, action buttons
           class={`inline-flex items-center rounded-full border px-3 py-1 transition-colors ${
             activeModelIds.includes(model.id)
               ? "bg-amber-500 text-slate-900 border-amber-500 font-medium"
-              : $theme === "dark"
+              : themeStore.current === "dark"
                 ? "bg-slate-950 border-slate-700 text-slate-200 hover:bg-slate-900 hover:border-slate-600"
                 : "bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:border-slate-400"
           }`}
@@ -156,7 +156,7 @@ Quick Run form: prompt input, optional context, model selection, action buttons
     </div>
     <p
       class={`text-[11px] ${
-        $theme === "dark" ? "text-slate-400" : "text-slate-500"
+        themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
       }`}
     >
       Choose one or two models for quick comparison.
@@ -166,8 +166,8 @@ Quick Run form: prompt input, optional context, model selection, action buttons
   <!-- Actions row -->
   <div
     class="flex items-center justify-between gap-2 text-xs pt-2 border-t"
-    class:border-slate-700={$theme === "dark"}
-    class:border-slate-200={$theme !== "dark"}
+    class:border-slate-700={themeStore.current === "dark"}
+    class:border-slate-200={themeStore.current !== "dark"}
   >
     <div class="flex gap-2">
       <button
@@ -180,7 +180,7 @@ Quick Run form: prompt input, optional context, model selection, action buttons
       </button>
       <button
         class={`px-3 py-1.5 rounded-md border transition-colors ${
-          $theme === "dark"
+          themeStore.current === "dark"
             ? "border-slate-600 text-slate-300 hover:bg-slate-800"
             : "border-slate-300 text-slate-600 hover:bg-slate-100"
         }`}
@@ -193,7 +193,7 @@ Quick Run form: prompt input, optional context, model selection, action buttons
     </div>
     <p
       class={`text-[11px] ${
-        $theme === "dark" ? "text-slate-400" : "text-slate-500"
+        themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
       }`}
     >
       Mock UI. TODO: Wire to backend API.

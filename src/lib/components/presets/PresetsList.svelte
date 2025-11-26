@@ -8,7 +8,7 @@
 List of preset cards with selection and pin toggle
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
   import type { Preset } from "$lib/stores/presets";
 
   interface Props {
@@ -32,7 +32,7 @@ List of preset cards with selection and pin toggle
     <div class="flex items-center justify-center py-8">
       <p
         class={`text-[11px] ${
-          $theme === "dark" ? "text-slate-400" : "text-slate-500"
+          themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
         }`}
       >
         No presets available in this view.
@@ -43,10 +43,10 @@ List of preset cards with selection and pin toggle
       <div
         class={`w-full text-left rounded-md border px-3 py-2 flex flex-col gap-1 text-[11px] transition-colors cursor-pointer ${
           activePresetId === preset.id
-            ? $theme === "dark"
+            ? themeStore.current === "dark"
               ? "border-amber-400 bg-slate-900"
               : "border-amber-500 bg-amber-50"
-            : $theme === "dark"
+            : themeStore.current === "dark"
             ? "border-slate-700 bg-slate-950 hover:bg-slate-900 hover:border-slate-600"
             : "border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300"
         }`}
@@ -66,10 +66,10 @@ List of preset cards with selection and pin toggle
             type="button"
             class={`text-[11px] font-medium shrink-0 transition-colors ${
               preset.pinned
-                ? $theme === "dark"
+                ? themeStore.current === "dark"
                   ? "text-amber-400 hover:text-amber-300"
                   : "text-amber-600 hover:text-amber-700"
-                : $theme === "dark"
+                : themeStore.current === "dark"
                 ? "text-slate-400 hover:text-amber-400"
                 : "text-slate-400 hover:text-amber-600"
             }`}
@@ -85,7 +85,7 @@ List of preset cards with selection and pin toggle
 
         <div
           class={`flex items-center justify-between gap-2 text-[10px] ${
-            $theme === "dark" ? "text-slate-400" : "text-slate-500"
+            themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
           }`}
         >
           <span>{preset.category} · {preset.workspace}</span>
@@ -97,7 +97,7 @@ List of preset cards with selection and pin toggle
             {#each preset.tags as tag (tag)}
               <span
                 class={`inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] ${
-                  $theme === "dark"
+                  themeStore.current === "dark"
                     ? "border-slate-700 text-slate-300"
                     : "border-slate-300 text-slate-600"
                 }`}
@@ -110,7 +110,7 @@ List of preset cards with selection and pin toggle
 
         <p
           class={`text-[10px] line-clamp-2 ${
-            $theme === "dark" ? "text-slate-400" : "text-slate-500"
+            themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
           }`}
         >
           {preset.description}

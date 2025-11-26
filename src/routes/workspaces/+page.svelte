@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
   import type { Workspace } from "$lib/types/workspace";
   import WorkspacesHeader from "$lib/components/workspaces/WorkspacesHeader.svelte";
   import WorkspacesList from "$lib/components/workspaces/WorkspacesList.svelte";

@@ -8,7 +8,7 @@
 no description yet
 -->
 <script lang="ts">
-  import { theme } from "$lib/stores/themeStore";
+  import { themeStore } from "$lib/core/stores";
 
   interface IngestDocument {
     id: string;
@@ -115,7 +115,7 @@ no description yet
     <!-- Modal -->
     <div
       class={`relative w-full max-w-2xl mx-4 rounded-lg border shadow-xl transition-all ${
-        $theme === "dark"
+        themeStore.current === "dark"
           ? "bg-slate-950 border-slate-800"
           : "bg-white border-slate-200"
       }`}
@@ -123,14 +123,14 @@ no description yet
       <!-- Header -->
       <header
         class={`flex items-center justify-between px-6 py-4 border-b ${
-          $theme === "dark" ? "border-slate-800" : "border-slate-200"
+          themeStore.current === "dark" ? "border-slate-800" : "border-slate-200"
         }`}
       >
         <div class="flex flex-col gap-1">
           <h2 class="text-base font-semibold">Add documents</h2>
           <p
             class={`text-xs ${
-              $theme === "dark" ? "text-slate-400" : "text-slate-500"
+              themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
             }`}
           >
             Upload files to be ingested into the Context Library.
@@ -138,7 +138,7 @@ no description yet
         </div>
         <button
           class={`text-xs font-medium ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "text-slate-400 hover:text-slate-200"
               : "text-slate-500 hover:text-slate-900"
           }`}
@@ -156,7 +156,7 @@ no description yet
         <!-- Dropzone -->
         <div
           class={`border-2 border-dashed rounded-lg px-6 py-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "border-slate-700 bg-slate-900 hover:bg-slate-800"
               : "border-slate-300 bg-slate-50 hover:bg-slate-100"
           }`}
@@ -168,7 +168,7 @@ no description yet
           <p class="text-sm font-medium">Drop files here, or click to browse</p>
           <p
             class={`text-[11px] mt-1 ${
-              $theme === "dark" ? "text-slate-400" : "text-slate-500"
+              themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
             }`}
           >
             Supported: PDF, Markdown, TXT, DOCX (mocked)
@@ -187,7 +187,7 @@ no description yet
         {#if pendingDocs.length === 0}
           <p
             class={`text-xs ${
-              $theme === "dark" ? "text-slate-400" : "text-slate-500"
+              themeStore.current === "dark" ? "text-slate-400" : "text-slate-500"
             }`}
           >
             No files selected yet. Select or drag files above to get started.
@@ -196,7 +196,7 @@ no description yet
           <div class="border rounded-lg overflow-hidden">
             <div
               class={`grid grid-cols-[1.4fr_0.8fr_0.7fr_0.5fr] gap-3 px-4 py-2 text-[11px] font-medium border-b ${
-                $theme === "dark"
+                themeStore.current === "dark"
                   ? "bg-slate-900 border-slate-800 text-slate-400"
                   : "bg-slate-50 border-slate-200 text-slate-500"
               }`}
@@ -210,7 +210,7 @@ no description yet
               {#each pendingDocs as doc (doc.id)}
                 <div
                   class={`grid grid-cols-[1.4fr_0.8fr_0.7fr_0.5fr] gap-3 px-4 py-3 items-center border-b ${
-                    $theme === "dark"
+                    themeStore.current === "dark"
                       ? "border-slate-800 hover:bg-slate-900/50"
                       : "border-slate-200 hover:bg-slate-50"
                   }`}
@@ -218,7 +218,7 @@ no description yet
                   <input
                     type="text"
                     class={`rounded-md border px-2 py-1.5 text-xs transition-colors ${
-                      $theme === "dark"
+                      themeStore.current === "dark"
                         ? "bg-slate-900 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-amber-500 focus:outline-none"
                         : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none"
                     }`}
@@ -227,7 +227,7 @@ no description yet
                   />
                   <span class="truncate text-slate-400">{doc.filename}</span>
                   <span
-                    class={$theme === "dark"
+                    class={themeStore.current === "dark"
                       ? "text-slate-400"
                       : "text-slate-500"}
                   >
@@ -235,7 +235,7 @@ no description yet
                   </span>
                   <select
                     class={`rounded-md border px-2 py-1.5 text-xs transition-colors ${
-                      $theme === "dark"
+                      themeStore.current === "dark"
                         ? "bg-slate-900 border-slate-700 text-slate-100 focus:border-amber-500 focus:outline-none"
                         : "bg-white border-slate-300 text-slate-900 focus:border-amber-500 focus:outline-none"
                     }`}
@@ -260,7 +260,7 @@ no description yet
             <input
               type="text"
               class={`rounded-md border px-3 py-2 text-xs ${
-                $theme === "dark"
+                themeStore.current === "dark"
                   ? "bg-slate-900 border-slate-700 text-slate-100"
                   : "bg-slate-50 border-slate-300 text-slate-900"
               }`}
@@ -269,7 +269,7 @@ no description yet
             />
             <p
               class={`text-[10px] ${
-                $theme === "dark" ? "text-slate-500" : "text-slate-400"
+                themeStore.current === "dark" ? "text-slate-500" : "text-slate-400"
               }`}
             >
               Documents associated with this workspace.
@@ -281,7 +281,7 @@ no description yet
             <input
               type="text"
               class={`rounded-md border px-3 py-2 text-xs transition-colors ${
-                $theme === "dark"
+                themeStore.current === "dark"
                   ? "bg-slate-900 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-amber-500 focus:outline-none"
                   : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none"
               }`}
@@ -290,7 +290,7 @@ no description yet
             />
             <p
               class={`text-[10px] ${
-                $theme === "dark" ? "text-slate-500" : "text-slate-400"
+                themeStore.current === "dark" ? "text-slate-500" : "text-slate-400"
               }`}
             >
               Applied to all files. Use commas to separate.
@@ -301,7 +301,7 @@ no description yet
         <!-- Info -->
         <div
           class={`rounded-md border px-3 py-2 text-[10px] ${
-            $theme === "dark"
+            themeStore.current === "dark"
               ? "bg-slate-900 border-slate-800 text-slate-400"
               : "bg-blue-50 border-blue-200 text-blue-600"
           }`}
@@ -317,12 +317,12 @@ no description yet
       <!-- Footer -->
       <footer
         class={`flex items-center justify-between px-6 py-3 border-t ${
-          $theme === "dark" ? "border-slate-800" : "border-slate-200"
+          themeStore.current === "dark" ? "border-slate-800" : "border-slate-200"
         }`}
       >
         <p
           class={`text-xs ${
-            $theme === "dark" ? "text-slate-500" : "text-slate-500"
+            themeStore.current === "dark" ? "text-slate-500" : "text-slate-500"
           }`}
         >
           {pendingDocs.length > 0
@@ -334,7 +334,7 @@ no description yet
         <div class="flex gap-2">
           <button
             class={`px-4 py-2 rounded-md border text-xs font-medium transition-colors ${
-              $theme === "dark"
+              themeStore.current === "dark"
                 ? "border-slate-600 text-slate-300 hover:bg-slate-800"
                 : "border-slate-300 text-slate-600 hover:bg-slate-100"
             }`}
