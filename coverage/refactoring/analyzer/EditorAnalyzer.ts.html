@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for refactoring/standards/StandardsEngine.ts</title>
+    <title>Code coverage report for refactoring/analyzer/EditorAnalyzer.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">refactoring/standards</a> StandardsEngine.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">refactoring/analyzer</a> EditorAnalyzer.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">77.84% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>101/101</span>
+                <span class='fraction'>137/176</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.65% </span>
+                <span class="strong">55.76% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>52/58</span>
+                <span class='fraction'>87/156</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">95.55% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>26/26</span>
+                <span class='fraction'>43/45</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">86.3% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>90/90</span>
+                <span class='fraction'>126/146</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -562,7 +562,109 @@
 <a name='L497'></a><a href='#L497'>497</a>
 <a name='L498'></a><a href='#L498'>498</a>
 <a name='L499'></a><a href='#L499'>499</a>
-<a name='L500'></a><a href='#L500'>500</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L500'></a><a href='#L500'>500</a>
+<a name='L501'></a><a href='#L501'>501</a>
+<a name='L502'></a><a href='#L502'>502</a>
+<a name='L503'></a><a href='#L503'>503</a>
+<a name='L504'></a><a href='#L504'>504</a>
+<a name='L505'></a><a href='#L505'>505</a>
+<a name='L506'></a><a href='#L506'>506</a>
+<a name='L507'></a><a href='#L507'>507</a>
+<a name='L508'></a><a href='#L508'>508</a>
+<a name='L509'></a><a href='#L509'>509</a>
+<a name='L510'></a><a href='#L510'>510</a>
+<a name='L511'></a><a href='#L511'>511</a>
+<a name='L512'></a><a href='#L512'>512</a>
+<a name='L513'></a><a href='#L513'>513</a>
+<a name='L514'></a><a href='#L514'>514</a>
+<a name='L515'></a><a href='#L515'>515</a>
+<a name='L516'></a><a href='#L516'>516</a>
+<a name='L517'></a><a href='#L517'>517</a>
+<a name='L518'></a><a href='#L518'>518</a>
+<a name='L519'></a><a href='#L519'>519</a>
+<a name='L520'></a><a href='#L520'>520</a>
+<a name='L521'></a><a href='#L521'>521</a>
+<a name='L522'></a><a href='#L522'>522</a>
+<a name='L523'></a><a href='#L523'>523</a>
+<a name='L524'></a><a href='#L524'>524</a>
+<a name='L525'></a><a href='#L525'>525</a>
+<a name='L526'></a><a href='#L526'>526</a>
+<a name='L527'></a><a href='#L527'>527</a>
+<a name='L528'></a><a href='#L528'>528</a>
+<a name='L529'></a><a href='#L529'>529</a>
+<a name='L530'></a><a href='#L530'>530</a>
+<a name='L531'></a><a href='#L531'>531</a>
+<a name='L532'></a><a href='#L532'>532</a>
+<a name='L533'></a><a href='#L533'>533</a>
+<a name='L534'></a><a href='#L534'>534</a>
+<a name='L535'></a><a href='#L535'>535</a>
+<a name='L536'></a><a href='#L536'>536</a>
+<a name='L537'></a><a href='#L537'>537</a>
+<a name='L538'></a><a href='#L538'>538</a>
+<a name='L539'></a><a href='#L539'>539</a>
+<a name='L540'></a><a href='#L540'>540</a>
+<a name='L541'></a><a href='#L541'>541</a>
+<a name='L542'></a><a href='#L542'>542</a>
+<a name='L543'></a><a href='#L543'>543</a>
+<a name='L544'></a><a href='#L544'>544</a>
+<a name='L545'></a><a href='#L545'>545</a>
+<a name='L546'></a><a href='#L546'>546</a>
+<a name='L547'></a><a href='#L547'>547</a>
+<a name='L548'></a><a href='#L548'>548</a>
+<a name='L549'></a><a href='#L549'>549</a>
+<a name='L550'></a><a href='#L550'>550</a>
+<a name='L551'></a><a href='#L551'>551</a>
+<a name='L552'></a><a href='#L552'>552</a>
+<a name='L553'></a><a href='#L553'>553</a>
+<a name='L554'></a><a href='#L554'>554</a>
+<a name='L555'></a><a href='#L555'>555</a>
+<a name='L556'></a><a href='#L556'>556</a>
+<a name='L557'></a><a href='#L557'>557</a>
+<a name='L558'></a><a href='#L558'>558</a>
+<a name='L559'></a><a href='#L559'>559</a>
+<a name='L560'></a><a href='#L560'>560</a>
+<a name='L561'></a><a href='#L561'>561</a>
+<a name='L562'></a><a href='#L562'>562</a>
+<a name='L563'></a><a href='#L563'>563</a>
+<a name='L564'></a><a href='#L564'>564</a>
+<a name='L565'></a><a href='#L565'>565</a>
+<a name='L566'></a><a href='#L566'>566</a>
+<a name='L567'></a><a href='#L567'>567</a>
+<a name='L568'></a><a href='#L568'>568</a>
+<a name='L569'></a><a href='#L569'>569</a>
+<a name='L570'></a><a href='#L570'>570</a>
+<a name='L571'></a><a href='#L571'>571</a>
+<a name='L572'></a><a href='#L572'>572</a>
+<a name='L573'></a><a href='#L573'>573</a>
+<a name='L574'></a><a href='#L574'>574</a>
+<a name='L575'></a><a href='#L575'>575</a>
+<a name='L576'></a><a href='#L576'>576</a>
+<a name='L577'></a><a href='#L577'>577</a>
+<a name='L578'></a><a href='#L578'>578</a>
+<a name='L579'></a><a href='#L579'>579</a>
+<a name='L580'></a><a href='#L580'>580</a>
+<a name='L581'></a><a href='#L581'>581</a>
+<a name='L582'></a><a href='#L582'>582</a>
+<a name='L583'></a><a href='#L583'>583</a>
+<a name='L584'></a><a href='#L584'>584</a>
+<a name='L585'></a><a href='#L585'>585</a>
+<a name='L586'></a><a href='#L586'>586</a>
+<a name='L587'></a><a href='#L587'>587</a>
+<a name='L588'></a><a href='#L588'>588</a>
+<a name='L589'></a><a href='#L589'>589</a>
+<a name='L590'></a><a href='#L590'>590</a>
+<a name='L591'></a><a href='#L591'>591</a>
+<a name='L592'></a><a href='#L592'>592</a>
+<a name='L593'></a><a href='#L593'>593</a>
+<a name='L594'></a><a href='#L594'>594</a>
+<a name='L595'></a><a href='#L595'>595</a>
+<a name='L596'></a><a href='#L596'>596</a>
+<a name='L597'></a><a href='#L597'>597</a>
+<a name='L598'></a><a href='#L598'>598</a>
+<a name='L599'></a><a href='#L599'>599</a>
+<a name='L600'></a><a href='#L600'>600</a>
+<a name='L601'></a><a href='#L601'>601</a>
+<a name='L602'></a><a href='#L602'>602</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -586,53 +688,49 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">36x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">35x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">207x</span>
-<span class="cline-any cline-yes">207x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -655,13 +753,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -674,146 +769,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">63x</span>
-<span class="cline-any cline-yes">63x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">20x</span>
-<span class="cline-any cline-yes">20x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">20x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">62x</span>
-<span class="cline-any cline-yes">62x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">62x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -822,212 +782,36 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">42x</span>
-<span class="cline-any cline-yes">42x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">42x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">20x</span>
-<span class="cline-any cline-yes">20x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">20x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">20x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1037,8 +821,358 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">1037x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1037x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1037x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1037x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1037x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">1050x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">1050x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">1050x</span>
+<span class="cline-any cline-yes">1050x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1051,6 +1185,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1058,508 +1195,677 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
- * Standards Engine
+ * Editor Analyzer
  *
- * Core engine for evaluating codebases against user-configured quality standards.
- * Generates quality gates and verifies compliance.
- *
- * KEY PRINCIPLE: Standards are USER-configurable, not hardcoded.
+ * Analyzes code from editor content rather than file system.
+ * Adapter for analyzing pasted code or GitHub repository files.
  */
 &nbsp;
 import type {
-	QualityStandards,
-	StandardsEvaluation,
-	CategoryEvaluation,
-	RuleEvaluation,
-	QualityGate,
-	QualityGateCheck,
-	GateVerificationResult
-} from '../types/standards';
-import type { CodebaseAnalysis } from '../types/analysis';
+	CodebaseAnalysis,
+	DetectedIssue,
+	TechStack,
+	Framework,
+	StateManagement,
+	DirectoryStructure,
+	CodebaseMetrics,
+	IssueSeverity,
+	IssueCategory
+} from '../types/analysis';
 &nbsp;
-export class StandardsEngine {
-	private standards: QualityStandards;
+export interface EditorContent {
+	content: string;
+	language: string; // 'typescript', 'javascript', 'python', etc.
+	filename?: string; // Optional filename hint
+}
 &nbsp;
-	constructor(standards: QualityStandards) {
-		this.standards = standards;
+export interface AnalyzeOptions {
+	/** Multiple files (for GitHub repos) */
+	files?: Map&lt;string, string&gt;;
+	/** Single file content (for pasted code) */
+	singleFile?: EditorContent;
+}
+&nbsp;
+/**
+ * Analyzes code from editor content rather than file system
+ */
+export class EditorAnalyzer {
+	/**
+	 * Analyze single file/snippet pasted into editor
+	 */
+	async analyzeSingleFile(content: EditorContent): Promise&lt;CodebaseAnalysis&gt; {
+		const issues: DetectedIssue[] = [];
+&nbsp;
+		// Detect language if not provided
+		const language = content.language || <span class="branch-1 cbranch-no" title="branch not covered" >this.detectLanguage(content.content);</span>
+&nbsp;
+		// Run language-specific checks
+		if (language === 'typescript' || language === 'javascript') {
+			issues.push(...this.analyzeJavaScript(content.content, content.filename || <span class="branch-1 cbranch-no" title="branch not covered" >'editor')</span>);
+		} else if (language === 'python') {
+			issues.push(...this.analyzePython(content.content, content.filename || <span class="branch-1 cbranch-no" title="branch not covered" >'editor')</span>);
+		}
+&nbsp;
+		// Run generic checks
+		issues.push(...this.analyzeGeneric(content.content, content.filename || <span class="branch-1 cbranch-no" title="branch not covered" >'editor')</span>);
+&nbsp;
+		const lines = content.content.split('\n');
+&nbsp;
+		// Build structure
+		const structure: DirectoryStructure = {
+			totalFiles: 1,
+			totalDirectories: 0,
+			totalSize: content.content.length,
+			sourceFiles: 1,
+			testFiles: 0,
+			files: [
+				{
+					path: content.filename || <span class="branch-1 cbranch-no" title="branch not covered" >'editor',</span>
+					relativePath: content.filename || <span class="branch-1 cbranch-no" title="branch not covered" >'editor',</span>
+					type: this.mapLanguageToFileType(language),
+					extension: this.getExtension(language),
+					size: content.content.length,
+					lines: lines.length,
+					isTest: false,
+					lastModified: new Date().toISOString()
+				}
+			],
+			filesByType: {
+				typescript: language === 'typescript' ? 1 : 0,
+				javascript: language === 'javascript' ? 1 : 0,
+				svelte: 0,
+				css: 0,
+				html: 0,
+				json: 0,
+				markdown: 0,
+				other: language !== 'typescript' &amp;&amp; language !== 'javascript' ? 1 : 0
+			}
+		};
+&nbsp;
+		// Build analysis result
+		return {
+			id: `analysis-${Date.now()}`,
+			path: content.filename || <span class="branch-1 cbranch-no" title="branch not covered" >'editor',</span>
+			analyzedAt: new Date().toISOString(),
+			structure,
+			techStack: this.detectTechStack(content.content, language),
+			metrics: this.calculateMetrics(content.content, issues, lines.length),
+			patterns: [],
+			issues,
+			summary: this.generateSummary(issues)
+		};
 	}
 &nbsp;
 	/**
-	 * Evaluate a codebase analysis against the configured standards
+	 * Analyze multiple files (from GitHub)
 	 */
-	evaluate(analysis: CodebaseAnalysis): StandardsEvaluation {
-		const testingEval = this.evaluateTesting(analysis);
-		const typeSafetyEval = this.evaluateTypeSafety(analysis);
-		const codeQualityEval = this.evaluateCodeQuality(analysis);
-		const architectureEval = this.evaluateArchitecture(analysis);
+	async analyzeMultipleFiles(files: Map&lt;string, string&gt;): Promise&lt;CodebaseAnalysis&gt; {
+		const allIssues: DetectedIssue[] = [];
+		const fileInfos = [];
 &nbsp;
-		const totalRules =
-			testingEval.rules.length +
-			typeSafetyEval.rules.length +
-			codeQualityEval.rules.length +
-			architectureEval.rules.length;
+		for (const [path, content] of files) {
+			const language = this.detectLanguageFromPath(path);
+			const fileAnalysis = await this.analyzeSingleFile({
+				content,
+				language,
+				filename: path
+			});
 &nbsp;
-		const passedRules =
-			testingEval.passedCount +
-			typeSafetyEval.passedCount +
-			codeQualityEval.passedCount +
-			architectureEval.passedCount;
+			// Merge issues (they already have the correct file path from analyzeSingleFile)
+			allIssues.push(...fileAnalysis.issues);
+			fileInfos.push(...fileAnalysis.structure.files);
+		}
 &nbsp;
-		const failedRules =
-			testingEval.failedCount +
-			typeSafetyEval.failedCount +
-			codeQualityEval.failedCount +
-			architectureEval.failedCount;
+		const totalLines = fileInfos.reduce((sum, f) =&gt; sum + f.lines, 0);
 &nbsp;
-		const allErrors = [
-			...testingEval.rules,
-			...typeSafetyEval.rules,
-			...codeQualityEval.rules,
-			...architectureEval.rules
-		];
+		// Build structure
+		const structure: DirectoryStructure = {
+			totalFiles: files.size,
+			totalDirectories: new Set([...files.keys()].map((p) =&gt; p.split('/').slice(0, -1).join('/')))
+				.size,
+			totalSize: fileInfos.reduce((sum, f) =&gt; sum + f.size, 0),
+			sourceFiles: fileInfos.filter((f) =&gt; !f.isTest).length,
+			testFiles: fileInfos.filter((f) =&gt; f.isTest).length,
+			files: fileInfos,
+			filesByType: {
+				typescript: fileInfos.filter((f) =&gt; f.type === 'typescript').length,
+				javascript: fileInfos.filter((f) =&gt; f.type === 'javascript').length,
+				svelte: fileInfos.filter((f) =&gt; f.type === 'svelte').length,
+				css: fileInfos.filter((f) =&gt; f.type === 'css').length,
+				html: fileInfos.filter((f) =&gt; f.type === 'html').length,
+				json: fileInfos.filter((f) =&gt; f.type === 'json').length,
+				markdown: fileInfos.filter((f) =&gt; f.type === 'markdown').length,
+				other: fileInfos.filter((f) =&gt; f.type === 'other').length
+			}
+		};
 &nbsp;
-		const errorCount = allErrors.filter((r) =&gt; r.severity === 'error' &amp;&amp; !r.passed).length;
-		const warningCount = allErrors.filter((r) =&gt; r.severity === 'warning' &amp;&amp; !r.passed).length;
+		// Aggregate results
+		return {
+			id: `analysis-${Date.now()}`,
+			path: 'repository',
+			analyzedAt: new Date().toISOString(),
+			structure,
+			techStack: this.detectTechStackFromFiles(files),
+			metrics: this.calculateAggregateMetrics(files, allIssues, totalLines),
+			patterns: [],
+			issues: allIssues,
+			summary: this.generateSummary(allIssues)
+		};
+	}
 &nbsp;
-		const passed =
-			testingEval.passed &amp;&amp;
-			typeSafetyEval.passed &amp;&amp;
-			codeQualityEval.passed &amp;&amp;
-			architectureEval.passed;
+	/**
+	 * JavaScript/TypeScript specific analysis
+	 */
+	private analyzeJavaScript(content: string, filename: string): DetectedIssue[] {
+		const issues: DetectedIssue[] = [];
+		const lines = content.split('\n');
+&nbsp;
+		lines.forEach((line, index) =&gt; {
+			const lineNum = index + 1;
+&nbsp;
+			// Check for 'any' type
+			if (/:\s*any\b/.test(line)) {
+				issues.push({
+					id: `any-${filename}-${lineNum}`,
+					severity: 'warning',
+					category: 'type-safety',
+					title: 'Avoid using "any" type',
+					description: 'Use a specific type instead of "any" to maintain type safety',
+					files: [filename],
+					lineNumbers: [lineNum],
+					suggestion: 'Replace "any" with a specific type or create a custom interface',
+					autoFixable: false
+				});
+			}
+&nbsp;
+			// Check for var usage
+			if (/\bvar\s+\w+/.test(line)) {
+				issues.push({
+					id: `var-${filename}-${lineNum}`,
+					severity: 'warning',
+					category: 'code-quality',
+					title: 'Use "let" or "const" instead of "var"',
+					description: 'var has function scope which can lead to bugs. Use let or const for block scope.',
+					files: [filename],
+					lineNumbers: [lineNum],
+					suggestion: 'Replace "var" with "let" for mutable variables or "const" for constants',
+					autoFixable: true
+				});
+			}
+&nbsp;
+			// Check for console.log
+			if (/console\.(log|warn|error|debug|info)/.test(line)) {
+				issues.push({
+					id: `console-${filename}-${lineNum}`,
+					severity: 'info',
+					category: 'code-quality',
+					title: 'Console statement found',
+					description: 'Remove console statements before production deployment',
+					files: [filename],
+					lineNumbers: [lineNum],
+					suggestion: 'Use a proper logging library or remove before deployment',
+					autoFixable: true
+				});
+			}
+&nbsp;
+			// Check for == instead of ===
+			if (/[^=!]==[^=]/.test(line)) {
+				issues.push({
+					id: `equality-${filename}-${lineNum}`,
+					severity: 'warning',
+					category: 'code-quality',
+					title: 'Use strict equality',
+					description: 'Use "===" instead of "==" for strict equality comparison',
+					files: [filename],
+					lineNumbers: [lineNum],
+					suggestion: 'Replace "==" with "===" for type-safe comparison',
+					autoFixable: true
+				});
+			}
+		});
+&nbsp;
+		return issues;
+	}
+&nbsp;
+	/**
+	 * Python specific analysis
+	 */
+	private analyzePython(content: string, filename: string): DetectedIssue[] {
+		const issues: DetectedIssue[] = [];
+		const lines = content.split('\n');
+&nbsp;
+		lines.forEach((line, index) =&gt; {
+			const lineNum = index + 1;
+&nbsp;
+			// Check for print statements (Python 2 style)
+			if (/^print\s+[^(]/.test(line.trim())) {
+				issues.push({
+					id: `print-${filename}-${lineNum}`,
+					severity: 'error',
+					category: 'code-quality',
+					title: 'Use print() function syntax',
+					description: 'Python 3 requires print() function syntax instead of print statement',
+					files: [filename],
+					lineNumbers: [lineNum],
+					suggestion: 'Add parentheses: print("text") instead of print "text"',
+					autoFixable: true
+				});
+			}
+&nbsp;
+			// Check for mutable default arguments
+			if (/def\s+\w+\([^)]*=\s*(\[\]|\{\})/.test(line)) {
+				issues.push({
+					id: `mutable-default-${filename}-${lineNum}`,
+					severity: 'error',
+					category: 'code-quality',
+					title: 'Mutable default argument',
+					description:
+						'Mutable default arguments can lead to unexpected behavior. Use None and initialize inside function.',
+					files: [filename],
+					lineNumbers: [lineNum],
+					suggestion: 'Use None as default and initialize inside function: def func(arg=None): arg = arg or []',
+					autoFixable: false
+				});
+			}
+		});
+&nbsp;
+		return issues;
+	}
+&nbsp;
+	/**
+	 * Generic analysis (any language)
+	 */
+	private analyzeGeneric(content: string, filename: string): DetectedIssue[] {
+		const issues: DetectedIssue[] = [];
+		const lines = content.split('\n');
+&nbsp;
+		// Group long lines
+		const longLines: number[] = [];
+		lines.forEach((line, index) =&gt; {
+			if (line.length &gt; 120) {
+				longLines.push(index + 1);
+			}
+		});
+&nbsp;
+		if (longLines.length &gt; 0) {
+			issues.push({
+				id: `long-lines-${filename}`,
+				severity: 'info',
+				category: 'code-quality',
+				title: `${longLines.length} line(s) exceed 120 characters`,
+				description: 'Long lines can reduce readability. Consider breaking them into multiple lines.',
+				files: [filename],
+				lineNumbers: longLines,
+				suggestion: 'Break long lines at logical points or use string concatenation',
+				autoFixable: false
+			});
+		}
+&nbsp;
+		// Group trailing whitespace
+		const trailingWsLines: number[] = [];
+		lines.forEach((line, index) =&gt; {
+			if (/\s+$/.test(line)) {
+				trailingWsLines.push(index + 1);
+			}
+		});
+&nbsp;
+		if (trailingWsLines.length &gt; 0) {
+			issues.push({
+				id: `trailing-ws-${filename}`,
+				severity: 'info',
+				category: 'code-quality',
+				title: `${trailingWsLines.length} line(s) have trailing whitespace`,
+				description: 'Trailing whitespace can cause unnecessary diffs in version control',
+				files: [filename],
+				lineNumbers: trailingWsLines,
+				suggestion: 'Configure your editor to remove trailing whitespace on save',
+				autoFixable: true
+			});
+		}
+&nbsp;
+		return issues;
+	}
+&nbsp;
+	private <span class="fstat-no" title="function not covered" >detectLanguage(c</span>ontent: string): string {
+<span class="cstat-no" title="statement not covered" >		if (content.includes('import React') || content.includes('useState')) <span class="cstat-no" title="statement not covered" >return 'typescript';</span></span>
+<span class="cstat-no" title="statement not covered" >		if (content.includes('def ') &amp;&amp; content.includes(':')) <span class="cstat-no" title="statement not covered" >return 'python';</span></span>
+<span class="cstat-no" title="statement not covered" >		if (content.includes('func ') &amp;&amp; content.includes('-&gt;')) <span class="cstat-no" title="statement not covered" >return 'swift';</span></span>
+<span class="cstat-no" title="statement not covered" >		if (content.includes('fn ') &amp;&amp; content.includes('-&gt;')) <span class="cstat-no" title="statement not covered" >return 'rust';</span></span>
+<span class="cstat-no" title="statement not covered" >		if (content.includes('function') || content.includes('=&gt;')) <span class="cstat-no" title="statement not covered" >return 'javascript';</span></span>
+<span class="cstat-no" title="statement not covered" >		return 'plaintext';</span>
+	}
+&nbsp;
+	private detectLanguageFromPath(path: string): string {
+		const ext = path.split('.').pop()?.toLowerCase();
+		const map: Record&lt;string, string&gt; = {
+			ts: 'typescript',
+			tsx: 'typescript',
+			js: 'javascript',
+			jsx: 'javascript',
+			py: 'python',
+			rs: 'rust',
+			go: 'go',
+			swift: 'swift',
+			java: 'java',
+			svelte: 'svelte'
+		};
+		return map[ext || <span class="branch-1 cbranch-no" title="branch not covered" >'']</span> || <span class="branch-1 cbranch-no" title="branch not covered" >'plaintext';</span>
+	}
+&nbsp;
+	private mapLanguageToFileType(language: string): any {
+		const map: Record&lt;string, any&gt; = {
+			typescript: 'typescript',
+			javascript: 'javascript',
+			python: 'other',
+			svelte: 'svelte',
+			rust: 'other',
+			go: 'other'
+		};
+		return map[language] || 'other';
+	}
+&nbsp;
+	private getExtension(language: string): string {
+		const map: Record&lt;string, string&gt; = {
+			typescript: '.ts',
+			javascript: '.js',
+			python: '.py',
+			rust: '.rs',
+			svelte: '.svelte'
+		};
+		return map[language] || '.txt';
+	}
+&nbsp;
+	private detectTechStack(content: string, language: string): TechStack {
+		return {
+			framework: this.detectFramework(content),
+			language: (language === 'typescript' ? 'typescript' : 'javascript') as 'typescript' | 'javascript',
+			cssFramework: undefined,
+			testFramework: undefined,
+			buildTool: undefined,
+			stateManagement: 'none' as StateManagement,
+			dependencies: []
+		};
+	}
+&nbsp;
+	private detectFramework(content: string): Framework {
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (content.includes('import React') || content.includes('from "react"')) <span class="cstat-no" title="statement not covered" >return 'react';</span>
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (content.includes('&lt;script') &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >content.includes('$:')) <span class="cstat-no" title="statement not covered" >r</span>eturn 'svelte';</span>
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (content.includes('@Component')) <span class="cstat-no" title="statement not covered" >return 'unknown';</span>
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (content.includes('Vue.component') || content.includes('defineComponent')) <span class="cstat-no" title="statement not covered" >return 'vue';</span>
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (content.includes('FastAPI') || content.includes('from fastapi')) <span class="cstat-no" title="statement not covered" >return 'fastapi';</span>
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (content.includes('from django')) <span class="cstat-no" title="statement not covered" >return 'django';</span>
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (content.includes('express()')) <span class="cstat-no" title="statement not covered" >return 'express';</span>
+		return 'unknown';
+	}
+&nbsp;
+	private detectTechStackFromFiles(files: Map&lt;string, string&gt;): TechStack {
+		// Check package.json if present
+		const packageJson = files.get('package.json');
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (packageJson) {
+<span class="cstat-no" title="statement not covered" >			try {</span>
+				const pkg = <span class="cstat-no" title="statement not covered" >JSON.parse(packageJson);</span>
+				const deps = <span class="cstat-no" title="statement not covered" >{ ...pkg.dependencies, ...pkg.devDependencies };</span>
+&nbsp;
+				let framework: Framework = <span class="cstat-no" title="statement not covered" >'unknown';</span>
+<span class="cstat-no" title="statement not covered" >				if (deps['@sveltejs/kit']) <span class="cstat-no" title="statement not covered" >framework = <span class="cstat-no" title="statement not covered" >'sveltekit';</span></span></span>
+				else if (deps.svelte) <span class="cstat-no" title="statement not covered" >framework = <span class="cstat-no" title="statement not covered" >'svelte';</span></span>
+				else if (deps.next) <span class="cstat-no" title="statement not covered" >framework = <span class="cstat-no" title="statement not covered" >'nextjs';</span></span>
+				else if (deps.react) <span class="cstat-no" title="statement not covered" >framework = <span class="cstat-no" title="statement not covered" >'react';</span></span>
+				else if (deps.vue) <span class="cstat-no" title="statement not covered" >framework = <span class="cstat-no" title="statement not covered" >'vue';</span></span>
+				else if (deps.express) <span class="cstat-no" title="statement not covered" >framework = 'express';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >				return {</span>
+					language: deps.typescript ? 'typescript' : 'javascript',
+					framework,
+					buildTool: deps.vite ? 'Vite' : deps.webpack ? 'Webpack' : undefined,
+					testFramework: deps.vitest ? 'Vitest' : deps.jest ? 'Jest' : undefined,
+					cssFramework: deps.tailwindcss ? 'Tailwind' : undefined,
+					stateManagement: deps['@reduxjs/toolkit']
+						? 'redux'
+						: deps.zustand
+							? 'zustand'
+							: ('none' as StateManagement),
+					dependencies: Object.entries({ ...pkg.dependencies }).map(<span class="fstat-no" title="function not covered" >([</span>name, version]) =&gt; (<span class="cstat-no" title="statement not covered" >{</span>
+						name,
+						version: version as string,
+						type: 'dependency' as const
+					}))
+				};
+			} catch (e) {
+				// Invalid JSON, fall through
+			}
+		}
 &nbsp;
 		return {
-			standardsId: this.standards.id,
-			evaluatedAt: new Date().toISOString(),
-			passed,
-			categories: {
-				testing: testingEval,
-				typeSafety: typeSafetyEval,
-				codeQuality: codeQualityEval,
-				architecture: architectureEval
+			language: 'javascript',
+			framework: 'unknown',
+			stateManagement: 'none',
+			dependencies: []
+		};
+	}
+&nbsp;
+	private calculateMetrics(content: string, issues: DetectedIssue[], totalLines: number): CodebaseMetrics {
+		const lines = content.split('\n');
+		const commentLines = lines.filter((l) =&gt; l.trim().startsWith('//')).length;
+		const blankLines = lines.filter((l) =&gt; !l.trim()).length;
+&nbsp;
+		return {
+			testCoverage: {
+				lines: 0,
+				statements: 0,
+				branches: 0,
+				functions: 0,
+				uncoveredFiles: [],
+				totalTests: 0,
+				passingTests: 0,
+				failingTests: 0
 			},
-			summary: {
-				totalRules,
-				passedRules,
-				failedRules,
-				errorCount,
-				warningCount
+			typeSafety: {
+				totalFiles: 1,
+				typedFiles: 0,
+				jsFiles: 1,
+				anyTypeCount: issues.filter((i) =&gt; i.title.includes('any')).length,
+				typeErrorCount: 0,
+				strictMode: false,
+				noImplicitAny: false,
+				typeCheckPassed: true
+			},
+			quality: {
+				avgFileSize: totalLines,
+				largestFile: { path: 'editor', lines: totalLines },
+				avgFunctionLength: 0,
+				maxComplexity: 0,
+				todoCount: 0,
+				fixmeCount: 0,
+				eslintErrors: 0,
+				eslintWarnings: 0
+			},
+			size: {
+				totalLines,
+				codeLines: totalLines - blankLines - commentLines,
+				commentLines,
+				blankLines
 			}
 		};
 	}
 &nbsp;
-	/**
-	 * Evaluate testing standards
-	 */
-	private evaluateTesting(analysis: CodebaseAnalysis): CategoryEvaluation {
-		const rules: RuleEvaluation[] = [];
-		const coverage = analysis.metrics.testCoverage;
+	private calculateAggregateMetrics(
+		files: Map&lt;string, string&gt;,
+		issues: DetectedIssue[],
+		totalLines: number
+	): CodebaseMetrics {
+		let totalBlankLines = 0;
+		let totalCommentLines = 0;
 &nbsp;
-		// Rule: Minimum coverage
-		const coveragePassed = coverage.lines &gt;= this.standards.testing.minimumCoverage;
-		rules.push({
-			ruleId: 'minimum-coverage',
-			ruleName: `Minimum ${this.standards.testing.minimumCoverage}% test coverage`,
-			passed: coveragePassed,
-			actual: coverage.lines,
-			expected: this.standards.testing.minimumCoverage,
-			message: coveragePassed
-				? `Coverage ${coverage.lines}% meets minimum ${this.standards.testing.minimumCoverage}%`
-				: `Coverage ${coverage.lines}% below minimum ${this.standards.testing.minimumCoverage}%`,
-			severity: 'error'
-		});
-&nbsp;
-		// Rule: Unit tests required
-		<span class="missing-if-branch" title="else path not taken" >E</span>if (this.standards.testing.requireUnitTests) {
-			const hasUnitTests = coverage.totalTests &gt; 0;
-			rules.push({
-				ruleId: 'require-unit-tests',
-				ruleName: 'Unit tests required',
-				passed: hasUnitTests,
-				actual: coverage.totalTests,
-				expected: '&gt; 0',
-				message: hasUnitTests
-					? `${coverage.totalTests} unit tests found`
-					: <span class="branch-1 cbranch-no" title="branch not covered" >'No unit tests found',</span>
-				severity: 'error'
-			});
+		for (const content of files.values()) {
+			const lines = content.split('\n');
+			totalBlankLines += lines.filter((l) =&gt; !l.trim()).length;
+			totalCommentLines += lines.filter((l) =&gt; l.trim().startsWith('//')).length;
 		}
-&nbsp;
-		// Rule: All tests passing
-		const allTestsPassing = coverage.failingTests === 0;
-		rules.push({
-			ruleId: 'tests-passing',
-			ruleName: 'All tests must pass',
-			passed: allTestsPassing,
-			actual: coverage.failingTests,
-			expected: 0,
-			message: allTestsPassing
-				? `All ${coverage.passingTests} tests passing`
-				: `${coverage.failingTests} tests failing`,
-			severity: 'error'
-		});
-&nbsp;
-		const passedCount = rules.filter((r) =&gt; r.passed).length;
-		const failedCount = rules.filter((r) =&gt; !r.passed).length;
 &nbsp;
 		return {
-			category: 'testing',
-			passed: failedCount === 0,
-			rules,
-			passedCount,
-			failedCount
-		};
-	}
-&nbsp;
-	/**
-	 * Evaluate type safety standards
-	 */
-	private evaluateTypeSafety(analysis: CodebaseAnalysis): CategoryEvaluation {
-		const rules: RuleEvaluation[] = [];
-		const typeSafety = analysis.metrics.typeSafety;
-&nbsp;
-		// Rule: Allow 'any' types
-		if (!this.standards.typeSafety.allowAnyTypes) {
-			const noAnyTypes = typeSafety.anyTypeCount === 0;
-			rules.push({
-				ruleId: 'no-any-types',
-				ruleName: 'No "any" types allowed',
-				passed: noAnyTypes,
-				actual: typeSafety.anyTypeCount,
-				expected: 0,
-				message: noAnyTypes
-					? 'No "any" types found'
-					: `${typeSafety.anyTypeCount} "any" types found`,
-				severity: 'error'
-			});
-		} else {
-			// Warning if too many 'any' types
-			const reasonableAnyCount = typeSafety.anyTypeCount &lt;= 20;
-			rules.push({
-				ruleId: 'any-types-warning',
-				ruleName: '"any" types should be minimized',
-				passed: reasonableAnyCount,
-				actual: typeSafety.anyTypeCount,
-				expected: '&lt;= 20',
-				message: reasonableAnyCount
-					? <span class="branch-0 cbranch-no" title="branch not covered" >`${typeSafety.anyTypeCount} "any" types is acceptable`</span>
-					: `${typeSafety.anyTypeCount} "any" types - consider reducing`,
-				severity: 'warning'
-			});
-		}
-&nbsp;
-		// Rule: Maximum type errors
-		const typeErrorsPassed = typeSafety.typeErrorCount &lt;= this.standards.typeSafety.maxTypeErrors;
-		rules.push({
-			ruleId: 'max-type-errors',
-			ruleName: `Maximum ${this.standards.typeSafety.maxTypeErrors} type errors`,
-			passed: typeErrorsPassed,
-			actual: typeSafety.typeErrorCount,
-			expected: this.standards.typeSafety.maxTypeErrors,
-			message: typeErrorsPassed
-				? `${typeSafety.typeErrorCount} type errors within limit`
-				: `${typeSafety.typeErrorCount} type errors exceeds limit of ${this.standards.typeSafety.maxTypeErrors}`,
-			severity: 'error'
-		});
-&nbsp;
-		// Rule: Strict mode
-		if (this.standards.typeSafety.requireStrictMode) {
-			rules.push({
-				ruleId: 'strict-mode',
-				ruleName: 'TypeScript strict mode required',
-				passed: typeSafety.strictMode,
-				actual: typeSafety.strictMode,
-				expected: true,
-				message: typeSafety.strictMode ? 'Strict mode enabled' : 'Strict mode not enabled',
-				severity: 'error'
-			});
-		}
-&nbsp;
-		const passedCount = rules.filter((r) =&gt; r.passed).length;
-		const failedCount = rules.filter((r) =&gt; !r.passed).length;
-&nbsp;
-		return {
-			category: 'typeSafety',
-			passed: rules.filter((r) =&gt; r.severity === 'error' &amp;&amp; !r.passed).length === 0,
-			rules,
-			passedCount,
-			failedCount
-		};
-	}
-&nbsp;
-	/**
-	 * Evaluate code quality standards
-	 */
-	private evaluateCodeQuality(analysis: CodebaseAnalysis): CategoryEvaluation {
-		const rules: RuleEvaluation[] = [];
-		const quality = analysis.metrics.quality;
-&nbsp;
-		// Rule: Maximum file size
-		const fileSizePassed = quality.largestFile.lines &lt;= this.standards.codeQuality.maxFileSize;
-		rules.push({
-			ruleId: 'max-file-size',
-			ruleName: `Maximum ${this.standards.codeQuality.maxFileSize} lines per file`,
-			passed: fileSizePassed,
-			actual: quality.largestFile.lines,
-			expected: this.standards.codeQuality.maxFileSize,
-			message: fileSizePassed
-				? `Largest file ${quality.largestFile.lines} lines within limit`
-				: <span class="branch-1 cbranch-no" title="branch not covered" >`File ${quality.largestFile.path} has ${quality.largestFile.lines} lines (max ${this.standards.codeQuality.maxFileSize})`,</span>
-			severity: 'warning'
-		});
-&nbsp;
-		// Rule: TODO comments
-		if (!this.standards.codeQuality.allowTodoComments) {
-			const noTodos = quality.todoCount === 0;
-			rules.push({
-				ruleId: 'no-todos',
-				ruleName: 'TODO comments not allowed',
-				passed: noTodos,
-				actual: quality.todoCount,
-				expected: 0,
-				message: noTodos ? 'No TODO comments' : `${quality.todoCount} TODO comments found`,
-				severity: 'error'
-			});
-		} else {
-			const todosWithinLimit = quality.todoCount &lt;= this.standards.codeQuality.maxTodoCount;
-			rules.push({
-				ruleId: 'max-todos',
-				ruleName: `Maximum ${this.standards.codeQuality.maxTodoCount} TODO comments`,
-				passed: todosWithinLimit,
-				actual: quality.todoCount,
-				expected: this.standards.codeQuality.maxTodoCount,
-				message: todosWithinLimit
-					? `${quality.todoCount} TODO comments within limit`
-					: `${quality.todoCount} TODO comments exceeds limit of ${this.standards.codeQuality.maxTodoCount}`,
-				severity: 'warning'
-			});
-		}
-&nbsp;
-		const passedCount = rules.filter((r) =&gt; r.passed).length;
-		const failedCount = rules.filter((r) =&gt; !r.passed).length;
-&nbsp;
-		return {
-			category: 'codeQuality',
-			passed: rules.filter((r) =&gt; r.severity === 'error' &amp;&amp; !r.passed).length === 0,
-			rules,
-			passedCount,
-			failedCount
-		};
-	}
-&nbsp;
-	/**
-	 * Evaluate architecture standards
-	 */
-	private evaluateArchitecture(analysis: CodebaseAnalysis): CategoryEvaluation {
-		const rules: RuleEvaluation[] = [];
-&nbsp;
-		// Rule: Enforce file structure
-		if (this.standards.architecture.enforceFileStructure) {
-			const hasGoodStructure = analysis.structure.totalDirectories &gt; 3; // Basic check
-			rules.push({
-				ruleId: 'enforce-structure',
-				ruleName: 'File structure must be organized',
-				passed: hasGoodStructure,
-				actual: analysis.structure.totalDirectories,
-				expected: '&gt; 3 directories',
-				message: hasGoodStructure
-					? 'File structure is organized'
-					: <span class="branch-1 cbranch-no" title="branch not covered" >'File structure needs organization',</span>
-				severity: 'warning'
-			});
-		}
-&nbsp;
-		// Rule: Forbidden patterns
-		if (this.standards.architecture.forbiddenPatterns.length &gt; 0) {
-			const hasForbiddenFiles = analysis.structure.files.some((file) =&gt;
-				this.standards.architecture.forbiddenPatterns.some((pattern) =&gt;
-					file.relativePath.includes(pattern.replace(/\*/g, ''))
-				)
-			);
-&nbsp;
-			rules.push({
-				ruleId: 'no-forbidden-patterns',
-				ruleName: 'No forbidden file patterns',
-				passed: !hasForbiddenFiles,
-				actual: hasForbiddenFiles,
-				expected: false,
-				message: hasForbiddenFiles
-					? 'Forbidden file patterns detected'
-					: 'No forbidden patterns found',
-				severity: 'error'
-			});
-		}
-&nbsp;
-		const passedCount = rules.filter((r) =&gt; r.passed).length;
-		const failedCount = rules.filter((r) =&gt; !r.passed).length;
-&nbsp;
-		return {
-			category: 'architecture',
-			passed: rules.filter((r) =&gt; r.severity === 'error' &amp;&amp; !r.passed).length === 0,
-			rules,
-			passedCount,
-			failedCount
-		};
-	}
-&nbsp;
-	/**
-	 * Generate quality gates based on configured standards
-	 */
-	generateGates(): QualityGate[] {
-		const gates: QualityGate[] = [];
-&nbsp;
-		// Phase 1: Setup &amp; Planning
-		gates.push({
-			id: 'gate-phase-1',
-			name: 'Phase 1: Setup &amp; Planning',
-			description: 'Initial setup and refactoring plan approval',
-			phase: 1,
-			checks: [
-				{
-					id: 'plan-approved',
-					name: 'Refactoring plan approved',
-					description: 'User has reviewed and approved the generated plan',
-					threshold: true,
-					autoVerify: false
-				},
-				{
-					id: 'git-clean',
-					name: 'Git working directory clean',
-					description: 'No uncommitted changes in repository',
-					threshold: true,
-					command: 'git status --porcelain',
-					autoVerify: true
-				}
-			],
-			required: true
-		});
-&nbsp;
-		// Phase 2: Testing
-		gates.push({
-			id: 'gate-phase-2',
-			name: 'Phase 2: Test Coverage',
-			description: `Achieve ${this.standards.testing.minimumCoverage}% test coverage`,
-			phase: 2,
-			checks: [
-				{
-					id: 'minimum-coverage',
-					name: `Coverage ≥ ${this.standards.testing.minimumCoverage}%`,
-					description: `Test coverage meets user-configured threshold of ${this.standards.testing.minimumCoverage}%`,
-					threshold: this.standards.testing.minimumCoverage,
-					command: 'pnpm test:coverage',
-					autoVerify: true
-				},
-				{
-					id: 'tests-passing',
-					name: 'All tests passing',
-					description: 'No failing tests',
-					threshold: 0,
-					command: 'pnpm test',
-					autoVerify: true
-				}
-			],
-			required: true
-		});
-&nbsp;
-		// Phase 3: Type Safety
-		gates.push({
-			id: 'gate-phase-3',
-			name: 'Phase 3: Type Safety',
-			description: `Type errors ≤ ${this.standards.typeSafety.maxTypeErrors}`,
-			phase: 3,
-			checks: [
-				{
-					id: 'max-type-errors',
-					name: `Type errors ≤ ${this.standards.typeSafety.maxTypeErrors}`,
-					description: `Type error count meets user-configured threshold`,
-					threshold: this.standards.typeSafety.maxTypeErrors,
-					command: 'pnpm check',
-					autoVerify: true
-				}
-			],
-			required: true
-		});
-&nbsp;
-		// Phase 4: Code Quality
-		gates.push({
-			id: 'gate-phase-4',
-			name: 'Phase 4: Code Quality',
-			description: 'Code quality standards met',
-			phase: 4,
-			checks: [
-				{
-					id: 'build-succeeds',
-					name: 'Production build succeeds',
-					description: 'Code builds without errors',
-					threshold: true,
-					command: 'pnpm build',
-					autoVerify: true
-				}
-			],
-			required: false // Quality is important but not blocking
-		});
-&nbsp;
-		return gates;
-	}
-&nbsp;
-	/**
-	 * Verify a quality gate
-	 */
-	async verifyGate(gate: QualityGate, analysis: CodebaseAnalysis): Promise&lt;GateVerificationResult&gt; {
-		const checkResults = [];
-&nbsp;
-		for (const check of gate.checks) {
-			let passed = false;
-			let actual: number | boolean | string = '';
-&nbsp;
-			if (check.id === 'minimum-coverage') {
-				actual = analysis.metrics.testCoverage.lines;
-				passed = actual &gt;= (check.threshold as number);
-			} else if (check.id === 'tests-passing') {
-				actual = analysis.metrics.testCoverage.failingTests;
-				passed = actual === 0;
-			<span class="missing-if-branch" title="else path not taken" >E</span>} else if (check.id === 'max-type-errors') {
-				actual = analysis.metrics.typeSafety.typeErrorCount;
-				passed = actual &lt;= (check.threshold as number);
+			testCoverage: {
+				lines: 0,
+				statements: 0,
+				branches: 0,
+				functions: 0,
+				uncoveredFiles: [],
+				totalTests: 0,
+				passingTests: 0,
+				failingTests: 0
+			},
+			typeSafety: {
+				totalFiles: files.size,
+				typedFiles: [...files.keys()].filter((p) =&gt; p.endsWith('.ts') || p.endsWith('.tsx')).length,
+				jsFiles: [...files.keys()].filter((p) =&gt; p.endsWith('.js') || p.endsWith('.jsx')).length,
+				anyTypeCount: issues.filter((i) =&gt; i.title.includes('any')).length,
+				typeErrorCount: 0,
+				strictMode: false,
+				noImplicitAny: false,
+				typeCheckPassed: true
+			},
+			quality: {
+				avgFileSize: Math.floor(totalLines / files.size),
+				largestFile: { path: 'unknown', lines: 0 },
+				avgFunctionLength: 0,
+				maxComplexity: 0,
+				todoCount: 0,
+				fixmeCount: 0,
+				eslintErrors: 0,
+				eslintWarnings: 0
+			},
+			size: {
+				totalLines,
+				codeLines: totalLines - totalBlankLines - totalCommentLines,
+				commentLines: totalCommentLines,
+				blankLines: totalBlankLines
 			}
-&nbsp;
-			checkResults.push({
-				checkId: check.id,
-				passed,
-				actual,
-				message: passed
-					? `✓ ${check.name}: ${actual}`
-					: `✗ ${check.name}: ${actual} (expected ${check.threshold})`
-			});
-		}
-&nbsp;
-		const allPassed = checkResults.every((r) =&gt; r.passed);
-&nbsp;
-		return {
-			gateId: gate.id,
-			verifiedAt: new Date().toISOString(),
-			passed: allPassed,
-			checks: checkResults
 		};
 	}
 &nbsp;
-	/**
-	 * Get current standards
-	 */
-	getStandards(): QualityStandards {
-		return { ...this.standards };
-	}
+	private generateSummary(issues: DetectedIssue[]): {
+		health: 'excellent' | 'good' | 'fair' | 'poor';
+		score: number;
+		highlights: string[];
+		concerns: string[];
+	} {
+		const errors = issues.filter((i) =&gt; i.severity === 'error').length;
+		const warnings = issues.filter((i) =&gt; i.severity === 'warning').length;
+		const suggestions = issues.filter((i) =&gt; i.severity === 'info').length;
 &nbsp;
-	/**
-	 * Update standards (creates new engine)
-	 */
-	static withStandards(standards: QualityStandards): StandardsEngine {
-		return new StandardsEngine(standards);
+		let health: 'excellent' | 'good' | 'fair' | 'poor' = 'excellent';
+		if (errors &gt; 0) health = <span class="missing-if-branch" title="if path not taken" >I</span>'poor';
+		else if (warnings &gt; 5) <span class="cstat-no" title="statement not covered" >health = 'fair';</span>
+		else if (warnings &gt; 0) health = 'good';
+&nbsp;
+		const score = Math.max(0, 100 - errors * 10 - warnings * 3 - suggestions * 1);
+&nbsp;
+		const highlights: string[] = [];
+		const concerns: string[] = [];
+&nbsp;
+		if (errors === 0 &amp;&amp; warnings === 0) {
+			highlights.push('No errors or warnings found');
+		}
+		if (errors === 0 &amp;&amp; warnings &gt; 0) {
+			highlights.push('No critical errors');
+		}
+&nbsp;
+		if (errors &gt; 0) {
+			concerns.push(`${errors} error(s) need immediate attention`);
+		}
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (warnings &gt; 5) {
+<span class="cstat-no" title="statement not covered" >			concerns.push(`${warnings} warnings should be addressed`);</span>
+		}
+&nbsp;
+		const categories = new Set(issues.map((i) =&gt; i.category));
+		if (categories.has('type-safety')) {
+			concerns.push('Type safety issues detected');
+		}
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (categories.has('security')) {
+<span class="cstat-no" title="statement not covered" >			concerns.push('Security vulnerabilities found');</span>
+		}
+&nbsp;
+		return {
+			health,
+			score,
+			highlights,
+			concerns
+		};
 	}
 }
+&nbsp;
+export const editorAnalyzer = new EditorAnalyzer();
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

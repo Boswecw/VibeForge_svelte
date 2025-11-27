@@ -16,6 +16,10 @@ import type {
 	IssueSeverity,
 	IssueCategory
 } from '../types/analysis';
+import { architectureDetector } from './ArchitectureDetector';
+import { securityDetector } from './SecurityDetector';
+import { performanceDetector } from './PerformanceDetector';
+import { bestPracticesDetector } from './BestPracticesDetector';
 
 export interface EditorContent {
 	content: string;
@@ -42,16 +46,23 @@ export class EditorAnalyzer {
 
 		// Detect language if not provided
 		const language = content.language || this.detectLanguage(content.content);
+		const filename = content.filename || 'editor';
 
 		// Run language-specific checks
 		if (language === 'typescript' || language === 'javascript') {
-			issues.push(...this.analyzeJavaScript(content.content, content.filename || 'editor'));
+			issues.push(...this.analyzeJavaScript(content.content, filename));
 		} else if (language === 'python') {
-			issues.push(...this.analyzePython(content.content, content.filename || 'editor'));
+			issues.push(...this.analyzePython(content.content, filename));
 		}
 
 		// Run generic checks
-		issues.push(...this.analyzeGeneric(content.content, content.filename || 'editor'));
+		issues.push(...this.analyzeGeneric(content.content, filename));
+
+		// Run advanced detectors
+		issues.push(...architectureDetector.detectIssues(content.content, filename, language));
+		issues.push(...securityDetector.detectIssues(content.content, filename, language));
+		issues.push(...performanceDetector.detectIssues(content.content, filename, language));
+		issues.push(...bestPracticesDetector.detectIssues(content.content, filename, language));
 
 		const lines = content.content.split('\n');
 

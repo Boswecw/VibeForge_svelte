@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for core/stores/models.svelte.ts</title>
+    <title>Code coverage report for refactoring/executor/ProgressTracker.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">core/stores</a> models.svelte.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">refactoring/executor</a> ProgressTracker.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">62.33% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>47/47</span>
+                <span class='fraction'>48/77</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">55.88% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>8/8</span>
+                <span class='fraction'>19/34</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">75.86% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>32/32</span>
+                <span class='fraction'>22/29</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">70.17% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>38/38</span>
+                <span class='fraction'>40/57</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -228,7 +228,62 @@
 <a name='L163'></a><a href='#L163'>163</a>
 <a name='L164'></a><a href='#L164'>164</a>
 <a name='L165'></a><a href='#L165'>165</a>
-<a name='L166'></a><a href='#L166'>166</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -247,7 +302,31 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -258,126 +337,127 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">36x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">26x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">100x</span>
-<span class="cline-any cline-yes">100x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">44x</span>
-<span class="cline-any cline-yes">43x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">55x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -390,174 +470,259 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
- * VibeForge V2 - Models Store
+ * Progress Tracker
  *
- * Manages available models and model selection using Svelte 5 runes.
+ * Monitors and calculates execution progress for refactoring projects
  */
 &nbsp;
-import type { Model } from '$lib/core/types';
+import type {
+	RefactoringProject,
+	ExecutionProgress,
+	PhaseExecution,
+	TaskExecution,
+	ExecutionStatus
+} from '../types/execution';
+import type { RefactoringPlan } from '../types/planning';
 &nbsp;
-// ============================================================================
-// MODELS STATE
-// ============================================================================
+/**
+ * Progress Tracker
+ *
+ * Tracks execution state and calculates progress metrics
+ */
+export class ProgressTracker {
+	/**
+	 * Calculates current progress from project state
+	 */
+	calculateProgress(project: RefactoringProject): ExecutionProgress {
+		const totalPhases = project.plan.phases.length;
+		const totalTasks = this.countTotalTasks(project.plan);
 &nbsp;
-interface ModelsState {
-  models: Model[];
-  selectedIds: string[];
-  isLoading: boolean;
-  error: string | null;
+		const completedPhases = this.countCompletedPhases(project.phases);
+		const completedTasks = this.countCompletedTasks(project.phases);
+&nbsp;
+		const percentage = this.calculatePercentage(completedTasks, totalTasks);
+&nbsp;
+		const currentPhase = this.getCurrentPhase(project.phases, totalPhases);
+		const currentTask = this.getCurrentTask(project.phases);
+&nbsp;
+		const estimatedTimeRemaining = this.estimateTimeRemaining(
+			project.plan,
+			completedTasks,
+			totalTasks,
+			project.startedAt
+		);
+&nbsp;
+		return {
+			currentPhase,
+			currentTask,
+			totalPhases,
+			totalTasks,
+			completedPhases,
+			completedTasks,
+			percentage,
+			estimatedTimeRemaining
+		};
+	}
+&nbsp;
+	/**
+	 * Updates progress after task completion
+	 */
+<span class="fstat-no" title="function not covered" >	updateProgress(</span>
+		currentProgress: ExecutionProgress,
+		taskCompleted: boolean
+	): ExecutionProgress {
+<span class="cstat-no" title="statement not covered" >		if (!taskCompleted) {</span>
+<span class="cstat-no" title="statement not covered" >			return currentProgress;</span>
+		}
+&nbsp;
+		const completedTasks = <span class="cstat-no" title="statement not covered" >currentProgress.completedTasks + 1;</span>
+		const percentage = <span class="cstat-no" title="statement not covered" >this.calculatePercentage(completedTasks, currentProgress.totalTasks);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		return {</span>
+			...currentProgress,
+			completedTasks,
+			percentage
+		};
+	}
+&nbsp;
+	/**
+	 * Counts total tasks across all phases
+	 */
+	private countTotalTasks(plan: RefactoringPlan): number {
+		return plan.phases.reduce((sum, phase) =&gt; sum + phase.tasks.length, 0);
+	}
+&nbsp;
+	/**
+	 * Counts completed phases
+	 */
+	private countCompletedPhases(phases: PhaseExecution[]): number {
+		return phases.filter((phase) =&gt; phase.status === 'completed').length;
+	}
+&nbsp;
+	/**
+	 * Counts completed tasks across all phases
+	 */
+	private countCompletedTasks(phases: PhaseExecution[]): number {
+		return phases.reduce((sum, phase) =&gt; {
+			const completed = phase.tasks.filter((task) =&gt; task.status === 'completed').length;
+			return sum + completed;
+		}, 0);
+	}
+&nbsp;
+	/**
+	 * Calculates completion percentage
+	 */
+	private calculatePercentage(completed: number, total: number): number {
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (total === 0) <span class="cstat-no" title="statement not covered" >return 0;</span>
+		return Math.round((completed / total) * 100);
+	}
+&nbsp;
+	/**
+	 * Gets current phase number
+	 */
+	private getCurrentPhase(phases: PhaseExecution[], totalPhases: number): number {
+		// Find first incomplete phase
+		const currentPhase = phases.find(
+			(phase) =&gt; phase.status !== 'completed' &amp;&amp; phase.status !== 'failed'
+		);
+&nbsp;
+		return currentPhase ? currentPhase.phase : totalPhases;
+	}
+&nbsp;
+	/**
+	 * Gets current task ID
+	 */
+	private getCurrentTask(phases: PhaseExecution[]): string | undefined {
+		// Find current phase
+		const currentPhase = phases.find(
+			(phase) =&gt; phase.status !== 'completed' &amp;&amp; phase.status !== 'failed'
+		);
+&nbsp;
+		if (!currentPhase) return undefined;
+&nbsp;
+		// Find current task in phase
+		const currentTask = currentPhase.tasks.find(
+			(task) =&gt; task.status !== 'completed' &amp;&amp; task.status !== 'failed'
+		);
+&nbsp;
+		return currentTask?.taskId;
+	}
+&nbsp;
+	/**
+	 * Estimates time remaining based on progress and elapsed time
+	 */
+	private estimateTimeRemaining(
+		plan: RefactoringPlan,
+		completedTasks: number,
+		totalTasks: number,
+		startedAt?: string
+	): number | undefined {
+		if (!startedAt || completedTasks === 0) {
+			// Use plan estimate
+			return plan.totalEstimatedHours * 60; // Convert to minutes
+		}
+&nbsp;
+		// Calculate based on actual progress
+		const elapsedMs = Date.now() - new Date(startedAt).getTime();
+		const elapsedMinutes = elapsedMs / (1000 * 60);
+&nbsp;
+		const avgMinutesPerTask = elapsedMinutes / completedTasks;
+		const remainingTasks = totalTasks - completedTasks;
+&nbsp;
+		return Math.round(avgMinutesPerTask * remainingTasks);
+	}
+&nbsp;
+	/**
+	 * Checks if a phase is complete
+	 */
+	isPhaseComplete(phase: PhaseExecution): boolean {
+		return phase.status === 'completed' &amp;&amp; phase.tasks.every((task) =&gt; task.status === 'completed');
+	}
+&nbsp;
+	/**
+	 * Checks if a task is in progress
+	 */
+	isTaskRunning(task: TaskExecution): boolean {
+		return task.status === 'running' || task.status === 'verifying';
+	}
+&nbsp;
+	/**
+	 * Gets phase progress summary
+	 */
+	getPhaseProgress(phase: PhaseExecution): {
+		total: number;
+		completed: number;
+		failed: number;
+		running: number;
+		percentage: number;
+	} {
+		const total = phase.tasks.length;
+		const completed = phase.tasks.filter((t) =&gt; t.status === 'completed').length;
+		const failed = phase.tasks.filter((t) =&gt; t.status === 'failed').length;
+		const running = phase.tasks.filter((t) =&gt; this.isTaskRunning(t)).length;
+		const percentage = this.calculatePercentage(completed, total);
+&nbsp;
+		return { total, completed, failed, running, percentage };
+	}
+&nbsp;
+	/**
+	 * Determines overall project status
+	 */
+<span class="fstat-no" title="function not covered" >	determineProjectStatus(p</span>hases: PhaseExecution[]): ExecutionStatus {
+<span class="cstat-no" title="statement not covered" >		if (phases.length === 0) <span class="cstat-no" title="statement not covered" >return 'idle';</span></span>
+&nbsp;
+		const anyFailed = <span class="cstat-no" title="statement not covered" >phases.some(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; <span class="cstat-no" title="statement not covered" >p.status === 'failed')</span>;</span>
+<span class="cstat-no" title="statement not covered" >		if (anyFailed) <span class="cstat-no" title="statement not covered" >return 'failed';</span></span>
+&nbsp;
+		const allCompleted = <span class="cstat-no" title="statement not covered" >phases.every(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; <span class="cstat-no" title="statement not covered" >p.status === 'completed')</span>;</span>
+<span class="cstat-no" title="statement not covered" >		if (allCompleted) <span class="cstat-no" title="statement not covered" >return 'completed';</span></span>
+&nbsp;
+		const anyRunning = <span class="cstat-no" title="statement not covered" >phases.some(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; <span class="cstat-no" title="statement not covered" >p.status === 'running')</span>;</span>
+<span class="cstat-no" title="statement not covered" >		if (anyRunning) <span class="cstat-no" title="statement not covered" >return 'running';</span></span>
+&nbsp;
+		const anyVerifying = <span class="cstat-no" title="statement not covered" >phases.some(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; <span class="cstat-no" title="statement not covered" >p.status === 'verifying')</span>;</span>
+<span class="cstat-no" title="statement not covered" >		if (anyVerifying) <span class="cstat-no" title="statement not covered" >return 'verifying';</span></span>
+&nbsp;
+		const anyPaused = <span class="cstat-no" title="statement not covered" >phases.some(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; <span class="cstat-no" title="statement not covered" >p.status === 'paused')</span>;</span>
+<span class="cstat-no" title="statement not covered" >		if (anyPaused) <span class="cstat-no" title="statement not covered" >return 'paused';</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		return 'preparing';</span>
+	}
 }
-&nbsp;
-const state = $state&lt;ModelsState&gt;({
-  models: [],
-  selectedIds: [],
-  isLoading: false,
-  error: null,
-});
-&nbsp;
-// ============================================================================
-// DERIVED STATE
-// ============================================================================
-&nbsp;
-const selectedModels = $derived(
-  state.models.filter((m) =&gt; state.selectedIds.includes(m.id))
-);
-&nbsp;
-const availableModels = $derived(state.models.filter((m) =&gt; !state.selectedIds.includes(m.id)));
-&nbsp;
-const modelsByProvider = $derived(
-  state.models.reduce(
-    (acc, model) =&gt; {
-      if (!acc[model.provider]) {
-        acc[model.provider] = [];
-      }
-      acc[model.provider].push(model);
-      return acc;
-    },
-    {} as Record&lt;string, Model[]&gt;
-  )
-);
-&nbsp;
-const hasSelection = $derived(state.selectedIds.length &gt; 0);
-&nbsp;
-const selectedCount = $derived(state.selectedIds.length);
-&nbsp;
-// Calculate estimated total cost for a given token count
-const estimatedCost = (inputTokens: number, outputTokens: number) =&gt; {
-  return selectedModels.reduce((total, model) =&gt; {
-    if (!model.costPer1kTokens) return total;
-    const totalTokens = inputTokens + outputTokens;
-    return total + (totalTokens / 1000) * model.costPer1kTokens;
-  }, 0);
-};
-&nbsp;
-// ============================================================================
-// ACTIONS
-// ============================================================================
-&nbsp;
-function setModels(models: Model[]) {
-  state.models = models;
-  state.error = null;
-}
-&nbsp;
-function selectModel(id: string) {
-  if (!state.selectedIds.includes(id)) {
-    state.selectedIds = [...state.selectedIds, id];
-  }
-}
-&nbsp;
-function deselectModel(id: string) {
-  state.selectedIds = state.selectedIds.filter((selectedId) =&gt; selectedId !== id);
-}
-&nbsp;
-function toggleModel(id: string) {
-  if (state.selectedIds.includes(id)) {
-    deselectModel(id);
-  } else {
-    selectModel(id);
-  }
-}
-&nbsp;
-function setSelectedIds(ids: string[]) {
-  state.selectedIds = ids;
-}
-&nbsp;
-function clearSelection() {
-  state.selectedIds = [];
-}
-&nbsp;
-function selectOnly(id: string) {
-  state.selectedIds = [id];
-}
-&nbsp;
-function selectAll() {
-  state.selectedIds = state.models.map((m) =&gt; m.id);
-}
-&nbsp;
-function getModelById(id: string): Model | undefined {
-  return state.models.find((model) =&gt; model.id === id);
-}
-&nbsp;
-function setLoading(loading: boolean) {
-  state.isLoading = loading;
-}
-&nbsp;
-function setError(error: string | null) {
-  state.error = error;
-}
-&nbsp;
-// ============================================================================
-// EXPORTS
-// ============================================================================
-&nbsp;
-export const modelsStore = {
-  // State
-  get models() {
-    return state.models;
-  },
-  get selectedIds() {
-    return state.selectedIds;
-  },
-  get isLoading() {
-    return state.isLoading;
-  },
-  get error() {
-    return state.error;
-  },
-  // Derived
-  get selectedModels() {
-    return selectedModels;
-  },
-  get availableModels() {
-    return availableModels;
-  },
-  get modelsByProvider() {
-    return modelsByProvider;
-  },
-  get hasSelection() {
-    return hasSelection;
-  },
-  get selectedCount() {
-    return selectedCount;
-  },
-  estimatedCost,
-  // Actions
-  setModels,
-  selectModel,
-  deselectModel,
-  toggleModel,
-  setSelectedIds,
-  clearSelection,
-  selectOnly,
-  selectAll,
-  getModelById,
-  setLoading,
-  setError,
-};
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
