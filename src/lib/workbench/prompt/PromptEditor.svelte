@@ -13,7 +13,10 @@
     totalCost,
     totalTokens,
   } from "$lib/stores/estimation";
+  import { analysisStore } from "$lib/workbench/stores/analysis.svelte";
+  import { setAnalysisMarkers, clearAnalysisMarkers, goToIssue } from "$lib/workbench/analysis";
   import MonacoEditor from "$lib/ui/primitives/MonacoEditor.svelte";
+  import type * as Monaco from "monaco-editor";
 
   const text = $derived(promptStore.text);
   const estimatedTokens = $derived(promptStore.estimatedTokens);
@@ -39,7 +42,8 @@
     "{{variable}}" +
     " syntax for template variables\nPress Cmd+Enter to run";
 
-  let editorInstance: HTMLElement | null = null;
+  let editorInstance: Monaco.editor.IStandaloneCodeEditor | null = null;
+  let monacoInstance: typeof Monaco | null = null;
 
   onMount(() => {
     // Load pricing data on mount
@@ -84,6 +88,28 @@
       versionStore.saveVersion(selectedPreset.id, text, false, "Manual save");
     }
   }
+
+  // Wire analysis markers to Monaco editor
+  $effect(() => {
+    if (!editorInstance || !monacoInstance) return;
+
+    const current = analysisStore.current;
+    const issues = current?.issues || [];
+
+    if (issues.length > 0) {
+      setAnalysisMarkers({ editor: editorInstance, monaco: monacoInstance, issues });
+    } else {
+      clearAnalysisMarkers(monacoInstance, editorInstance);
+    }
+  });
+
+  // Jump to selected issue
+  $effect(() => {
+    const selected = analysisStore.selectedIssue;
+    if (selected && editorInstance) {
+      goToIssue(editorInstance, selected);
+    }
+  });
 </script>
 
 <svelte:window
@@ -130,8 +156,9 @@
       placeholder={placeholderText}
       onChange={handleChange}
       onRunShortcut={handleRunShortcut}
-      onEditorMount={(editor) => {
+      onEditorMount={(editor, monaco) => {
         editorInstance = editor;
+        monacoInstance = monaco;
       }}
       class="h-full"
     />

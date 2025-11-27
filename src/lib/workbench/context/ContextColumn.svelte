@@ -4,7 +4,7 @@
 	 * Left column of the 3-column workbench layout
 	 */
 
-	import { contextBlocksStore } from '$lib/core/stores';
+	import { contextBlocksStore, promptStore } from '$lib/core/stores';
 	import Button from '$lib/ui/primitives/Button.svelte';
 	import SectionHeader from '$lib/ui/primitives/SectionHeader.svelte';
 	import Tag from '$lib/ui/primitives/Tag.svelte';
@@ -13,6 +13,7 @@
 	import ContextMetrics from './ContextMetrics.svelte';
 	import McpToolsSection from './McpToolsSection.svelte';
 	import PromptSelector from '../prompts/PromptSelector.svelte';
+	import { SourcePanel } from '../source';
 
 	let showEditor = $state(false);
 	let showInactive = $state(false);
@@ -83,6 +84,14 @@
 	function formatCost(cost: number): string {
 		if (cost < 0.01) return '<$0.01';
 		return `$${cost.toFixed(3)}`;
+	}
+
+	function handleFileSelect(path: string, content: string) {
+		// Load file content into prompt editor
+		promptStore.setText(content);
+
+		// Dispatch event to focus editor (prompt column will listen)
+		window.dispatchEvent(new CustomEvent('focus-editor'));
 	}
 </script>
 
@@ -285,6 +294,11 @@
 			<!-- MCP Tools Section -->
 			<div class="mt-6">
 				<McpToolsSection />
+			</div>
+
+			<!-- Source Panel (GitHub Integration) -->
+			<div class="mt-6">
+				<SourcePanel onFileSelect={handleFileSelect} />
 			</div>
 		{/if}
 	</div>

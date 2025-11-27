@@ -196,7 +196,16 @@ function createSourceStore() {
 
 			for (let i = 0; i < uncached.length; i += batchSize) {
 				const batch = uncached.slice(i, i + batchSize);
-				await Promise.all(batch.map((p) => this.loadFile(p)));
+				await Promise.all(
+					batch.map(async (p) => {
+						try {
+							await this.loadFile(p);
+						} catch (error) {
+							// Skip files that fail to load
+							console.warn(`Failed to load file ${p}:`, error);
+						}
+					})
+				);
 			}
 
 			return state.fileCache;
@@ -211,6 +220,13 @@ function createSourceStore() {
 
 			// Filter to relevant paths
 			const filtered = items.filter((item) => {
+				// Skip common non-source directories
+				const excludedDirs = ['node_modules', '.git', 'dist', 'build', '.next', '.cache', 'coverage'];
+				const pathParts = item.path.split('/');
+				if (excludedDirs.some(dir => pathParts.includes(dir))) {
+					return false;
+				}
+
 				// Skip non-source files
 				if (item.type === 'blob') {
 					const ext = item.path.split('.').pop();
@@ -220,6 +236,38 @@ function createSourceStore() {
 				}
 				return item.type === 'tree';
 			});
+
+			// Helper to ensure parent directory exists
+			const ensureParentExists = (path: string): FileTreeNode | null => {
+				if (map.has(path)) {
+					return map.get(path)!;
+				}
+
+				const pathParts = path.split('/');
+				const name = pathParts[pathParts.length - 1];
+
+				const parent: FileTreeNode = {
+					name,
+					path,
+					type: 'directory',
+					children: []
+				};
+
+				map.set(path, parent);
+
+				// Recursively ensure grandparents exist
+				if (pathParts.length > 1) {
+					const parentPath = pathParts.slice(0, -1).join('/');
+					const grandparent = ensureParentExists(parentPath);
+					if (grandparent && grandparent.children) {
+						grandparent.children.push(parent);
+					}
+				} else {
+					root.push(parent);
+				}
+
+				return parent;
+			};
 
 			// Build tree
 			for (const item of filtered) {
@@ -239,7 +287,7 @@ function createSourceStore() {
 					root.push(node);
 				} else {
 					const parentPath = pathParts.slice(0, -1).join('/');
-					const parent = map.get(parentPath);
+					const parent = ensureParentExists(parentPath);
 					if (parent && parent.children) {
 						parent.children.push(node);
 					}

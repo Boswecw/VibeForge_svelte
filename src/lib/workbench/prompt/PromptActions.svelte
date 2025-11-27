@@ -5,6 +5,8 @@
 	 */
 
 	import { promptStore, modelsStore, runsStore } from '$lib/core/stores';
+	import { analysisStore } from '../stores/analysis.svelte';
+	import { editorAnalyzer } from '$lib/refactoring/analyzer/EditorAnalyzer';
 	import Button from '$lib/ui/primitives/Button.svelte';
 
 	interface Props {
@@ -16,8 +18,10 @@
 	const isEmpty = $derived(promptStore.isEmpty);
 	const selectedCount = $derived(modelsStore.selectedCount);
 	const isExecuting = $derived(runsStore.isExecuting);
+	const isAnalyzing = $derived(analysisStore.isAnalyzing);
 
 	const canRun = $derived(!isEmpty && selectedCount > 0 && !isExecuting);
+	const canAnalyze = $derived(!isEmpty && !isAnalyzing);
 
 	function handleRun() {
 		if (!canRun) return;
@@ -40,6 +44,25 @@
 		// Phase 2: Implement template loading
 		console.log('Load template');
 		alert('Load template functionality - Phase 2');
+	}
+
+	async function handleAnalyze() {
+		if (!canAnalyze) return;
+
+		analysisStore.setAnalyzing(true);
+
+		try {
+			const analysis = await editorAnalyzer.analyzeSingleFile({
+				content: promptStore.text,
+				filename: 'prompt.md',
+				language: 'markdown'
+			});
+
+			analysisStore.setAnalysis(analysis);
+		} catch (error) {
+			console.error('Analysis failed:', error);
+			analysisStore.setError(error instanceof Error ? error.message : 'Analysis failed');
+		}
 	}
 </script>
 
@@ -84,6 +107,35 @@
 
 	<!-- Secondary Actions -->
 	<div class="flex items-center gap-2">
+		<!-- Analyze Code -->
+		<button
+			onclick={handleAnalyze}
+			disabled={!canAnalyze}
+			class="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 active:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 font-medium"
+			title="Analyze code quality"
+		>
+			{#if isAnalyzing}
+				<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+					></path>
+				</svg>
+			{:else}
+				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+					></path>
+				</svg>
+			{/if}
+			Analyze
+		</button>
+
 		<!-- Save as Template -->
 		<button
 			onclick={handleSave}
