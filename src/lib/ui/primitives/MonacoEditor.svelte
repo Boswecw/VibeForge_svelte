@@ -20,7 +20,7 @@
   export let onChange: ((value: string) => void) | undefined = undefined;
   export let onRunShortcut: (() => void) | undefined = undefined;
   export let onEditorMount:
-    | ((editor: Monaco.editor.IStandaloneCodeEditor) => void)
+    | ((editor: Monaco.editor.IStandaloneCodeEditor, monaco: typeof Monaco) => void)
     | undefined = undefined;
 
   let editorContainer: HTMLDivElement;
@@ -104,8 +104,8 @@
     }
 
     // Call onEditorMount callback if provided
-    if (onEditorMount && editor) {
-      onEditorMount(editor);
+    if (onEditorMount && editor && monaco) {
+      onEditorMount(editor, monaco);
     }
   });
 
