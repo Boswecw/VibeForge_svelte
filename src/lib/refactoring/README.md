@@ -23,6 +23,11 @@ Complete automated refactoring system with codebase analysis, intelligent planni
 │  ├─ MetricsCollector (Coverage, types, quality, size)      │
 │  ├─ PatternDetector (Stores, APIs, components)             │
 │  ├─ IssueDetector (Generate issues from metrics)           │
+│  ├─ EditorAnalyzer (Real-time file analysis)               │
+│  ├─ ArchitectureDetector (Complexity, code smells)         │
+│  ├─ SecurityDetector (Vulnerabilities, secrets)            │
+│  ├─ PerformanceDetector (Anti-patterns, optimizations)     │
+│  ├─ BestPracticesDetector (Quality, maintainability)       │
 │  └─ CodebaseAnalyzer (Orchestrate analysis)                │
 │                                                              │
 │  Phase 3: Refactoring Planner                               │
@@ -145,6 +150,100 @@ console.log(`Score: ${analysis.summary.score}/100`);
 console.log(`Test Coverage: ${analysis.metrics.testCoverage.lines}%`);
 console.log(`Type Errors: ${analysis.metrics.typeSafety.typeErrorCount}`);
 console.log(`Issues: ${analysis.issues.length}`);
+```
+
+#### Code Analysis Detectors
+
+Four specialized detectors analyze code for specific issue categories:
+
+**1. Architecture Detector**
+Detects architectural code smells and complexity issues:
+
+```typescript
+import { ArchitectureDetector } from '$lib/refactoring/analyzer/ArchitectureDetector';
+
+const detector = new ArchitectureDetector();
+const issues = detector.detectIssues(fileContent, filename, language);
+
+// Detects:
+// - Cyclomatic complexity >10 (info), >15 (warning)
+// - Deep nesting >4 levels (warning)
+// - God functions >50 lines (warning)
+// - Long parameter lists >6 params (info)
+// - Callback hell (promise chains >3, nested callbacks >2)
+```
+
+**2. Security Detector**
+Identifies security vulnerabilities and risks:
+
+```typescript
+import { SecurityDetector } from '$lib/refactoring/analyzer/SecurityDetector';
+
+const detector = new SecurityDetector();
+const issues = detector.detectIssues(fileContent, filename, language);
+
+// Detects:
+// - Hardcoded secrets (passwords, API keys, tokens) - error
+// - SQL injection vulnerabilities - error
+// - XSS vulnerabilities (dangerouslySetInnerHTML) - error
+// - Unsafe eval/exec usage - error
+// - Weak cryptography (MD5, SHA1) - warning
+// - Path traversal risks - warning
+```
+
+**3. Performance Detector**
+Finds performance anti-patterns:
+
+```typescript
+import { PerformanceDetector } from '$lib/refactoring/analyzer/PerformanceDetector';
+
+const detector = new PerformanceDetector();
+const issues = detector.detectIssues(fileContent, filename, language);
+
+// Detects:
+// - Nested loops (O(n²) complexity) - warning
+// - Memory leaks (unclosed intervals, event listeners) - warning
+// - Blocking operations (fs.readFileSync, execSync) - warning
+// - Unnecessary re-renders (inline objects/functions in React) - info
+// - Large library imports (lodash, moment) - info
+```
+
+**4. Best Practices Detector**
+Checks code quality and maintainability:
+
+```typescript
+import { BestPracticesDetector } from '$lib/refactoring/analyzer/BestPracticesDetector';
+
+const detector = new BestPracticesDetector();
+const issues = detector.detectIssues(fileContent, filename, language);
+
+// Detects:
+// - Missing error handling (Promise without catch, try without catch) - warning
+// - Magic numbers (hardcoded values) - info
+// - Dead code (unused variables, unreachable code) - info
+// - Inconsistent naming conventions - info
+// - TODO/FIXME comments - info
+// - Empty blocks (if/for/while with empty body) - warning
+// - Console.log in production code - info
+```
+
+**Integration with EditorAnalyzer**
+
+All detectors are integrated into the `EditorAnalyzer` for real-time file analysis:
+
+```typescript
+import { EditorAnalyzer } from '$lib/refactoring/analyzer/EditorAnalyzer';
+
+const analyzer = new EditorAnalyzer();
+const analysis = analyzer.analyzeFile(fileContent, filename, language);
+
+// Returns comprehensive analysis with all issue categories:
+console.log(`Total issues: ${analysis.allIssues.length}`);
+console.log(`Architecture: ${analysis.architectureIssues.length}`);
+console.log(`Security: ${analysis.securityIssues.length}`);
+console.log(`Performance: ${analysis.performanceIssues.length}`);
+console.log(`Best Practices: ${analysis.bestPracticesIssues.length}`);
+console.log(`Overall health: ${analysis.healthScore}/100`);
 ```
 
 ### Phase 3: Refactoring Planner
@@ -276,11 +375,18 @@ pnpm test src/lib/refactoring
 
 # Run specific phase tests
 pnpm test src/lib/refactoring/standards   # Phase 1 (78 tests)
-pnpm test src/lib/refactoring/analyzer    # Phase 2 (6 tests)
+pnpm test src/lib/refactoring/analyzer    # Phase 2 (154 tests)
 pnpm test src/lib/refactoring/planner     # Phase 3 (12 tests)
 pnpm test src/lib/refactoring/executor    # Phase 4 (21 tests)
 
-# Total: 117 tests, 100% passing
+# Run specific detector tests
+pnpm test ArchitectureDetector.test      # 25 tests - Complexity & code smells
+pnpm test SecurityDetector.test          # 44 tests - Vulnerability detection
+pnpm test PerformanceDetector.test       # 39 tests - Performance anti-patterns
+pnpm test BestPracticesDetector.test     # 40 tests - Code quality checks
+
+# Total: 265 tests, 98% passing (257/265)
+# Code Analysis Coverage: 148 detector tests (145/148 passing)
 ```
 
 ## API Reference
@@ -395,8 +501,17 @@ src/lib/refactoring/
 │   ├── MetricsCollector.ts
 │   ├── PatternDetector.ts
 │   ├── IssueDetector.ts
+│   ├── EditorAnalyzer.ts           # Real-time file analysis
+│   ├── ArchitectureDetector.ts     # Complexity & code smells
+│   ├── SecurityDetector.ts         # Vulnerability detection
+│   ├── PerformanceDetector.ts      # Performance anti-patterns
+│   ├── BestPracticesDetector.ts    # Code quality checks
 │   ├── index.ts
 │   └── __tests__/
+│       ├── ArchitectureDetector.test.ts    # 25 tests
+│       ├── SecurityDetector.test.ts        # 44 tests
+│       ├── PerformanceDetector.test.ts     # 39 tests
+│       └── BestPracticesDetector.test.ts   # 40 tests
 │
 ├── planner/                        # Phase 3: Refactoring Planner
 │   ├── RefactoringPlanner.ts
