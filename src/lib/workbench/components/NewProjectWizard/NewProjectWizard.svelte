@@ -6,15 +6,21 @@
     Step3Stack,
     Step4Configuration,
     Step5Review,
+    StepPatternSelect,
+    StepComponentConfig,
   } from './steps';
 
-  const stepNames = [
-    'Project Intent',
-    'Languages',
-    'Stack',
-    'Configuration',
-    'Review & Launch',
-  ];
+  // Dynamic step names based on mode
+  const stepNames = $derived(() => {
+    const isPatternMode = wizardStore.config.architecturePattern !== null;
+    return [
+      'Project Intent',
+      'Architecture',
+      isPatternMode ? 'Components' : 'Stack',
+      'Configuration',
+      'Review & Launch',
+    ];
+  });
 
   function handleClose() {
     wizardStore.close();
@@ -85,7 +91,7 @@
 
         <!-- Step Progress Indicator -->
         <div class="flex items-center justify-between">
-          {#each stepNames as stepName, index}
+          {#each stepNames() as stepName, index}
             <div class="flex items-center flex-1">
               <!-- Step Circle -->
               <button
@@ -115,7 +121,7 @@
               </span>
 
               <!-- Connector Line -->
-              {#if index < stepNames.length - 1}
+              {#if index < stepNames().length - 1}
                 <div
                   class="hidden sm:block flex-1 h-0.5 mx-2 {(index + 1) < wizardStore.currentStep
                     ? 'bg-green-600'
@@ -132,9 +138,15 @@
         {#if wizardStore.currentStep === 1}
           <Step1Intent config={wizardStore.config} />
         {:else if wizardStore.currentStep === 2}
-          <Step2Languages config={wizardStore.config} />
+          <!-- Step 2: Pattern Selection (with embedded legacy mode) -->
+          <StepPatternSelect config={wizardStore.config} />
         {:else if wizardStore.currentStep === 3}
-          <Step3Stack config={wizardStore.config} />
+          <!-- Step 3: Component Config (pattern) OR Stack (legacy) -->
+          {#if wizardStore.config.architecturePattern}
+            <StepComponentConfig config={wizardStore.config} />
+          {:else}
+            <Step3Stack config={wizardStore.config} />
+          {/if}
         {:else if wizardStore.currentStep === 4}
           <Step4Configuration config={wizardStore.config} />
         {:else if wizardStore.currentStep === 5}

@@ -15,16 +15,23 @@ const STORAGE_KEY = 'vibeforge:wizard-draft';
  */
 function loadDraft(): ProjectConfig | null {
   if (!browser) return null;
-  
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // Convert componentConfigs from object to Map
+      if (parsed.componentConfigs && typeof parsed.componentConfigs === 'object') {
+        parsed.componentConfigs = new Map(Object.entries(parsed.componentConfigs));
+      } else {
+        parsed.componentConfigs = new Map();
+      }
+      return parsed;
     }
   } catch (error) {
     console.error('Failed to load wizard draft:', error);
   }
-  
+
   return null;
 }
 
@@ -33,9 +40,14 @@ function loadDraft(): ProjectConfig | null {
  */
 function saveDraft(config: ProjectConfig): void {
   if (!browser) return;
-  
+
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    // Convert Map to object for JSON serialization
+    const serializable = {
+      ...config,
+      componentConfigs: Object.fromEntries(config.componentConfigs)
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(serializable));
   } catch (error) {
     console.error('Failed to save wizard draft:', error);
   }
@@ -57,7 +69,6 @@ function clearDraft(): void {
 class WizardStore {
   isOpen = $state(false);
   currentStep = $state(1);
-  totalSteps = 5;
 
   // Project configuration
   config = $state<ProjectConfig>({ ...DEFAULT_PROJECT_CONFIG });
@@ -65,6 +76,13 @@ class WizardStore {
   constructor() {
     // Note: Cannot use $effect here as store is instantiated at module level
     // Draft saving is handled manually in methods that modify config
+  }
+
+  /**
+   * Get total steps (always 5, but content changes based on mode)
+   */
+  get totalSteps(): number {
+    return 5;
   }
 
   /**
@@ -118,8 +136,18 @@ class WizardStore {
 
   /**
    * Check if current step is valid
+   *
+   * Step flow (5 steps, dynamic content):
+   *   1. Intent
+   *   2. Pattern Selection (select pattern OR "use legacy mode")
+   *   3. Component Config (if pattern) OR Stack (if legacy)
+   *   4. Configuration
+   *   5. Review
    */
   get isCurrentStepValid(): boolean {
+    const isPatternMode = this.config.architecturePattern !== null;
+    const isLegacyMode = this.config.primaryLanguage !== null;
+
     switch (this.currentStep) {
       case 1: // Project Intent
         return (
@@ -127,19 +155,25 @@ class WizardStore {
           this.config.projectName.trim().length <= 50 &&
           this.config.projectType !== null
         );
-      
-      case 2: // Languages
-        return this.config.primaryLanguage !== null;
-      
-      case 3: // Stack
-        return this.config.stack !== null;
-      
+
+      case 2: // Pattern Selection (must select pattern OR legacy mode)
+        return isPatternMode || isLegacyMode;
+
+      case 3: // Component Config (pattern) OR Stack (legacy)
+        if (isPatternMode) {
+          return true; // Component configs are optional
+        } else if (isLegacyMode) {
+          return this.config.stack !== null;
+        } else {
+          return false; // Need to select mode first
+        }
+
       case 4: // Configuration
-        return true; // Always valid (features are optional)
-      
+        return true; // Features are optional
+
       case 5: // Review
-        return true; // Always valid (review step)
-      
+        return true; // Always valid
+
       default:
         return false;
     }

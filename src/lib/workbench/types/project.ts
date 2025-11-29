@@ -2,6 +2,9 @@
  * Project Configuration Types
  */
 
+import type { ArchitecturePattern } from './architecture';
+import type { ComponentConfig } from './wizard';
+
 export type ProjectType = 'web' | 'api' | 'library' | 'cli' | 'fullstack';
 
 export interface ProjectConfig {
@@ -9,15 +12,19 @@ export interface ProjectConfig {
   projectName: string;
   projectDescription: string;
   projectType: ProjectType | null;
-  
-  // Step 2: Languages
+
+  // Step 2: Architecture Pattern (NEW - Phase 2)
+  architecturePattern: ArchitecturePattern | null;
+  componentConfigs: Map<string, ComponentConfig>;
+
+  // Step 3: Languages (Legacy - for single-component projects)
   primaryLanguage: string | null;
   additionalLanguages: string[];
-  
-  // Step 3: Stack
+
+  // Step 4: Stack (Legacy - for single-component projects)
   stack: string | null;
-  
-  // Step 4: Configuration
+
+  // Step 5: Configuration
   features: {
     testing: boolean;
     linting: boolean;
@@ -25,7 +32,7 @@ export interface ProjectConfig {
     docker: boolean;
     ci: boolean;
   };
-  
+
   // Additional
   projectPath: string;
   license: string;
@@ -35,6 +42,8 @@ export const DEFAULT_PROJECT_CONFIG: ProjectConfig = {
   projectName: '',
   projectDescription: '',
   projectType: null,
+  architecturePattern: null,
+  componentConfigs: new Map(),
   primaryLanguage: null,
   additionalLanguages: [],
   stack: null,
