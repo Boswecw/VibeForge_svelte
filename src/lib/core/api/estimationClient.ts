@@ -72,7 +72,7 @@ class EstimationClient {
     request: EstimateRequest
   ): Promise<ApiResponse<EstimateResponse>> {
     try {
-      const response = await fetch(`${this.baseUrl}/estimate`, {
+      const response = await fetch(`${this.baseUrl}/api/v1/estimate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +100,7 @@ class EstimationClient {
    */
   async getPricing(): Promise<ApiResponse<ModelPricing[]>> {
     try {
-      const response = await fetch(`${this.baseUrl}/estimate/pricing`);
+      const response = await fetch(`${this.baseUrl}/api/v1/estimate/pricing`);
 
       if (!response.ok) {
         const error = await response.text();
@@ -121,7 +121,7 @@ class EstimationClient {
    */
   async getModelPricing(model: string): Promise<ApiResponse<ModelPricing>> {
     try {
-      const response = await fetch(`${this.baseUrl}/estimate/pricing/${model}`);
+      const response = await fetch(`${this.baseUrl}/api/v1/estimate/pricing/${model}`);
 
       if (!response.ok) {
         const error = await response.text();
