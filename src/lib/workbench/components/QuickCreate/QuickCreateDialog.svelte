@@ -76,6 +76,8 @@
         selectedStack,
         stacksCompared: [],
         aiRecommendations: [],
+        architecturesConsidered: [], // For Phase 1 - empty for legacy mode
+        componentConfigs: new Map(), // For Phase 1 - empty for legacy mode
         features: {
           testing: true,
           docker: false,

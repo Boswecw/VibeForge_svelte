@@ -5,6 +5,7 @@
  */
 
 import type { StackProfile, StackCategory } from '$lib/core/types/stack-profiles';
+import type { ArchitecturePattern } from './architecture';
 
 // ============================================================================
 // WIZARD STEP TYPES
@@ -69,10 +70,63 @@ export interface FeatureSelection {
   [key: string]: boolean | undefined;
 }
 
+/**
+ * Configuration for a single component in an architecture pattern
+ *
+ * Allows users to override default settings for pattern components.
+ *
+ * @example
+ * ```typescript
+ * const config: ComponentConfig = {
+ *   componentId: 'backend',
+ *   language: 'rust',
+ *   framework: 'tauri',
+ *   location: 'src-tauri',
+ *   includeTests: true,
+ *   includeDocker: false,
+ *   includeCi: true
+ * };
+ * ```
+ */
+export interface ComponentConfig {
+	/** ID of the component being configured */
+	componentId: string;
+
+	// Override defaults
+	/** Override language selection */
+	language?: string;
+
+	/** Override framework selection */
+	framework?: string;
+
+	/** Override file location */
+	location?: string;
+
+	// Optional features
+	/** Include test scaffolding */
+	includeTests: boolean;
+
+	/** Include Docker configuration */
+	includeDocker: boolean;
+
+	/** Include CI/CD configuration */
+	includeCi: boolean;
+
+	// Component-specific config
+	/** Additional component-specific configuration */
+	customConfig?: Record<string, any>;
+}
+
 // ============================================================================
 // WIZARD DATA
 // ============================================================================
 
+/**
+ * Complete wizard data structure
+ *
+ * Includes both legacy single-stack fields and new architecture pattern fields
+ * for backward compatibility during transition.
+ */
 export interface WizardData {
   // Step 1: Intent
   projectName: string;
@@ -80,15 +134,36 @@ export interface WizardData {
   projectType: ProjectType;
   complexity: Complexity;
 
-  // Step 2: Languages
-  primaryLanguage: string | null;
-  secondaryLanguages: string[];
-  languagesConsidered: string[];  // For learning tracking
+  // Step 2: Architecture Pattern (NEW - replaces single language/stack for multi-component projects)
+  /** Selected architecture pattern (NEW) */
+  architecturePattern?: ArchitecturePattern;
 
-  // Step 3: Stack
+  /** Architectures considered during selection (NEW - for learning tracking) */
+  architecturesConsidered: string[];
+
+  // Step 2: Languages (LEGACY - kept for backward compatibility)
+  /** Primary language (legacy - use architecturePattern for new projects) */
+  primaryLanguage: string | null;
+
+  /** Secondary languages (legacy) */
+  secondaryLanguages: string[];
+
+  /** Languages considered (legacy - for learning tracking) */
+  languagesConsidered: string[];
+
+  // Step 3: Stack (LEGACY - kept for backward compatibility)
+  /** Selected stack (legacy - use architecturePattern for new projects) */
   selectedStack: StackProfile | null;
-  stacksCompared: string[];        // For learning tracking
+
+  /** Stacks compared (legacy - for learning tracking) */
+  stacksCompared: string[];
+
+  /** AI recommendations (legacy) */
   aiRecommendations: StackRecommendation[];
+
+  // Step 3: Component Configuration (NEW)
+  /** Configuration for each component in the architecture pattern (NEW) */
+  componentConfigs: Map<string, ComponentConfig>;
 
   // Step 4: Config
   features: FeatureSelection;

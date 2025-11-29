@@ -1,0 +1,36 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+mod commands;
+{{#if includeDatabase}}
+mod db;
+{{/if}}
+
+use tauri::Manager;
+
+#[tokio::main]
+async fn main() {
+    {{#if includeDatabase}}
+    let db = db::init_database().await
+        .expect("Failed to initialize database");
+    {{/if}}
+
+    tauri::Builder::default()
+        {{#if includeDatabase}}
+        .manage(db)
+        {{/if}}
+        .invoke_handler(tauri::generate_handler![
+            {{#each commands}}
+            commands::{{this}},
+            {{/each}}
+        ])
+        .setup(|app| {
+            #[cfg(debug_assertions)]
+            {
+                let window = app.get_webview_window("main").unwrap();
+                window.open_devtools();
+            }
+            Ok(())
+        })
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schema.tauri.app/config/2.0.0",
+  "productName": "{{projectName}}",
+  "version": "0.1.0",
+  "identifier": "com.{{projectName}}.dev",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:5173",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "{{projectName}}",
+        "width": 1200,
+        "height": 800,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  }
+}

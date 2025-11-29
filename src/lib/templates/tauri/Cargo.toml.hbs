@@ -1,0 +1,21 @@
+[package]
+name = "{{projectName}}"
+version = "0.1.0"
+description = "{{projectDescription}}"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["unstable"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+{{#if includeDatabase}}
+rusqlite = { version = "0.31", features = ["bundled"] }
+{{/if}}
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
