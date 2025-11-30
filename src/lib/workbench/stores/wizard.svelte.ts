@@ -206,17 +206,151 @@ class WizardStore {
   /**
    * Create project and close wizard
    */
-  createProject() {
-    // TODO: Actually create the project via API
-    console.log('Creating project:', this.config);
-    
-    // Clear draft
-    clearDraft();
-    
-    // Reset and close
-    this.config = { ...DEFAULT_PROJECT_CONFIG };
-    this.currentStep = 1;
-    this.close();
+  async createProject(): Promise<void> {
+    try {
+      // Determine if we're using pattern mode or legacy mode
+      const isPatternMode = this.config.architecturePattern !== null;
+
+      if (isPatternMode) {
+        await this.createPatternProject();
+      } else {
+        await this.createLegacyProject();
+      }
+
+      // Clear draft after successful creation
+      clearDraft();
+
+      // Reset and close
+      this.config = { ...DEFAULT_PROJECT_CONFIG };
+      this.currentStep = 1;
+      this.close();
+
+      // Success toast
+      toastStore.success('Project created successfully!');
+    } catch (error) {
+      console.error('Failed to create project:', error);
+      const message = error instanceof Error ? error.message : 'Failed to create project';
+      toastStore.error(message);
+      throw error;
+    }
+  }
+
+  /**
+   * Create project using architecture pattern (Phase 3)
+   */
+  private async createPatternProject(): Promise<void> {
+    if (!this.config.architecturePattern) {
+      throw new Error('No architecture pattern selected');
+    }
+
+    // Serialize the pattern configuration for the Rust backend
+    const patternConfig = {
+      pattern_id: this.config.architecturePattern.id,
+      pattern_name: this.config.architecturePattern.displayName,
+      project_name: this.config.projectName,
+      project_description: this.config.projectDescription,
+      project_path: this.config.projectPath,
+      components: this.config.architecturePattern.components.map((component) => {
+        // Get custom config for this component if it exists
+        const customConfig = this.config.componentConfigs.get(component.id);
+
+        return {
+          id: component.id,
+          role: component.role,
+          name: component.name,
+          language: customConfig?.language || component.language,
+          framework: customConfig?.framework || component.framework,
+          location: customConfig?.location || component.location,
+          scaffolding: {
+            directories: component.scaffolding.directories,
+            files: component.scaffolding.files,
+          },
+          custom_config: customConfig ? {
+            include_tests: customConfig.includeTests,
+            include_docker: customConfig.includeDocker,
+            include_ci: customConfig.includeCi,
+          } : null,
+        };
+      }),
+      features: {
+        testing: this.config.features.testing,
+        linting: this.config.features.linting,
+        git: this.config.features.git,
+        docker: this.config.features.docker,
+        ci: this.config.features.ci,
+      },
+    };
+
+    // Check if we're in Tauri environment
+    if (typeof window !== 'undefined' && '__TAURI__' in window) {
+      const { invoke } = await import('@tauri-apps/api/core');
+
+      const result = await invoke<{
+        success: boolean;
+        project_path: string;
+        message: string;
+        files_created: number;
+        components_generated: string[];
+      }>('generate_pattern_project_command', { config: patternConfig });
+
+      console.log('Pattern project generated:', result);
+      console.log(`Created ${result.files_created} files across ${result.components_generated.length} components`);
+      console.log(`Project path: ${result.project_path}`);
+    } else {
+      // In development/web mode, just simulate
+      console.log('Pattern project generation (simulated):', patternConfig);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
+
+  /**
+   * Create project using legacy single-stack mode (Phase 1/2)
+   */
+  private async createLegacyProject(): Promise<void> {
+    if (!this.config.primaryLanguage || !this.config.stack) {
+      throw new Error('Primary language and stack are required for legacy mode');
+    }
+
+    const legacyConfig = {
+      name: this.config.projectName,
+      description: this.config.projectDescription,
+      project_type: this.config.projectType || 'web',
+      languages: [
+        this.config.primaryLanguage,
+        ...this.config.additionalLanguages,
+      ],
+      stack_id: this.config.stack,
+      database: null,
+      authentication: null,
+      deployment_platform: null,
+      environment_variables: {},
+      features: Object.keys(this.config.features).filter(
+        (key) => this.config.features[key as keyof typeof this.config.features]
+      ),
+    };
+
+    // Check if we're in Tauri environment
+    if (typeof window !== 'undefined' && '__TAURI__' in window) {
+      const { invoke } = await import('@tauri-apps/api/core');
+
+      const result = await invoke<{
+        success: boolean;
+        project_path: string;
+        message: string;
+        files_created: number;
+      }>('generate_project', {
+        config: legacyConfig,
+        outputDir: this.config.projectPath,
+      });
+
+      console.log('Legacy project generated:', result);
+      console.log(`Created ${result.files_created} files`);
+      console.log(`Project path: ${result.project_path}`);
+    } else {
+      // In development/web mode, just simulate
+      console.log('Legacy project generation (simulated):', legacyConfig);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
   }
 
   /**

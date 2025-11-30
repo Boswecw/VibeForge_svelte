@@ -39,8 +39,8 @@
     }
   }
 
-  function handleCreate() {
-    wizardStore.createProject();
+  async function handleCreate() {
+    await wizardStore.createProject();
   }
 
   function handleKeydown(event: KeyboardEvent) {

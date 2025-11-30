@@ -4,10 +4,12 @@
 mod runtime_check;
 mod code_analyzer;
 mod project_generator;
+mod pattern_generator;
 
 use runtime_check::{check_all_runtimes, RuntimeCheckResult, RuntimeCache};
 use code_analyzer::analyze_codebase;
 use project_generator::generate_project;
+use pattern_generator::{generate_pattern_project, ArchitecturePatternConfig, PatternGenerationResult};
 use std::sync::Mutex;
 use tauri::State;
 
@@ -100,6 +102,13 @@ fn get_install_instructions(runtime_id: String) -> Result<String, String> {
     Ok(instructions.to_string())
 }
 
+#[tauri::command]
+async fn generate_pattern_project_command(
+    config: ArchitecturePatternConfig
+) -> Result<PatternGenerationResult, String> {
+    generate_pattern_project(config)
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(AppState {
@@ -110,7 +119,8 @@ fn main() {
             refresh_runtime_cache,
             get_install_instructions,
             analyze_codebase,
-            generate_project
+            generate_project,
+            generate_pattern_project_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

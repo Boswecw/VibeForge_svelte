@@ -44,19 +44,45 @@ describe('Wizard Integration Tests', () => {
 				id: 'frontend',
 				name: 'Frontend',
 				role: 'UI Layer',
+				description: 'Frontend UI',
 				language: 'typescript',
 				framework: 'sveltekit',
 				location: './frontend',
-				dependencies: []
+				dependencies: [],
+				scaffolding: {
+					directories: [{ path: 'src', description: 'Source code' }],
+					files: [{ path: 'package.json', content: '{}', templateEngine: 'none', overwritable: false }],
+					packageFiles: {},
+					configFiles: {}
+				},
+				commands: {
+					install: ['npm install'],
+					dev: ['npm run dev'],
+					build: ['npm run build'],
+					test: ['npm test']
+				}
 			},
 			{
 				id: 'backend',
 				name: 'Backend',
 				role: 'API Server',
+				description: 'Backend API',
 				language: 'typescript',
 				framework: 'express',
 				location: './backend',
-				dependencies: []
+				dependencies: [],
+				scaffolding: {
+					directories: [{ path: 'src', description: 'Source code' }],
+					files: [{ path: 'package.json', content: '{}', templateEngine: 'none', overwritable: false }],
+					packageFiles: {},
+					configFiles: {}
+				},
+				commands: {
+					install: ['npm install'],
+					dev: ['npm run dev'],
+					build: ['npm run build'],
+					test: ['npm test']
+				}
 			}
 		],
 		idealFor: ['Web applications'],
@@ -441,7 +467,7 @@ describe('Wizard Integration Tests', () => {
 			expect(wizardStore.config.componentConfigs.get('frontend')).toBeTruthy();
 		});
 
-		it('should clear draft when project is created', () => {
+		it('should clear draft when project is created', async () => {
 			wizardStore.open();
 			wizardStore.config.projectName = 'Test';
 			wizardStore.config.projectType = 'web';
@@ -452,7 +478,7 @@ describe('Wizard Integration Tests', () => {
 			expect(localStorageMock.getItem('vibeforge:wizard-draft')).toBeTruthy();
 
 			// Create project
-			wizardStore.createProject();
+			await wizardStore.createProject();
 
 			// Draft should be cleared
 			expect(localStorageMock.getItem('vibeforge:wizard-draft')).toBeNull();
@@ -493,25 +519,27 @@ describe('Wizard Integration Tests', () => {
 			expect(wizardStore.currentStep).toBe(1);
 		});
 
-		it('should reset config when creating project', () => {
+		it('should reset config when creating project', async () => {
 			wizardStore.open();
 			wizardStore.config.projectName = 'Test';
 			wizardStore.config.projectType = 'web';
 			wizardStore.config.architecturePattern = mockPattern;
 
-			wizardStore.createProject();
+			await wizardStore.createProject();
 
 			expect(wizardStore.config.projectName).toBe('');
 			expect(wizardStore.config.projectType).toBeNull();
 			expect(wizardStore.config.architecturePattern).toBeNull();
 		});
 
-		it('should close wizard after creating project', () => {
+		it('should close wizard after creating project', async () => {
 			wizardStore.open();
 			wizardStore.config.projectName = 'Test';
 			wizardStore.config.projectType = 'web';
+			wizardStore.config.primaryLanguage = 'typescript';
+			wizardStore.config.stack = 'sveltekit';
 
-			wizardStore.createProject();
+			await wizardStore.createProject();
 
 			expect(wizardStore.isOpen).toBe(false);
 		});
