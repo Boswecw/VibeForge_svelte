@@ -11,6 +11,9 @@ import type {
 } from '$lib/workbench/types/architecture';
 import { desktopAppPattern } from './desktop-app';
 import { fullstackWebPattern } from './fullstack-web';
+import { restApiBackendPattern } from './rest-api-backend';
+import { staticSitePattern } from './static-site';
+import { spaPattern } from './spa';
 
 // ============================================================================
 // PATTERN REGISTRY
@@ -26,7 +29,10 @@ import { fullstackWebPattern } from './fullstack-web';
  */
 export const ARCHITECTURE_PATTERNS = {
 	'desktop-app': desktopAppPattern,
-	'fullstack-web': fullstackWebPattern
+	'fullstack-web': fullstackWebPattern,
+	'rest-api-backend': restApiBackendPattern,
+	'static-site': staticSitePattern,
+	'spa': spaPattern
 } as const;
 
 /**
