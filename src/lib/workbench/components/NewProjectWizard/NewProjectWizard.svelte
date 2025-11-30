@@ -10,6 +10,7 @@
     StepComponentConfig,
   } from './steps';
   import ErrorBoundary from '../ErrorBoundary.svelte';
+  import ScaffoldingModal from '../Scaffolding/ScaffoldingModal.svelte';
 
   // Dynamic step names based on mode
   const stepNames = $derived(() => {
@@ -210,3 +211,11 @@
     </div>
   </div>
 {/if}
+
+<!-- Scaffolding Modal -->
+<ScaffoldingModal
+  config={wizardStore.scaffoldConfig}
+  onComplete={(result) => wizardStore.handleScaffoldingComplete(result)}
+  onError={(error) => wizardStore.handleScaffoldingError(error)}
+  onCancel={() => wizardStore.handleScaffoldingCancel()}
+/>

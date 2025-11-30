@@ -8,6 +8,7 @@ import { browser } from '$app/environment';
 import type { ProjectConfig } from '../types/project';
 import { DEFAULT_PROJECT_CONFIG } from '../types/project';
 import { toastStore } from '$lib/stores/toast.svelte';
+import type { ScaffoldConfig } from '../types/scaffolding';
 
 const STORAGE_KEY = 'vibeforge:wizard-draft';
 
@@ -82,6 +83,10 @@ class WizardStore {
 
   // Project configuration
   config = $state<ProjectConfig>({ ...DEFAULT_PROJECT_CONFIG });
+
+  // Scaffolding state
+  scaffoldConfig = $state<ScaffoldConfig | null>(null);
+  isScaffolding = $state(false);
 
   constructor() {
     // Note: Cannot use $effect here as store is instantiated at module level
@@ -237,19 +242,20 @@ class WizardStore {
 
   /**
    * Create project using architecture pattern (Phase 3)
+   * Now triggers ScaffoldingModal instead of directly invoking Tauri
    */
   private async createPatternProject(): Promise<void> {
     if (!this.config.architecturePattern) {
       throw new Error('No architecture pattern selected');
     }
 
-    // Serialize the pattern configuration for the Rust backend
-    const patternConfig = {
-      pattern_id: this.config.architecturePattern.id,
-      pattern_name: this.config.architecturePattern.displayName,
-      project_name: this.config.projectName,
-      project_description: this.config.projectDescription,
-      project_path: this.config.projectPath,
+    // Build scaffold configuration for the ScaffoldingModal
+    const scaffoldConfig: ScaffoldConfig = {
+      patternId: this.config.architecturePattern.id,
+      patternName: this.config.architecturePattern.displayName,
+      projectName: this.config.projectName,
+      projectDescription: this.config.projectDescription,
+      projectPath: this.config.projectPath,
       components: this.config.architecturePattern.components.map((component) => {
         // Get custom config for this component if it exists
         const customConfig = this.config.componentConfigs.get(component.id);
@@ -262,14 +268,29 @@ class WizardStore {
           framework: customConfig?.framework || component.framework,
           location: customConfig?.location || component.location,
           scaffolding: {
-            directories: component.scaffolding.directories,
-            files: component.scaffolding.files,
+            directories: component.scaffolding.directories.map(dir => ({
+              path: dir.path,
+              description: dir.description,
+              subdirectories: dir.subdirectories,
+              files: dir.files?.map(f => ({
+                path: f.path,
+                content: f.content,
+                templateEngine: 'handlebars' as const,
+                overwritable: true
+              }))
+            })),
+            files: component.scaffolding.files.map(file => ({
+              path: file.path,
+              content: file.content,
+              templateEngine: 'handlebars' as const,
+              overwritable: true
+            }))
           },
-          custom_config: customConfig ? {
-            include_tests: customConfig.includeTests,
-            include_docker: customConfig.includeDocker,
-            include_ci: customConfig.includeCi,
-          } : null,
+          customConfig: customConfig ? {
+            includeTests: customConfig.includeTests,
+            includeDocker: customConfig.includeDocker,
+            includeCi: customConfig.includeCi
+          } : undefined
         };
       }),
       features: {
@@ -277,30 +298,62 @@ class WizardStore {
         linting: this.config.features.linting,
         git: this.config.features.git,
         docker: this.config.features.docker,
-        ci: this.config.features.ci,
-      },
+        ci: this.config.features.ci
+      }
     };
 
-    // Check if we're in Tauri environment
-    if (typeof window !== 'undefined' && '__TAURI__' in window) {
-      const { invoke } = await import('@tauri-apps/api/core');
+    // Set scaffolding config and trigger modal
+    this.scaffoldConfig = scaffoldConfig;
+    this.isScaffolding = true;
 
-      const result = await invoke<{
-        success: boolean;
-        project_path: string;
-        message: string;
-        files_created: number;
-        components_generated: string[];
-      }>('generate_pattern_project_command', { config: patternConfig });
+    // Don't close wizard yet - ScaffoldingModal will handle that
+  }
 
-      console.log('Pattern project generated:', result);
-      console.log(`Created ${result.files_created} files across ${result.components_generated.length} components`);
-      console.log(`Project path: ${result.project_path}`);
-    } else {
-      // In development/web mode, just simulate
-      console.log('Pattern project generation (simulated):', patternConfig);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
+  /**
+   * Handle scaffolding completion
+   */
+  handleScaffoldingComplete(result: any): void {
+    console.log('Scaffolding complete:', result);
+
+    // Clear draft after successful creation
+    clearDraft();
+
+    // Reset scaffolding state
+    this.scaffoldConfig = null;
+    this.isScaffolding = false;
+
+    // Reset and close wizard
+    this.config = { ...DEFAULT_PROJECT_CONFIG };
+    this.currentStep = 1;
+    this.close();
+
+    // Success toast
+    toastStore.success(`Project created with ${result.filesCreated} files!`);
+  }
+
+  /**
+   * Handle scaffolding error
+   */
+  handleScaffoldingError(error: Error): void {
+    console.error('Scaffolding error:', error);
+
+    // Reset scaffolding state but keep wizard open
+    this.isScaffolding = false;
+    this.scaffoldConfig = null;
+
+    // Show error toast
+    toastStore.error(error.message || 'Failed to create project');
+  }
+
+  /**
+   * Handle scaffolding cancellation
+   */
+  handleScaffoldingCancel(): void {
+    console.log('Scaffolding cancelled');
+
+    // Reset scaffolding state
+    this.isScaffolding = false;
+    this.scaffoldConfig = null;
   }
 
   /**
