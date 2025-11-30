@@ -798,3 +798,273 @@ pub fn analyze_project(options: RuntimeAnalysisOptions) -> Result<Recommendation
         },
     })
 }
+
+// ============================================================================
+// TESTS
+// ============================================================================
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_detect_typescript_from_package_json() {
+        let mut detected_files = HashMap::new();
+        detected_files.insert("package.json".to_string(), true);
+        detected_files.insert("tsconfig.json".to_string(), true);
+
+        let detector = TechStackDetector::new();
+        let options = RuntimeAnalysisOptions {
+            project_path: "/test".to_string(),
+            max_depth: 3,
+            exclude: vec![],
+            analyze_dependencies: false,
+            read_package_files: false,
+        };
+
+        let result = detector.analyze_files(&detected_files, &options);
+        assert!(result.is_ok());
+
+        let stack = result.unwrap();
+        assert_eq!(stack.primary_language, "typescript");
+        assert!(stack.package_files.package_json);
+    }
+
+    #[test]
+    fn test_detect_python_from_requirements() {
+        let mut detected_files = HashMap::new();
+        detected_files.insert("requirements.txt".to_string(), true);
+
+        let detector = TechStackDetector::new();
+        let options = RuntimeAnalysisOptions {
+            project_path: "/test".to_string(),
+            max_depth: 3,
+            exclude: vec![],
+            analyze_dependencies: false,
+            read_package_files: false,
+        };
+
+        let result = detector.analyze_files(&detected_files, &options);
+        assert!(result.is_ok());
+
+        let stack = result.unwrap();
+        assert_eq!(stack.primary_language, "python");
+        assert!(stack.package_files.requirements_txt);
+    }
+
+    #[test]
+    fn test_detect_rust_from_cargo_toml() {
+        let mut detected_files = HashMap::new();
+        detected_files.insert("Cargo.toml".to_string(), true);
+
+        let detector = TechStackDetector::new();
+        let options = RuntimeAnalysisOptions {
+            project_path: "/test".to_string(),
+            max_depth: 3,
+            exclude: vec![],
+            analyze_dependencies: false,
+            read_package_files: false,
+        };
+
+        let result = detector.analyze_files(&detected_files, &options);
+        assert!(result.is_ok());
+
+        let stack = result.unwrap();
+        assert_eq!(stack.primary_language, "rust");
+        assert!(stack.package_files.cargo_toml);
+    }
+
+    #[test]
+    fn test_detect_sveltekit_framework() {
+        let mut detected_files = HashMap::new();
+        detected_files.insert("package.json".to_string(), true);
+        detected_files.insert("svelte.config.js".to_string(), true);
+
+        let detector = TechStackDetector::new();
+        let options = RuntimeAnalysisOptions {
+            project_path: "/test".to_string(),
+            max_depth: 3,
+            exclude: vec![],
+            analyze_dependencies: false,
+            read_package_files: false,
+        };
+
+        let result = detector.analyze_files(&detected_files, &options);
+        assert!(result.is_ok());
+
+        let stack = result.unwrap();
+        assert!(stack.config_files.svelte_config);
+    }
+
+    #[test]
+    fn test_detect_tauri_desktop_app() {
+        let mut detected_files = HashMap::new();
+        detected_files.insert("Cargo.toml".to_string(), true);
+        detected_files.insert("tauri.conf.json".to_string(), true);
+
+        let detector = TechStackDetector::new();
+        let options = RuntimeAnalysisOptions {
+            project_path: "/test".to_string(),
+            max_depth: 3,
+            exclude: vec![],
+            analyze_dependencies: false,
+            read_package_files: false,
+        };
+
+        let result = detector.analyze_files(&detected_files, &options);
+        assert!(result.is_ok());
+
+        let stack = result.unwrap();
+        assert!(stack.config_files.tauri_config);
+    }
+
+    #[test]
+    fn test_pattern_recommendation_desktop_app() {
+        let tech_stack = TechnologyStack {
+            primary_language: "rust".to_string(),
+            additional_languages: vec!["typescript".to_string()],
+            frontend_framework: Some("svelte".to_string()),
+            backend_framework: None,
+            desktop_framework: Some("tauri".to_string()),
+            build_tools: vec!["cargo".to_string(), "npm".to_string()],
+            databases: vec![],
+            structure: "single-app".to_string(),
+            package_files: PackageFiles {
+                package_json: true,
+                cargo_toml: true,
+                requirements_txt: false,
+                poetry_lock: false,
+                go_mod: false,
+            },
+            config_files: ConfigFiles {
+                vite_config: true,
+                svelte_config: true,
+                tauri_config: true,
+                docker_compose: false,
+                dockerfile: false,
+            },
+            confidence: 95,
+        };
+
+        let recommender = PatternRecommender::new();
+        let recommendations = recommender.recommend(&tech_stack);
+
+        assert!(!recommendations.is_empty());
+
+        // Desktop app should be recommended
+        let desktop_rec = recommendations.iter()
+            .find(|r| r.pattern_id == "desktop-app");
+        assert!(desktop_rec.is_some());
+
+        // Should have high score
+        let rec = desktop_rec.unwrap();
+        assert!(rec.score >= 80);
+        assert_eq!(rec.confidence, "high");
+    }
+
+    #[test]
+    fn test_pattern_recommendation_fullstack() {
+        let tech_stack = TechnologyStack {
+            primary_language: "typescript".to_string(),
+            additional_languages: vec!["python".to_string()],
+            frontend_framework: Some("sveltekit".to_string()),
+            backend_framework: Some("fastapi".to_string()),
+            desktop_framework: None,
+            build_tools: vec!["npm".to_string(), "pip".to_string()],
+            databases: vec!["postgresql".to_string()],
+            structure: "single-app".to_string(),
+            package_files: PackageFiles {
+                package_json: true,
+                cargo_toml: false,
+                requirements_txt: true,
+                poetry_lock: false,
+                go_mod: false,
+            },
+            config_files: ConfigFiles {
+                vite_config: true,
+                svelte_config: true,
+                tauri_config: false,
+                docker_compose: true,
+                dockerfile: true,
+            },
+            confidence: 90,
+        };
+
+        let recommender = PatternRecommender::new();
+        let recommendations = recommender.recommend(&tech_stack);
+
+        assert!(!recommendations.is_empty());
+
+        // Fullstack should be recommended
+        let fullstack_rec = recommendations.iter()
+            .find(|r| r.pattern_id == "fullstack-web");
+        assert!(fullstack_rec.is_some());
+
+        let rec = fullstack_rec.unwrap();
+        assert!(rec.score >= 80);
+    }
+
+    #[test]
+    fn test_pattern_recommendation_microservices() {
+        let tech_stack = TechnologyStack {
+            primary_language: "python".to_string(),
+            additional_languages: vec!["typescript".to_string()],
+            frontend_framework: Some("express".to_string()),
+            backend_framework: Some("fastapi".to_string()),
+            desktop_framework: None,
+            build_tools: vec!["npm".to_string(), "pip".to_string()],
+            databases: vec!["postgresql".to_string()],
+            structure: "multi-service".to_string(),
+            package_files: PackageFiles {
+                package_json: true,
+                cargo_toml: false,
+                requirements_txt: true,
+                poetry_lock: false,
+                go_mod: false,
+            },
+            config_files: ConfigFiles {
+                vite_config: false,
+                svelte_config: false,
+                tauri_config: false,
+                docker_compose: true,
+                dockerfile: true,
+            },
+            confidence: 85,
+        };
+
+        let recommender = PatternRecommender::new();
+        let recommendations = recommender.recommend(&tech_stack);
+
+        assert!(!recommendations.is_empty());
+
+        // Microservices should be recommended
+        let micro_rec = recommendations.iter()
+            .find(|r| r.pattern_id == "microservices");
+        assert!(micro_rec.is_some());
+    }
+
+    #[test]
+    fn test_confidence_calculation() {
+        let mut detected_files = HashMap::new();
+        detected_files.insert("package.json".to_string(), true);
+        detected_files.insert("tsconfig.json".to_string(), true);
+        detected_files.insert("svelte.config.js".to_string(), true);
+        detected_files.insert("vite.config.ts".to_string(), true);
+
+        let detector = TechStackDetector::new();
+        let options = RuntimeAnalysisOptions {
+            project_path: "/test".to_string(),
+            max_depth: 3,
+            exclude: vec![],
+            analyze_dependencies: false,
+            read_package_files: false,
+        };
+
+        let result = detector.analyze_files(&detected_files, &options);
+        assert!(result.is_ok());
+
+        let stack = result.unwrap();
+        // Should have high confidence with multiple indicators
+        assert!(stack.confidence >= 70);
+    }
+}
