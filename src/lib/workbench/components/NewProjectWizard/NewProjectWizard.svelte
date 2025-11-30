@@ -9,6 +9,7 @@
     StepPatternSelect,
     StepComponentConfig,
   } from './steps';
+  import ErrorBoundary from '../ErrorBoundary.svelte';
 
   // Dynamic step names based on mode
   const stepNames = $derived(() => {
@@ -135,23 +136,25 @@
 
       <!-- Step Content -->
       <div class="flex-1 overflow-y-auto px-6 py-6">
-        {#if wizardStore.currentStep === 1}
-          <Step1Intent config={wizardStore.config} />
-        {:else if wizardStore.currentStep === 2}
-          <!-- Step 2: Pattern Selection (with embedded legacy mode) -->
-          <StepPatternSelect config={wizardStore.config} />
-        {:else if wizardStore.currentStep === 3}
-          <!-- Step 3: Component Config (pattern) OR Stack (legacy) -->
-          {#if wizardStore.config.architecturePattern}
-            <StepComponentConfig config={wizardStore.config} />
-          {:else}
-            <Step3Stack config={wizardStore.config} />
+        <ErrorBoundary fallback="Error loading wizard step">
+          {#if wizardStore.currentStep === 1}
+            <Step1Intent config={wizardStore.config} />
+          {:else if wizardStore.currentStep === 2}
+            <!-- Step 2: Pattern Selection (with embedded legacy mode) -->
+            <StepPatternSelect config={wizardStore.config} />
+          {:else if wizardStore.currentStep === 3}
+            <!-- Step 3: Component Config (pattern) OR Stack (legacy) -->
+            {#if wizardStore.config.architecturePattern}
+              <StepComponentConfig config={wizardStore.config} />
+            {:else}
+              <Step3Stack config={wizardStore.config} />
+            {/if}
+          {:else if wizardStore.currentStep === 4}
+            <Step4Configuration config={wizardStore.config} />
+          {:else if wizardStore.currentStep === 5}
+            <Step5Review config={wizardStore.config} />
           {/if}
-        {:else if wizardStore.currentStep === 4}
-          <Step4Configuration config={wizardStore.config} />
-        {:else if wizardStore.currentStep === 5}
-          <Step5Review config={wizardStore.config} />
-        {/if}
+        </ErrorBoundary>
       </div>
 
       <!-- Footer with Actions -->

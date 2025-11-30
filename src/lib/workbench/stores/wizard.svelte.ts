@@ -7,6 +7,7 @@
 import { browser } from '$app/environment';
 import type { ProjectConfig } from '../types/project';
 import { DEFAULT_PROJECT_CONFIG } from '../types/project';
+import { toastStore } from '$lib/stores/toast.svelte';
 
 const STORAGE_KEY = 'vibeforge:wizard-draft';
 
@@ -30,6 +31,7 @@ function loadDraft(): ProjectConfig | null {
     }
   } catch (error) {
     console.error('Failed to load wizard draft:', error);
+    toastStore.warning('Could not load saved wizard draft. Starting fresh.');
   }
 
   return null;
@@ -50,6 +52,13 @@ function saveDraft(config: ProjectConfig): void {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(serializable));
   } catch (error) {
     console.error('Failed to save wizard draft:', error);
+
+    // Provide user-friendly error messages
+    if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+      toastStore.error('Storage full. Cannot save wizard progress. Please clear browser data.');
+    } else {
+      toastStore.error('Could not save wizard progress. Changes may be lost.');
+    }
   }
 }
 
@@ -58,11 +67,12 @@ function saveDraft(config: ProjectConfig): void {
  */
 function clearDraft(): void {
   if (!browser) return;
-  
+
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch (error) {
     console.error('Failed to clear wizard draft:', error);
+    // Silent fail for clear - not critical to user experience
   }
 }
 

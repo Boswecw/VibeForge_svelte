@@ -6,6 +6,7 @@
 -->
 <script lang="ts">
   import PatternCard from '../../ArchitecturePatterns/PatternCard.svelte';
+  import PatternFilters from '../components/PatternFilters.svelte';
   import {
     getAllPatterns,
     getPatternsByCategory,
@@ -26,8 +27,23 @@
   let categoryFilter = $state<ArchitectureCategory | 'all'>('all');
   let complexityFilter = $state<ComplexityLevel | 'all'>('all');
   let searchQuery = $state('');
+  let debouncedSearchQuery = $state('');
   let showRecommended = $state(true);
   let showLegacyMode = $state(false);
+
+  // Debounce search query (300ms delay)
+  let searchTimeout: ReturnType<typeof setTimeout> | null = null;
+  $effect(() => {
+    if (searchTimeout) clearTimeout(searchTimeout);
+
+    searchTimeout = setTimeout(() => {
+      debouncedSearchQuery = searchQuery;
+    }, 300);
+
+    return () => {
+      if (searchTimeout) clearTimeout(searchTimeout);
+    };
+  });
 
   // Get all patterns
   const allPatterns = getAllPatterns();
@@ -46,9 +62,9 @@
       patterns = patterns.filter(p => p.complexity === complexityFilter);
     }
 
-    // Search filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+    // Search filter (using debounced query for performance)
+    if (debouncedSearchQuery.trim()) {
+      const query = debouncedSearchQuery.toLowerCase();
       patterns = patterns.filter(p =>
         p.name.toLowerCase().includes(query) ||
         p.displayName.toLowerCase().includes(query) ||
@@ -98,26 +114,22 @@
     { value: 'csharp', label: 'C#' }
   ];
 
-  // Categories for filter
-  const categories: Array<{ value: ArchitectureCategory | 'all'; label: string }> = [
-    { value: 'all', label: 'All' },
-    { value: 'desktop', label: 'Desktop' },
-    { value: 'web', label: 'Web' },
-    { value: 'mobile', label: 'Mobile' },
-    { value: 'backend', label: 'Backend' },
-    { value: 'cli', label: 'CLI' },
-    { value: 'ai-ml', label: 'AI/ML' },
-    { value: 'microservices', label: 'Microservices' }
-  ];
+  // Filter callbacks
+  function handleSearchChange(value: string) {
+    searchQuery = value;
+  }
 
-  // Complexity levels for filter
-  const complexityLevels: Array<{ value: ComplexityLevel | 'all'; label: string }> = [
-    { value: 'all', label: 'All' },
-    { value: 'simple', label: 'Simple' },
-    { value: 'intermediate', label: 'Intermediate' },
-    { value: 'complex', label: 'Complex' },
-    { value: 'enterprise', label: 'Enterprise' }
-  ];
+  function handleCategoryChange(value: ArchitectureCategory | 'all') {
+    categoryFilter = value;
+  }
+
+  function handleComplexityChange(value: ComplexityLevel | 'all') {
+    complexityFilter = value;
+  }
+
+  function handleRecommendedToggle(value: boolean) {
+    showRecommended = value;
+  }
 </script>
 
 <div class="space-y-6">
@@ -132,86 +144,16 @@
   </div>
 
   <!-- Filters -->
-  <div class="bg-gunmetal-900 border border-gunmetal-700 rounded-lg p-4 space-y-4">
-    <!-- Search -->
-    <div>
-      <label for="pattern-search" class="sr-only">Search patterns</label>
-      <input
-        id="pattern-search"
-        type="text"
-        bind:value={searchQuery}
-        placeholder="Search patterns by name or use case..."
-        class="
-          w-full px-4 py-2.5 rounded-lg
-          bg-gunmetal-800 border border-gunmetal-700
-          text-zinc-100 placeholder:text-zinc-600
-          focus:outline-none focus:border-ember-500 focus:ring-2 focus:ring-ember-500/50
-          transition-all
-        "
-      />
-    </div>
-
-    <!-- Category & Complexity Filters -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Category Filter -->
-      <div>
-        <label for="category-filter" class="block text-xs font-medium text-zinc-400 mb-2">
-          Category
-        </label>
-        <select
-          id="category-filter"
-          bind:value={categoryFilter}
-          class="
-            w-full px-3 py-2 rounded-lg
-            bg-gunmetal-800 border border-gunmetal-700
-            text-zinc-100 text-sm
-            focus:outline-none focus:border-ember-500
-            transition-all
-          "
-        >
-          {#each categories as cat}
-            <option value={cat.value}>{cat.label}</option>
-          {/each}
-        </select>
-      </div>
-
-      <!-- Complexity Filter -->
-      <div>
-        <label for="complexity-filter" class="block text-xs font-medium text-zinc-400 mb-2">
-          Complexity
-        </label>
-        <select
-          id="complexity-filter"
-          bind:value={complexityFilter}
-          class="
-            w-full px-3 py-2 rounded-lg
-            bg-gunmetal-800 border border-gunmetal-700
-            text-zinc-100 text-sm
-            focus:outline-none focus:border-ember-500
-            transition-all
-          "
-        >
-          {#each complexityLevels as level}
-            <option value={level.value}>{level.label}</option>
-          {/each}
-        </select>
-      </div>
-    </div>
-
-    <!-- Show Recommended Toggle -->
-    <label class="flex items-center gap-2 cursor-pointer">
-      <input
-        type="checkbox"
-        bind:checked={showRecommended}
-        class="
-          w-4 h-4 rounded
-          bg-gunmetal-800 border-gunmetal-700
-          text-ember-600 focus:ring-ember-500
-        "
-      />
-      <span class="text-sm text-zinc-300">Show recommended patterns</span>
-    </label>
-  </div>
+  <PatternFilters
+    {searchQuery}
+    {categoryFilter}
+    {complexityFilter}
+    {showRecommended}
+    onSearchChange={handleSearchChange}
+    onCategoryChange={handleCategoryChange}
+    onComplexityChange={handleComplexityChange}
+    onRecommendedToggle={handleRecommendedToggle}
+  />
 
   <!-- Recommended Patterns -->
   {#if showRecommended && recommendedPatterns().length > 0}
@@ -266,6 +208,7 @@
             categoryFilter = 'all';
             complexityFilter = 'all';
             searchQuery = '';
+            debouncedSearchQuery = ''; // Clear debounced query immediately
           }}
           class="mt-3 text-sm text-ember-400 hover:text-ember-300"
         >
