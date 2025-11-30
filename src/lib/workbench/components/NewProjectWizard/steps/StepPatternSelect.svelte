@@ -7,6 +7,7 @@
 <script lang="ts">
   import PatternCard from '../../ArchitecturePatterns/PatternCard.svelte';
   import PatternFilters from '../components/PatternFilters.svelte';
+  import RuntimeDetectionPanel from '../components/RuntimeDetectionPanel.svelte';
   import {
     getAllPatterns,
     getPatternsByCategory,
@@ -142,6 +143,9 @@
       Select a multi-component architecture pattern, or use legacy single-component mode.
     </p>
   </div>
+
+  <!-- Runtime Detection Panel -->
+  <RuntimeDetectionPanel onPatternSelect={selectPattern} />
 
   <!-- Filters -->
   <PatternFilters

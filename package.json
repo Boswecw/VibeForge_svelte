@@ -48,6 +48,7 @@
 	},
 	"dependencies": {
 		"@monaco-editor/loader": "^1.7.0",
+		"@tauri-apps/plugin-dialog": "^2.4.2",
 		"chart.js": "^4.5.1",
 		"monaco-editor": "^0.55.1",
 		"svelte-chartjs": "^3.1.5"

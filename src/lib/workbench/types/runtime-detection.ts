@@ -271,7 +271,5 @@ export type {
 	FileIndicator,
 	PatternRecommendation,
 	RecommendationResult,
-	RuntimeAnalysisOptions,
-	TechStackDetector,
-	PatternRecommender
+	RuntimeAnalysisOptions
 };
