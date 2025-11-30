@@ -21,7 +21,7 @@ struct AppState {
 #[tauri::command]
 async fn check_runtimes(state: State<'_, AppState>) -> Result<RuntimeCheckResult, String> {
     // Try to get from cache first
-    let mut cache = state.cache.lock().unwrap();
+    let cache = state.cache.lock().unwrap();
     
     // For now, always do a fresh check (can optimize later)
     drop(cache); // Release lock before async operation

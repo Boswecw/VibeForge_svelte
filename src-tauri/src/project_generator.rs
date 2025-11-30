@@ -3612,7 +3612,7 @@ fn generate_react_native_expo_files(project_path: &Path, config: &ProjectConfig)
     files_created += 1;
     
     // app.json (Expo config)
-    let app_json = format!(r#"{{
+    let app_json = format!(r##"{{
   "expo": {{
     "name": "{}",
     "slug": "{}",
@@ -3650,7 +3650,7 @@ fn generate_react_native_expo_files(project_path: &Path, config: &ProjectConfig)
     }}
   }}
 }}
-"#, config.name, config.name, config.name, config.name);
+"##, config.name, config.name, config.name, config.name);
     let mut file = fs::File::create(project_path.join("app.json"))?;
     file.write_all(app_json.as_bytes())?;
     files_created += 1;
@@ -3747,7 +3747,7 @@ export default function TabLayout() {
 export default function HomeScreen() {{
   return (
     <View style={{styles.container}}>
-      <Text style={{styles.title}}>Welcome to {{}}</Text>
+      <Text style={{styles.title}}>Welcome to {}</Text>
       <Text style={{styles.subtitle}}>Built with React Native + Expo</Text>
     </View>
   );
