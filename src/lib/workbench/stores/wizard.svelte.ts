@@ -8,7 +8,8 @@ import { browser } from '$app/environment';
 import type { ProjectConfig } from '../types/project';
 import { DEFAULT_PROJECT_CONFIG } from '../types/project';
 import { toastStore } from '$lib/stores/toast.svelte';
-import type { ScaffoldConfig } from '../types/scaffolding';
+import type { ScaffoldConfig, DirectoryDefinition, FileDefinition } from '../types/scaffolding';
+import type { DirectoryStructure, FileTemplate } from '../types/architecture';
 
 const STORAGE_KEY = 'vibeforge:wizard-draft';
 
@@ -75,6 +76,39 @@ function clearDraft(): void {
     console.error('Failed to clear wizard draft:', error);
     // Silent fail for clear - not critical to user experience
   }
+}
+
+/**
+ * Map FileTemplate to FileDefinition
+ */
+function mapFile(file: FileTemplate): FileDefinition {
+  // Map template engines - scaffolding only supports handlebars and none
+  let templateEngine: 'handlebars' | 'none' = 'handlebars';
+  if (file.templateEngine === 'none') {
+    templateEngine = 'none';
+  } else if (file.templateEngine === 'jinja2') {
+    // Convert jinja2 to handlebars (we'll handle syntax differences in templates)
+    templateEngine = 'handlebars';
+  }
+
+  return {
+    path: file.path,
+    content: file.content,
+    templateEngine,
+    overwritable: file.overwritable
+  };
+}
+
+/**
+ * Map DirectoryStructure to DirectoryDefinition (recursive)
+ */
+function mapDirectory(dir: DirectoryStructure): DirectoryDefinition {
+  return {
+    path: dir.path,
+    description: dir.description,
+    subdirectories: dir.subdirectories?.map(mapDirectory),
+    files: dir.files?.map(mapFile)
+  };
 }
 
 class WizardStore {
@@ -268,23 +302,8 @@ class WizardStore {
           framework: customConfig?.framework || component.framework,
           location: customConfig?.location || component.location,
           scaffolding: {
-            directories: component.scaffolding.directories.map(dir => ({
-              path: dir.path,
-              description: dir.description,
-              subdirectories: dir.subdirectories,
-              files: dir.files?.map(f => ({
-                path: f.path,
-                content: f.content,
-                templateEngine: 'handlebars' as const,
-                overwritable: true
-              }))
-            })),
-            files: component.scaffolding.files.map(file => ({
-              path: file.path,
-              content: file.content,
-              templateEngine: 'handlebars' as const,
-              overwritable: true
-            }))
+            directories: component.scaffolding.directories.map(mapDirectory),
+            files: component.scaffolding.files.map(mapFile)
           },
           customConfig: customConfig ? {
             includeTests: customConfig.includeTests,
