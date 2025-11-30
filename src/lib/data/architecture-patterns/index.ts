@@ -14,6 +14,7 @@ import { desktopAppPattern } from './desktop-app';
 import { fullstackWebPattern } from './fullstack-web';
 import { graphqlApiPattern } from './graphql-api';
 import { microservicesPattern } from './microservices';
+import { monorepoPattern } from './monorepo';
 import { restApiBackendPattern } from './rest-api-backend';
 import { staticSitePattern } from './static-site';
 import { spaPattern } from './spa';
@@ -36,6 +37,7 @@ export const ARCHITECTURE_PATTERNS = {
 	'fullstack-web': fullstackWebPattern,
 	'graphql-api': graphqlApiPattern,
 	'microservices': microservicesPattern,
+	'monorepo': monorepoPattern,
 	'rest-api-backend': restApiBackendPattern,
 	'static-site': staticSitePattern,
 	'spa': spaPattern
