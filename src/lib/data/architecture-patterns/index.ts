@@ -9,6 +9,7 @@ import type {
 	ArchitecturePattern,
 	ArchitectureCategory
 } from '$lib/workbench/types/architecture';
+import { browserExtensionPattern } from './browser-extension';
 import { cliToolPattern } from './cli-tool';
 import { desktopAppPattern } from './desktop-app';
 import { fullstackWebPattern } from './fullstack-web';
@@ -32,6 +33,7 @@ import { spaPattern } from './spa';
  * ```
  */
 export const ARCHITECTURE_PATTERNS = {
+	'browser-extension': browserExtensionPattern,
 	'cli-tool': cliToolPattern,
 	'desktop-app': desktopAppPattern,
 	'fullstack-web': fullstackWebPattern,
