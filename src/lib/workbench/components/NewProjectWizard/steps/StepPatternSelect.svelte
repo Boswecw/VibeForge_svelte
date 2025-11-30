@@ -6,8 +6,10 @@
 -->
 <script lang="ts">
   import PatternCard from '../../ArchitecturePatterns/PatternCard.svelte';
+  import PatternComparisonView from '../../ArchitecturePatterns/PatternComparisonView.svelte';
   import PatternFilters from '../components/PatternFilters.svelte';
   import RuntimeDetectionPanel from '../components/RuntimeDetectionPanel.svelte';
+  import { patternComparison, comparisonCount } from '$lib/stores/patternComparison';
   import {
     getAllPatterns,
     getPatternsByCategory,
@@ -290,4 +292,21 @@
       </div>
     {/if}
   </div>
+
+  <!-- Floating Compare Button -->
+  {#if $comparisonCount > 0}
+    <button
+      type="button"
+      class="fixed bottom-8 right-8 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-2 z-50"
+      onclick={() => patternComparison.open()}
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+      Compare ({$comparisonCount})
+    </button>
+  {/if}
+
+  <!-- Pattern Comparison View -->
+  <PatternComparisonView onSelect={selectPattern} />
 </div>

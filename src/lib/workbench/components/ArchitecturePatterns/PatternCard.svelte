@@ -6,14 +6,23 @@
 -->
 <script lang="ts">
   import type { ArchitecturePattern } from '../../types/architecture';
+  import { patternComparison, canAddToComparison, comparisonCount } from '$lib/stores/patternComparison';
 
   interface Props {
     pattern: ArchitecturePattern;
     selected?: boolean;
     onClick?: () => void;
+    showCompare?: boolean;
   }
 
-  let { pattern, selected = false, onClick }: Props = $props();
+  let { pattern, selected = false, onClick, showCompare = true }: Props = $props();
+
+  let inComparison = $derived($comparisonCount > 0 && $patternComparison.patterns.some(p => p.id === pattern.id));
+
+  function handleCompareClick(e: MouseEvent) {
+    e.stopPropagation();
+    patternComparison.togglePattern(pattern);
+  }
 
   // Get complexity color
   const complexityColor = $derived(() => {
@@ -74,21 +83,42 @@
       </div>
     </div>
 
-    <!-- Selected Indicator -->
-    {#if selected}
-      <svg
-        class="w-6 h-6 text-ember-500"
-        fill="currentColor"
-        viewBox="0 0 20 20"
-        aria-label="Selected"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-          clip-rule="evenodd"
-        />
-      </svg>
-    {/if}
+    <!-- Compare & Selected Indicators -->
+    <div class="flex items-center gap-2">
+      {#if showCompare}
+        <button
+          type="button"
+          class="compare-btn {inComparison ? 'active' : ''} {!$canAddToComparison && !inComparison ? 'disabled' : ''}"
+          onclick={handleCompareClick}
+          disabled={!$canAddToComparison && !inComparison}
+          title={inComparison ? 'Remove from comparison' : 'Add to comparison'}
+        >
+          {#if inComparison}
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          {/if}
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+        </button>
+      {/if}
+
+      {#if selected}
+        <svg
+          class="w-6 h-6 text-ember-500"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          aria-label="Selected"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      {/if}
+    </div>
   </div>
 
   <!-- Description -->
@@ -160,5 +190,35 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  .compare-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 6px;
+    color: #A1A1AA;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .compare-btn:hover:not(.disabled) {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: rgba(99, 102, 241, 0.5);
+    color: #D4D4D8;
+  }
+
+  .compare-btn.active {
+    background: rgba(99, 102, 241, 0.3);
+    border-color: #6366F1;
+    color: #6366F1;
+  }
+
+  .compare-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 </style>
