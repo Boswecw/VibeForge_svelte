@@ -12,6 +12,7 @@ import type {
 import { cliToolPattern } from './cli-tool';
 import { desktopAppPattern } from './desktop-app';
 import { fullstackWebPattern } from './fullstack-web';
+import { graphqlApiPattern } from './graphql-api';
 import { microservicesPattern } from './microservices';
 import { restApiBackendPattern } from './rest-api-backend';
 import { staticSitePattern } from './static-site';
@@ -33,6 +34,7 @@ export const ARCHITECTURE_PATTERNS = {
 	'cli-tool': cliToolPattern,
 	'desktop-app': desktopAppPattern,
 	'fullstack-web': fullstackWebPattern,
+	'graphql-api': graphqlApiPattern,
 	'microservices': microservicesPattern,
 	'rest-api-backend': restApiBackendPattern,
 	'static-site': staticSitePattern,
