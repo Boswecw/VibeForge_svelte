@@ -7,21 +7,37 @@
 <script lang="ts">
   import type { ArchitecturePattern } from '../../types/architecture';
   import { patternComparison, canAddToComparison, comparisonCount } from '$lib/stores/patternComparison';
+  import PatternPreviewModal from './PatternPreviewModal.svelte';
 
   interface Props {
     pattern: ArchitecturePattern;
     selected?: boolean;
     onClick?: () => void;
     showCompare?: boolean;
+    onSelect?: (pattern: ArchitecturePattern) => void;
   }
 
-  let { pattern, selected = false, onClick, showCompare = true }: Props = $props();
+  let { pattern, selected = false, onClick, showCompare = true, onSelect }: Props = $props();
 
   let inComparison = $derived($comparisonCount > 0 && $patternComparison.patterns.some(p => p.id === pattern.id));
+  let showPreview = $state(false);
 
   function handleCompareClick(e: MouseEvent) {
     e.stopPropagation();
     patternComparison.togglePattern(pattern);
+  }
+
+  function handlePreviewClick(e: MouseEvent) {
+    e.stopPropagation();
+    showPreview = true;
+  }
+
+  function handlePreviewSelect(selectedPattern: ArchitecturePattern) {
+    if (onSelect) {
+      onSelect(selectedPattern);
+    } else if (onClick) {
+      onClick();
+    }
   }
 
   // Get complexity color
@@ -85,6 +101,18 @@
 
     <!-- Compare & Selected Indicators -->
     <div class="flex items-center gap-2">
+      <!-- Preview Button -->
+      <button
+        type="button"
+        class="preview-btn"
+        onclick={handlePreviewClick}
+        title="View pattern details"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </button>
+
       {#if showCompare}
         <button
           type="button"
@@ -184,6 +212,13 @@
   {/if}
 </button>
 
+<!-- Pattern Preview Modal -->
+<PatternPreviewModal
+  pattern={showPreview ? pattern : null}
+  onClose={() => showPreview = false}
+  onSelect={handlePreviewSelect}
+/>
+
 <style>
   .line-clamp-2 {
     display: -webkit-box;
@@ -220,5 +255,24 @@
   .compare-btn.disabled {
     opacity: 0.4;
     cursor: not-allowed;
+  }
+
+  .preview-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 6px;
+    color: #A1A1AA;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .preview-btn:hover {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: rgba(139, 92, 246, 0.5);
+    color: #D4D4D8;
   }
 </style>
