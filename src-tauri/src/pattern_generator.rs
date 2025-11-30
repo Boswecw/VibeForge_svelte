@@ -5,6 +5,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::io::Write;
 use std::process::Command;
+use tauri::{Emitter, Manager};
 
 // ============================================================================
 // TYPE DEFINITIONS (matching frontend TypeScript types)
@@ -64,7 +65,7 @@ pub struct FeatureFlags {
     pub ci: bool,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct PatternGenerationResult {
     pub success: bool,
     pub project_path: String,
@@ -229,6 +230,155 @@ fn register_handlebars_helpers(handlebars: &mut Handlebars) {
 // MAIN GENERATION FUNCTION
 // ============================================================================
 
+/// Generate project with real-time progress events
+pub async fn generate_pattern_project_with_progress(
+    config: ArchitecturePatternConfig,
+    window: tauri::Window
+) -> Result<PatternGenerationResult, String> {
+    // Helper to emit progress events
+    let emit_progress = |stage: &str, progress: u8, message: &str, details: Option<String>| {
+        let event = ScaffoldProgressEvent {
+            stage: stage.to_string(),
+            progress,
+            message: message.to_string(),
+            details,
+        };
+        let _ = window.app_handle().emit_to(&window.label(), "scaffolding-progress", event);
+    };
+
+    // Stage 1: Preparing (0-5%)
+    emit_progress("preparing", 0, "Validating configuration...", None);
+    println!("Generating architecture pattern project: {}", config.project_name);
+    println!("Pattern: {} ({})", config.pattern_name, config.pattern_id);
+    println!("Components: {}", config.components.len());
+
+    // Validate config
+    if config.project_name.is_empty() {
+        return Err("Project name is required".to_string());
+    }
+
+    if config.components.is_empty() {
+        return Err("At least one component is required".to_string());
+    }
+
+    emit_progress("preparing", 3, "Creating project directory...", None);
+
+    // Create project root directory
+    let project_path = std::path::PathBuf::from(&config.project_path).join(&config.project_name);
+
+    if project_path.exists() {
+        return Err(format!("Directory '{}' already exists", config.project_name));
+    }
+
+    emit_progress("preparing", 5, "Initializing template engine...", None);
+
+    // Initialize Handlebars template engine with custom helpers
+    let mut handlebars = Handlebars::new();
+    handlebars.set_strict_mode(false);
+    register_handlebars_helpers(&mut handlebars);
+
+    // Create template context
+    let template_context = create_template_context(&config);
+
+    // Stage 2: Creating Files (5-50%)
+    emit_progress("files", 5, "Generating project structure...", None);
+
+    // Generate each component
+    let mut total_files = 0;
+    let mut components_generated = Vec::new();
+    let component_count = config.components.len();
+
+    for (index, component) in config.components.iter().enumerate() {
+        let progress = 5 + ((index * 45) / component_count) as u8;
+        emit_progress(
+            "files",
+            progress,
+            &format!("Generating component: {} ({})", component.name, component.id),
+            Some(format!("Creating files for {} component", component.framework))
+        );
+
+        println!("Generating component: {} ({})", component.name, component.id);
+
+        let component_path = project_path.join(&component.location);
+        let files_created = generate_component(
+            &component_path,
+            component,
+            &handlebars,
+            &template_context
+        )?;
+
+        total_files += files_created;
+        components_generated.push(component.id.clone());
+    }
+
+    emit_progress("files", 45, "Creating root-level files...", None);
+
+    // Generate root-level files
+    total_files += generate_root_files(&project_path, &config, &handlebars, &template_context)?;
+
+    emit_progress("files", 50, &format!("Created {} files", total_files), None);
+
+    // Stage 3: Installing Dependencies (50-90%)
+    if config.features.git || config.components.iter().any(|c| {
+        matches!(c.language.as_str(), "typescript" | "javascript" | "rust" | "python" | "go")
+    }) {
+        emit_progress("dependencies", 50, "Installing dependencies...", None);
+
+        if let Err(e) = install_dependencies(&project_path, &config.components) {
+            // Don't fail the whole scaffolding if dependencies fail
+            emit_progress(
+                "dependencies",
+                70,
+                "Dependency installation failed (non-fatal)",
+                Some(e.clone())
+            );
+            println!("Warning: Dependency installation failed: {}", e);
+        } else {
+            emit_progress("dependencies", 90, "Dependencies installed successfully", None);
+        }
+    } else {
+        emit_progress("dependencies", 90, "Skipping dependency installation", None);
+    }
+
+    // Stage 4: Initializing Git (90-100%)
+    if config.features.git {
+        emit_progress("git", 90, "Initializing git repository...", None);
+
+        if let Err(e) = init_git_repository(&project_path) {
+            // Don't fail the whole scaffolding if git fails
+            emit_progress(
+                "git",
+                95,
+                "Git initialization failed (non-fatal)",
+                Some(e.clone())
+            );
+            println!("Warning: Git initialization failed: {}", e);
+        } else {
+            total_files += 1; // Count .git
+            emit_progress("git", 95, "Git repository initialized", None);
+        }
+    } else {
+        emit_progress("git", 95, "Skipping git initialization", None);
+    }
+
+    // Stage 5: Complete (100%)
+    let result = PatternGenerationResult {
+        success: true,
+        project_path: project_path.to_string_lossy().to_string(),
+        message: format!("Project '{}' generated successfully with {} components!", config.project_name, components_generated.len()),
+        files_created: total_files,
+        components_generated,
+    };
+
+    emit_progress("complete", 100, "Project created successfully!", None);
+
+    // Emit completion event
+    let _ = window.app_handle().emit_to(&window.label(), "scaffolding-complete", result.clone());
+
+    Ok(result)
+}
+
+/// Original synchronous generation function (kept for backward compatibility)
 pub fn generate_pattern_project(config: ArchitecturePatternConfig) -> Result<PatternGenerationResult, String> {
     println!("Generating architecture pattern project: {}", config.project_name);
     println!("Pattern: {} ({})", config.pattern_name, config.pattern_id);

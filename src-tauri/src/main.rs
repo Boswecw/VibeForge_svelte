@@ -106,9 +106,11 @@ fn get_install_instructions(runtime_id: String) -> Result<String, String> {
 
 #[tauri::command]
 async fn generate_pattern_project_command(
-    config: ArchitecturePatternConfig
+    config: ArchitecturePatternConfig,
+    window: tauri::Window
 ) -> Result<PatternGenerationResult, String> {
-    generate_pattern_project(config)
+    use pattern_generator::generate_pattern_project_with_progress;
+    generate_pattern_project_with_progress(config, window).await
 }
 
 #[tauri::command]
