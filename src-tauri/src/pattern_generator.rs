@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::io::Write;
+use std::process::Command;
 
 // ============================================================================
 // TYPE DEFINITIONS (matching frontend TypeScript types)
@@ -72,6 +73,158 @@ pub struct PatternGenerationResult {
     pub components_generated: Vec<String>,
 }
 
+#[derive(Debug, Clone, Serialize)]
+pub struct ScaffoldProgressEvent {
+    pub stage: String, // "preparing", "files", "dependencies", "git", "complete"
+    pub progress: u8, // 0-100
+    pub message: String,
+    pub details: Option<String>,
+}
+
+// ============================================================================
+// HANDLEBARS HELPERS
+// ============================================================================
+
+/// Convert string to camelCase
+fn to_camel_case(s: &str) -> String {
+    let s = s.trim();
+    if s.is_empty() {
+        return String::new();
+    }
+
+    let words: Vec<&str> = s.split(|c: char| !c.is_alphanumeric()).filter(|w| !w.is_empty()).collect();
+    if words.is_empty() {
+        return String::new();
+    }
+
+    let first = words[0].to_lowercase();
+    let rest: String = words[1..].iter()
+        .map(|w| {
+            let mut chars = w.chars();
+            match chars.next() {
+                None => String::new(),
+                Some(f) => f.to_uppercase().collect::<String>() + &chars.as_str().to_lowercase(),
+            }
+        })
+        .collect();
+
+    first + &rest
+}
+
+/// Convert string to PascalCase
+fn to_pascal_case(s: &str) -> String {
+    let s = s.trim();
+    if s.is_empty() {
+        return String::new();
+    }
+
+    s.split(|c: char| !c.is_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .map(|w| {
+            let mut chars = w.chars();
+            match chars.next() {
+                None => String::new(),
+                Some(f) => f.to_uppercase().collect::<String>() + &chars.as_str().to_lowercase(),
+            }
+        })
+        .collect()
+}
+
+/// Convert string to kebab-case
+fn to_kebab_case(s: &str) -> String {
+    let s = s.trim();
+    if s.is_empty() {
+        return String::new();
+    }
+
+    s.split(|c: char| !c.is_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .map(|w| w.to_lowercase())
+        .collect::<Vec<_>>()
+        .join("-")
+}
+
+/// Convert string to snake_case
+fn to_snake_case(s: &str) -> String {
+    let s = s.trim();
+    if s.is_empty() {
+        return String::new();
+    }
+
+    s.split(|c: char| !c.is_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .map(|w| w.to_lowercase())
+        .collect::<Vec<_>>()
+        .join("_")
+}
+
+/// Convert string to SCREAMING_SNAKE_CASE
+fn to_screaming_snake_case(s: &str) -> String {
+    let s = s.trim();
+    if s.is_empty() {
+        return String::new();
+    }
+
+    s.split(|c: char| !c.is_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .map(|w| w.to_uppercase())
+        .collect::<Vec<_>>()
+        .join("_")
+}
+
+fn register_handlebars_helpers(handlebars: &mut Handlebars) {
+    // Register string transformation helpers
+    handlebars.register_helper(
+        "camelCase",
+        Box::new(|h: &handlebars::Helper, _: &Handlebars, _: &handlebars::Context, _: &mut handlebars::RenderContext, out: &mut dyn handlebars::Output|
+            -> handlebars::HelperResult {
+            let param = h.param(0).and_then(|v| v.value().as_str()).unwrap_or("");
+            out.write(&to_camel_case(param))?;
+            Ok(())
+        }),
+    );
+
+    handlebars.register_helper(
+        "PascalCase",
+        Box::new(|h: &handlebars::Helper, _: &Handlebars, _: &handlebars::Context, _: &mut handlebars::RenderContext, out: &mut dyn handlebars::Output|
+            -> handlebars::HelperResult {
+            let param = h.param(0).and_then(|v| v.value().as_str()).unwrap_or("");
+            out.write(&to_pascal_case(param))?;
+            Ok(())
+        }),
+    );
+
+    handlebars.register_helper(
+        "kebabCase",
+        Box::new(|h: &handlebars::Helper, _: &Handlebars, _: &handlebars::Context, _: &mut handlebars::RenderContext, out: &mut dyn handlebars::Output|
+            -> handlebars::HelperResult {
+            let param = h.param(0).and_then(|v| v.value().as_str()).unwrap_or("");
+            out.write(&to_kebab_case(param))?;
+            Ok(())
+        }),
+    );
+
+    handlebars.register_helper(
+        "snakeCase",
+        Box::new(|h: &handlebars::Helper, _: &Handlebars, _: &handlebars::Context, _: &mut handlebars::RenderContext, out: &mut dyn handlebars::Output|
+            -> handlebars::HelperResult {
+            let param = h.param(0).and_then(|v| v.value().as_str()).unwrap_or("");
+            out.write(&to_snake_case(param))?;
+            Ok(())
+        }),
+    );
+
+    handlebars.register_helper(
+        "SCREAMING_SNAKE_CASE",
+        Box::new(|h: &handlebars::Helper, _: &Handlebars, _: &handlebars::Context, _: &mut handlebars::RenderContext, out: &mut dyn handlebars::Output|
+            -> handlebars::HelperResult {
+            let param = h.param(0).and_then(|v| v.value().as_str()).unwrap_or("");
+            out.write(&to_screaming_snake_case(param))?;
+            Ok(())
+        }),
+    );
+}
+
 // ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
@@ -97,9 +250,10 @@ pub fn generate_pattern_project(config: ArchitecturePatternConfig) -> Result<Pat
         return Err(format!("Directory '{}' already exists", config.project_name));
     }
 
-    // Initialize Handlebars template engine
+    // Initialize Handlebars template engine with custom helpers
     let mut handlebars = Handlebars::new();
     handlebars.set_strict_mode(false);  // Allow missing variables
+    register_handlebars_helpers(&mut handlebars);
 
     // Create template context
     let template_context = create_template_context(&config);
@@ -557,6 +711,181 @@ fn init_git_repository(project_path: &Path) -> Result<(), String> {
         .current_dir(project_path)
         .output()
         .map_err(|e| format!("Failed to create initial commit: {}", e))?;
+
+    Ok(())
+}
+
+// ============================================================================
+// DEPENDENCY INSTALLATION
+// ============================================================================
+
+/// Install dependencies for all components in the project
+pub fn install_dependencies(project_path: &Path, components: &[ComponentGenerationConfig]) -> Result<(), String> {
+    for component in components {
+        let component_path = project_path.join(&component.location);
+
+        match component.language.as_str() {
+            "typescript" | "javascript" => {
+                install_node_dependencies(&component_path)?;
+            }
+            "rust" => {
+                install_rust_dependencies(&component_path)?;
+            }
+            "python" => {
+                install_python_dependencies(&component_path)?;
+            }
+            "go" => {
+                install_go_dependencies(&component_path)?;
+            }
+            _ => {
+                println!("No dependency installation for language: {}", component.language);
+            }
+        }
+    }
+
+    Ok(())
+}
+
+/// Detect and use Node.js package manager (pnpm > npm > yarn)
+fn install_node_dependencies(component_path: &Path) -> Result<(), String> {
+    let package_json = component_path.join("package.json");
+    if !package_json.exists() {
+        return Ok(()); // No package.json, skip
+    }
+
+    // Try pnpm first
+    if which::which("pnpm").is_ok() {
+        println!("Installing Node.js dependencies with pnpm...");
+        let output = Command::new("pnpm")
+            .arg("install")
+            .current_dir(component_path)
+            .output()
+            .map_err(|e| format!("Failed to run pnpm install: {}", e))?;
+
+        if !output.status.success() {
+            return Err(format!("pnpm install failed: {}", String::from_utf8_lossy(&output.stderr)));
+        }
+    }
+    // Try npm
+    else if which::which("npm").is_ok() {
+        println!("Installing Node.js dependencies with npm...");
+        let output = Command::new("npm")
+            .arg("install")
+            .current_dir(component_path)
+            .output()
+            .map_err(|e| format!("Failed to run npm install: {}", e))?;
+
+        if !output.status.success() {
+            return Err(format!("npm install failed: {}", String::from_utf8_lossy(&output.stderr)));
+        }
+    }
+    // Try yarn
+    else if which::which("yarn").is_ok() {
+        println!("Installing Node.js dependencies with yarn...");
+        let output = Command::new("yarn")
+            .arg("install")
+            .current_dir(component_path)
+            .output()
+            .map_err(|e| format!("Failed to run yarn install: {}", e))?;
+
+        if !output.status.success() {
+            return Err(format!("yarn install failed: {}", String::from_utf8_lossy(&output.stderr)));
+        }
+    } else {
+        return Err("No Node.js package manager found (npm, pnpm, or yarn required)".to_string());
+    }
+
+    Ok(())
+}
+
+/// Install Rust dependencies with Cargo
+fn install_rust_dependencies(component_path: &Path) -> Result<(), String> {
+    let cargo_toml = component_path.join("Cargo.toml");
+    if !cargo_toml.exists() {
+        return Ok(()); // No Cargo.toml, skip
+    }
+
+    println!("Fetching Rust dependencies with cargo...");
+    let output = Command::new("cargo")
+        .arg("fetch")
+        .current_dir(component_path)
+        .output()
+        .map_err(|e| format!("Failed to run cargo fetch: {}", e))?;
+
+    if !output.status.success() {
+        return Err(format!("cargo fetch failed: {}", String::from_utf8_lossy(&output.stderr)));
+    }
+
+    Ok(())
+}
+
+/// Install Python dependencies (poetry > pip)
+fn install_python_dependencies(component_path: &Path) -> Result<(), String> {
+    let pyproject_toml = component_path.join("pyproject.toml");
+    let requirements_txt = component_path.join("requirements.txt");
+
+    // Try poetry first if pyproject.toml exists
+    if pyproject_toml.exists() && which::which("poetry").is_ok() {
+        println!("Installing Python dependencies with poetry...");
+        let output = Command::new("poetry")
+            .arg("install")
+            .current_dir(component_path)
+            .output()
+            .map_err(|e| format!("Failed to run poetry install: {}", e))?;
+
+        if !output.status.success() {
+            return Err(format!("poetry install failed: {}", String::from_utf8_lossy(&output.stderr)));
+        }
+    }
+    // Try pip with requirements.txt
+    else if requirements_txt.exists() && which::which("pip3").is_ok() {
+        println!("Installing Python dependencies with pip...");
+
+        // Create virtual environment first
+        Command::new("python3")
+            .args(&["-m", "venv", "venv"])
+            .current_dir(component_path)
+            .output()
+            .map_err(|e| format!("Failed to create venv: {}", e))?;
+
+        // Install dependencies
+        let pip_path = if cfg!(windows) {
+            component_path.join("venv/Scripts/pip.exe")
+        } else {
+            component_path.join("venv/bin/pip")
+        };
+
+        let output = Command::new(pip_path)
+            .args(&["install", "-r", "requirements.txt"])
+            .current_dir(component_path)
+            .output()
+            .map_err(|e| format!("Failed to run pip install: {}", e))?;
+
+        if !output.status.success() {
+            return Err(format!("pip install failed: {}", String::from_utf8_lossy(&output.stderr)));
+        }
+    }
+
+    Ok(())
+}
+
+/// Install Go dependencies
+fn install_go_dependencies(component_path: &Path) -> Result<(), String> {
+    let go_mod = component_path.join("go.mod");
+    if !go_mod.exists() {
+        return Ok(()); // No go.mod, skip
+    }
+
+    println!("Installing Go dependencies...");
+    let output = Command::new("go")
+        .args(&["mod", "download"])
+        .current_dir(component_path)
+        .output()
+        .map_err(|e| format!("Failed to run go mod download: {}", e))?;
+
+    if !output.status.success() {
+        return Err(format!("go mod download failed: {}", String::from_utf8_lossy(&output.stderr)));
+    }
 
     Ok(())
 }
