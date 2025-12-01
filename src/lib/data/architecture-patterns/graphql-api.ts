@@ -900,35 +900,37 @@ export const graphqlApiPattern: ArchitecturePattern = {
 							{ path: 'utils' }
 						],
 						files: [
-							{ path: 'index.ts', content: indexTsTemplate, templateEngine: 'handlebars' },
-							{ path: 'schema.ts', content: schemaTemplate, templateEngine: 'handlebars' },
-							{ path: 'resolvers.ts', content: resolversTemplate, templateEngine: 'handlebars' },
-							{ path: 'context.ts', content: contextTemplate, templateEngine: 'handlebars' },
-							{ path: 'dataloaders.ts', content: dataloaderTemplate, templateEngine: 'handlebars' }
+							{ path: 'index.ts', content: indexTsTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'schema.ts', content: schemaTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'resolvers.ts', content: resolversTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'context.ts', content: contextTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'dataloaders.ts', content: dataloaderTemplate, templateEngine: 'handlebars', overwritable: false }
 						]
 					},
 					{
 						path: 'src/utils',
 						files: [
-							{ path: 'auth.ts', content: authUtilTemplate, templateEngine: 'handlebars' }
+							{ path: 'auth.ts', content: authUtilTemplate, templateEngine: 'handlebars', overwritable: false }
 						]
 					},
 					{
 						path: 'prisma',
 						files: [
-							{ path: 'schema.prisma', content: prismaSchemaTemplate, templateEngine: 'handlebars' }
+							{ path: 'schema.prisma', content: prismaSchemaTemplate, templateEngine: 'handlebars', overwritable: false }
 						]
 					}
 				],
 				files: [
-					{ path: 'package.json', content: packageJsonTemplate, templateEngine: 'handlebars' },
-					{ path: 'tsconfig.json', content: tsconfigJsonTemplate, templateEngine: 'handlebars' },
-					{ path: '.env', content: envTemplate, templateEngine: 'handlebars' },
-					{ path: 'docker-compose.yml', content: dockerComposeTemplate, templateEngine: 'handlebars' },
-					{ path: 'Dockerfile', content: dockerfileTemplate, templateEngine: 'handlebars' },
-					{ path: 'README.md', content: readmeTemplate, templateEngine: 'handlebars' },
-					{ path: '.gitignore', content: 'node_modules/\ndist/\n.env\n*.log\n.DS_Store\nprisma/migrations/\n' }
-				]
+					{ path: 'package.json', content: packageJsonTemplate, templateEngine: 'handlebars', overwritable: false },
+					{ path: 'tsconfig.json', content: tsconfigJsonTemplate, templateEngine: 'handlebars', overwritable: false },
+					{ path: '.env', content: envTemplate, templateEngine: 'handlebars', overwritable: false },
+					{ path: 'docker-compose.yml', content: dockerComposeTemplate, templateEngine: 'handlebars', overwritable: false },
+					{ path: 'Dockerfile', content: dockerfileTemplate, templateEngine: 'handlebars', overwritable: false },
+					{ path: 'README.md', content: readmeTemplate, templateEngine: 'handlebars', overwritable: false },
+					{ path: '.gitignore', content: 'node_modules/\ndist/\n.env\n*.log\n.DS_Store\nprisma/migrations/\n', overwritable: false }
+				],
+				packageFiles: {},
+				configFiles: {}
 			},
 			dependencies: []
 		}

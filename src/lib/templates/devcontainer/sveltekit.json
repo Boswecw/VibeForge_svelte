@@ -1,0 +1,72 @@
+{
+  "name": "VibeForge SvelteKit Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-lts",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true
+    },
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "username": "node"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "svelte.svelte-vscode",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "GitHub.copilot",
+        "eamodio.gitlens",
+        "usernamehw.errorlens",
+        "formulahendry.auto-rename-tag",
+        "christian-kohler.path-intellisense"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "svelte.svelte-vscode",
+        "[svelte]": {
+          "editor.defaultFormatter": "svelte.svelte-vscode"
+        },
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "svelte.enable-ts-plugin": true,
+        "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "svelte"]
+      }
+    }
+  },
+  "forwardPorts": [5173, 4173, 24678],
+  "portsAttributes": {
+    "5173": {
+      "label": "SvelteKit Dev Server",
+      "onAutoForward": "openBrowser"
+    },
+    "4173": {
+      "label": "SvelteKit Preview",
+      "onAutoForward": "notify"
+    },
+    "24678": {
+      "label": "Vite HMR",
+      "onAutoForward": "silent"
+    }
+  },
+  "postCreateCommand": "npm install -g pnpm && pnpm install",
+  "remoteUser": "node",
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+  ],
+  "containerEnv": {
+    "NODE_ENV": "development"
+  }
+}

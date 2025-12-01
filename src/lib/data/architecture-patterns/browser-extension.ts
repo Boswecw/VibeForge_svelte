@@ -1039,37 +1039,39 @@ export const browserExtensionPattern: ArchitecturePattern = {
 					{
 						path: 'entrypoints',
 						files: [
-							{ path: 'background.ts', content: backgroundTemplate, templateEngine: 'handlebars' },
-							{ path: 'content.ts', content: contentTemplate, templateEngine: 'handlebars' },
-							{ path: 'popup.html', content: popupHtmlTemplate, templateEngine: 'handlebars' },
-							{ path: 'popup.ts', content: popupTsTemplate, templateEngine: 'handlebars' },
-							{ path: 'popup.css', content: popupCssTemplate, templateEngine: 'handlebars' },
-							{ path: 'options.html', content: optionsHtmlTemplate, templateEngine: 'handlebars' },
-							{ path: 'options.ts', content: optionsTsTemplate, templateEngine: 'handlebars' },
-							{ path: 'options.css', content: optionsCssTemplate, templateEngine: 'handlebars' }
+							{ path: 'background.ts', content: backgroundTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'content.ts', content: contentTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'popup.html', content: popupHtmlTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'popup.ts', content: popupTsTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'popup.css', content: popupCssTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'options.html', content: optionsHtmlTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'options.ts', content: optionsTsTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'options.css', content: optionsCssTemplate, templateEngine: 'handlebars', overwritable: false }
 						]
 					},
 					{
 						path: 'components',
 						files: [
-							{ path: 'Popup.svelte', content: popupSvelteTemplate, templateEngine: 'handlebars' },
-							{ path: 'Options.svelte', content: optionsSvelteTemplate, templateEngine: 'handlebars' }
+							{ path: 'Popup.svelte', content: popupSvelteTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'Options.svelte', content: optionsSvelteTemplate, templateEngine: 'handlebars', overwritable: false }
 						]
 					},
 					{
 						path: 'public/icons',
 						files: [
-							{ path: '.gitkeep', content: '# Add extension icons here (16x16, 48x48, 128x128)' }
+							{ path: '.gitkeep', content: '# Add extension icons here (16x16, 48x48, 128x128)', overwritable: false }
 						]
 					}
 				],
 				files: [
-					{ path: 'package.json', content: packageJsonTemplate, templateEngine: 'handlebars' },
-					{ path: 'wxt.config.ts', content: wxtConfigTemplate, templateEngine: 'handlebars' },
-					{ path: 'tsconfig.json', content: tsconfigJsonTemplate, templateEngine: 'handlebars' },
-					{ path: 'README.md', content: readmeTemplate, templateEngine: 'handlebars' },
-					{ path: '.gitignore', content: 'node_modules/\n.output/\n.wxt/\n*.log\n.DS_Store\n' }
-				]
+					{ path: 'package.json', content: packageJsonTemplate, templateEngine: 'handlebars', overwritable: false },
+					{ path: 'wxt.config.ts', content: wxtConfigTemplate, templateEngine: 'handlebars', overwritable: false },
+					{ path: 'tsconfig.json', content: tsconfigJsonTemplate, templateEngine: 'handlebars', overwritable: false },
+					{ path: 'README.md', content: readmeTemplate, templateEngine: 'handlebars', overwritable: false },
+					{ path: '.gitignore', content: 'node_modules/\n.output/\n.wxt/\n*.log\n.DS_Store\n', overwritable: false }
+				],
+				packageFiles: {},
+				configFiles: {}
 			},
 			dependencies: []
 		}

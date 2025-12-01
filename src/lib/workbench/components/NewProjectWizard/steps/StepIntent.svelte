@@ -27,29 +27,40 @@
   ];
 
   // Reactive bindings to wizard store
-  let projectName = $state(wizardStore.data.projectName);
-  let projectDescription = $state(wizardStore.data.projectDescription);
-  let projectType = $state(wizardStore.data.projectType);
-  let complexity = $state(wizardStore.data.complexity);
+  let projectName = $state(wizardStore.config.projectName);
+  let projectDescription = $state(wizardStore.config.projectDescription);
+  let projectType = $state(wizardStore.config.projectType);
+  let complexity = $state(wizardStore.config.complexity);
 
   // Sync to store on change
   $effect(() => {
-    wizardStore.updateData('projectName', projectName);
+    wizardStore.config.projectName = projectName;
   });
 
   $effect(() => {
-    wizardStore.updateData('projectDescription', projectDescription);
+    wizardStore.config.projectDescription = projectDescription;
   });
 
   $effect(() => {
-    wizardStore.updateData('projectType', projectType);
+    wizardStore.config.projectType = projectType;
   });
 
   $effect(() => {
-    wizardStore.updateData('complexity', complexity);
+    wizardStore.config.complexity = complexity;
   });
 
-  const validation = $derived(wizardStore.validation.intent);
+  // Validation - check if project name is valid (3-50 chars)
+  const nameError = $derived(
+    !projectName || projectName.trim().length < 3
+      ? 'Project name must be at least 3 characters'
+      : projectName.length > 50
+        ? 'Project name must be less than 50 characters'
+        : null
+  );
+
+  const typeError = $derived(
+    projectType === null ? 'Please select a project type' : null
+  );
 </script>
 
 <div class="space-y-6">
@@ -69,15 +80,15 @@
         text-zinc-100 placeholder:text-zinc-600
         focus:outline-none focus:ring-2 focus:ring-ember-500/50
         transition-all
-        {validation.errors.some(e => e.includes('name'))
+        {nameError
           ? 'border-red-500'
           : 'border-gunmetal-700 focus:border-ember-500'}
       "
       autofocus
     />
-    {#if validation.errors.some(e => e.includes('name'))}
+    {#if nameError}
       <p class="mt-1 text-sm text-red-400">
-        {validation.errors.find(e => e.includes('name'))}
+        {nameError}
       </p>
     {/if}
   </div>
@@ -101,11 +112,6 @@
         transition-all resize-none
       "
     />
-    {#if validation.warnings.some(w => w.includes('description'))}
-      <p class="mt-1 text-sm text-amber-400">
-        💡 {validation.warnings.find(w => w.includes('description'))}
-      </p>
-    {/if}
   </div>
 
   <!-- Project Type -->

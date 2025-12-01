@@ -3,15 +3,38 @@
  *
  * Service for project scaffolding via Tauri backend.
  * Wraps Tauri commands and provides type-safe scaffolding API.
+ *
+ * Browser Mode: When running in browser (not Tauri), uses mock implementation for testing.
  */
 
-import { invoke } from '@tauri-apps/api/core';
-import { listen, type UnlistenFn } from '@tauri-apps/api/event';
+import { browser } from '$app/environment';
 import type {
 	ScaffoldConfig,
 	ScaffoldResult,
 	ScaffoldProgressEvent
 } from '../types/scaffolding';
+
+// Conditionally import Tauri APIs (only available in Tauri context)
+let invoke: any;
+let listen: any;
+let UnlistenFn: any;
+
+if (browser && (window as any).__TAURI__) {
+	// Running in Tauri desktop app
+	import('@tauri-apps/api/core').then(module => {
+		invoke = module.invoke;
+	});
+	import('@tauri-apps/api/event').then(module => {
+		listen = module.listen;
+		UnlistenFn = module.UnlistenFn;
+	});
+}
+
+const isTauriMode = browser && (window as any).__TAURI__;
+
+// Mock progress callback storage for browser mode
+let mockProgressCallbacks: ((event: ScaffoldProgressEvent) => void)[] = [];
+let mockCompleteCallbacks: ((result: ScaffoldResult) => void)[] = [];
 
 // ============================================================================
 // TAURI COMMANDS
@@ -21,6 +44,12 @@ import type {
  * Generate a project from an architecture pattern
  */
 export async function generateProject(config: ScaffoldConfig): Promise<ScaffoldResult> {
+	// Browser mock mode for testing UI
+	if (!isTauriMode) {
+		return await mockGenerateProject(config);
+	}
+
+	// Tauri mode - real implementation
 	try {
 		const result = await invoke<ScaffoldResult>('generate_pattern_project_command', {
 			config: {
@@ -103,7 +132,16 @@ export async function installDependencies(
  */
 export async function listenToScaffoldingProgress(
 	callback: (event: ScaffoldProgressEvent) => void
-): Promise<UnlistenFn> {
+): Promise<any> {
+	// Browser mock mode
+	if (!isTauriMode) {
+		mockProgressCallbacks.push(callback);
+		return () => {
+			mockProgressCallbacks = mockProgressCallbacks.filter(cb => cb !== callback);
+		};
+	}
+
+	// Tauri mode
 	return await listen<ScaffoldProgressEvent>('scaffolding-progress', (event) => {
 		callback(event.payload);
 	});
@@ -114,7 +152,16 @@ export async function listenToScaffoldingProgress(
  */
 export async function listenToScaffoldingComplete(
 	callback: (result: ScaffoldResult) => void
-): Promise<UnlistenFn> {
+): Promise<any> {
+	// Browser mock mode
+	if (!isTauriMode) {
+		mockCompleteCallbacks.push(callback);
+		return () => {
+			mockCompleteCallbacks = mockCompleteCallbacks.filter(cb => cb !== callback);
+		};
+	}
+
+	// Tauri mode
 	return await listen<ScaffoldResult>('scaffolding-complete', (event) => {
 		callback(event.payload);
 	});
@@ -157,4 +204,59 @@ function mapFile(file: ScaffoldConfig['components'][0]['scaffolding']['files'][0
 		template_engine: file.templateEngine,
 		overwritable: file.overwritable
 	};
+}
+
+// ============================================================================
+// BROWSER MOCK IMPLEMENTATION (for UI testing without Tauri)
+// ============================================================================
+
+/**
+ * Mock project generation with simulated progress events
+ */
+async function mockGenerateProject(config: ScaffoldConfig): Promise<ScaffoldResult> {
+	console.log('[Mock Mode] Generating project:', config.projectName);
+
+	// Simulate scaffolding stages with delays
+	const stages: Array<{ stage: ScaffoldProgressEvent['stage'], progress: number, message: string }> = [
+		{ stage: 'preparing', progress: 5, message: `Validating configuration for ${config.projectName}...` },
+		{ stage: 'preparing', progress: 10, message: 'Creating project directory structure...' },
+		{ stage: 'files', progress: 20, message: 'Generating project files...' },
+		{ stage: 'files', progress: 40, message: `Processing ${config.components.length} components...` },
+		{ stage: 'files', progress: 50, message: 'Applying Handlebars templates...' },
+		{ stage: 'dependencies', progress: 60, message: 'Installing dependencies (mock)...' },
+		{ stage: 'dependencies', progress: 80, message: 'Resolving package versions...' },
+		{ stage: 'git', progress: 90, message: 'Initializing Git repository...' },
+		{ stage: 'git', progress: 95, message: 'Creating initial commit...' },
+		{ stage: 'complete', progress: 100, message: 'Project created successfully!' }
+	];
+
+	// Emit progress events
+	for (const event of stages) {
+		const progressEvent: ScaffoldProgressEvent = {
+			stage: event.stage,
+			progress: event.progress,
+			message: event.message,
+			details: event.stage === 'files' ? `Processing ${config.patternName} pattern` : undefined
+		};
+
+		// Notify all listeners
+		mockProgressCallbacks.forEach(cb => cb(progressEvent));
+
+		// Simulate processing time
+		await new Promise(resolve => setTimeout(resolve, 500));
+	}
+
+	// Generate mock result
+	const result: ScaffoldResult = {
+		success: true,
+		projectPath: `${config.projectPath}/${config.projectName}`,
+		message: `Successfully generated ${config.projectName} using ${config.patternName} pattern`,
+		filesCreated: 15 + config.components.length * 5,
+		componentsGenerated: config.components.map(c => c.name)
+	};
+
+	// Emit completion event
+	mockCompleteCallbacks.forEach(cb => cb(result));
+
+	return result;
 }

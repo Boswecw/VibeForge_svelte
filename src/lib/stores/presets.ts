@@ -32,25 +32,32 @@ export interface Preset {
 const mockPresets: Preset[] = [
   {
     id: "preset-1",
-    name: "Story Beat Expander",
+    name: "TypeScript Interface Generator",
     description:
-      "Expand a story outline into detailed beats with character arcs.",
-    category: "writing",
-    workspace: "AuthorForge",
-    tags: ["story", "outline", "Claude-first"],
-    basePrompt: `You are a creative writing assistant specializing in story structure.
+      "Generate TypeScript interfaces from JSON data or API responses.",
+    category: "coding",
+    workspace: "VibeForge Dev",
+    tags: ["typescript", "types", "codegen", "Claude-first"],
+    basePrompt: `You are a TypeScript expert specializing in type safety and clean code.
 
-Given a brief plot outline, expand it into detailed story beats with:
-- Act structure (setup, confrontation, resolution)
-- Character arcs for each protagonist
-- Major turning points
-- Emotional beats
-- Pacing notes
+Given JSON data or API response examples, generate:
+- Strongly-typed TypeScript interfaces
+- Nested type definitions
+- Enums for fixed values
+- Optional vs. required properties
+- JSDoc comments for complex types
+- Zod or Yup validation schemas (if requested)
 
-Format: Markdown with clear sections for each act.`,
+Best practices:
+- Use precise types (avoid 'any')
+- Prefer type unions over loose types
+- Add utility types (Partial, Pick, Omit) where appropriate
+- Include example usage
+
+Format: Clean TypeScript code with comments.`,
     contextRefs: [
-      { id: "ctx-1", label: "AuthorForge design rules" },
-      { id: "ctx-2", label: "Three-act structure guide" },
+      { id: "ctx-1", label: "TypeScript best practices" },
+      { id: "ctx-2", label: "Project type conventions" },
     ],
     models: ["Claude"],
     pinned: true,
@@ -111,24 +118,29 @@ For each prompt:
   },
   {
     id: "preset-4",
-    name: "Worldbuilding Lore Expander",
-    description: "Generate deep lore and history for fictional worlds.",
-    category: "writing",
-    workspace: "AuthorForge",
-    tags: ["worldbuilding", "fantasy", "lore", "detailed"],
-    basePrompt: `You are a world-building expert for fiction authors.
+    name: "SQL Query Optimizer",
+    description: "Analyze and optimize SQL queries for performance.",
+    category: "database",
+    workspace: "VibeForge Dev",
+    tags: ["sql", "database", "optimization", "performance"],
+    basePrompt: `You are a database performance expert specializing in SQL optimization.
 
-Given a basic world concept, generate:
-1. Historical timeline (major events, wars, discoveries)
-2. Political systems and power structures
-3. Magic or technology systems with rules
-4. Major cultures and their values
-5. Economic systems and trade
-6. Languages or naming conventions
-7. Geography and how it influences society
+Given a SQL query, analyze and improve:
+1. Query execution plan and bottlenecks
+2. Index recommendations (composite, covering, partial)
+3. JOIN strategies (INNER, LEFT, subquery vs. CTE)
+4. WHERE clause optimization (SARGable predicates)
+5. SELECT efficiency (avoid SELECT *, use specific columns)
+6. Subquery vs. JOIN performance
+7. N+1 query detection
 
-Be creative but internally consistent. Use world-building frameworks like MUSH or similar.`,
-    contextRefs: [{ id: "ctx-5", label: "Fantasy genre tropes" }],
+Provide:
+- Optimized query with comments
+- EXPLAIN ANALYZE interpretation
+- Index creation statements
+- Estimated performance improvement
+- Database-specific tips (PostgreSQL, MySQL, etc.)`,
+    contextRefs: [{ id: "ctx-5", label: "Database schema documentation" }],
     models: ["Claude"],
     pinned: false,
     updatedAt: "1 week ago",

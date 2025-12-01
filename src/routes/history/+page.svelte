@@ -92,35 +92,44 @@ Target audience: External developers integrating with our API.`,
     },
     {
       id: "run-002",
-      workspace: "AuthorForge",
-      project: "Novel Planning",
+      workspace: "VibeForge Dev",
+      project: "API Documentation",
       timestamp: "2025-11-18T08:15:00Z",
       models: ["Claude"],
       status: "success",
       durationMs: 2180,
-      promptSummary: "Expand story beat: protagonist discovers hidden message",
-      contextSummary: "2 context blocks: Character Profiles, World Building",
+      promptSummary: "Generate OpenAPI spec for user management endpoints",
+      contextSummary: "2 context blocks: REST API Patterns, TypeScript Types",
       tokenUsage: { input: 1890, output: 2450, total: 4340 },
       starred: false,
-      labels: ["creative writing", "scene expansion"],
-      fullPrompt: `Expand the following story beat into a 500-word scene:
+      labels: ["api", "documentation", "openapi"],
+      fullPrompt: `Generate a complete OpenAPI 3.0 specification for user management endpoints:
 
-**Beat:** The protagonist discovers a hidden message in their late mentor's journal.
+**Endpoints:**
+- GET /api/users - List users with pagination
+- GET /api/users/:id - Get user by ID
+- POST /api/users - Create new user
+- PUT /api/users/:id - Update user
+- DELETE /api/users/:id - Delete user
 
-**Setting:** A dimly lit study, late evening
+**Requirements:**
+- Include request/response schemas
+- Authentication: JWT Bearer token
+- Error responses (400, 401, 403, 404, 500)
+- Pagination parameters (page, limit, sort)
+- Input validation constraints
+- Example requests/responses
 
-**Tone:** Mystery, emotional discovery
-
-Focus on sensory details and character emotion. Show the protagonist's internal conflict between grief and curiosity.`,
+Use proper OpenAPI 3.0 syntax with reusable components.`,
       contextBlocks: [
-        { name: "Main Character Profile", type: "project" },
-        { name: "Story World Rules", type: "design" },
+        { name: "API Design Guidelines", type: "design" },
+        { name: "User Type Definitions", type: "code" },
       ],
       outputs: [
         {
           model: "Claude",
           summary:
-            "Excellent scene with rich sensory details, emotional depth, and natural dialogue. Balanced pacing between action and introspection.",
+            "Complete OpenAPI spec with proper schema definitions, authentication, error handling, and reusable components. Includes example requests/responses.",
           status: "success",
         },
       ],

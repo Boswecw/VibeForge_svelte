@@ -19,6 +19,9 @@
   } from '$lib/data/architecture-patterns';
   import type { ArchitectureCategory, ComplexityLevel, ArchitecturePattern } from '../../../types/architecture';
   import type { ProjectConfig } from '../../../types/project';
+  import { successPredictor } from '$lib/services/successPredictor';
+  import type { SuccessPrediction } from '$lib/types/success-prediction';
+  import { formatProbability, getSuccessProbabilityColor, getConfidenceBadgeClass } from '$lib/types/success-prediction';
 
   interface Props {
     config: ProjectConfig;
@@ -33,6 +36,11 @@
   let debouncedSearchQuery = $state('');
   let showRecommended = $state(true);
   let showLegacyMode = $state(false);
+
+  // Success prediction state
+  let currentPrediction = $state<SuccessPrediction | null>(null);
+  let isLoadingPrediction = $state(false);
+  let showPredictionPanel = $state(false);
 
   // Debounce search query (300ms delay)
   let searchTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -95,8 +103,37 @@
   });
 
   // Handle pattern selection
-  function selectPattern(pattern: ArchitecturePattern) {
+  async function selectPattern(pattern: ArchitecturePattern) {
     config.architecturePattern = pattern;
+    await calculateSuccessPrediction(pattern);
+    showPredictionPanel = true;
+  }
+
+  // Calculate success prediction for selected pattern
+  async function calculateSuccessPrediction(pattern: ArchitecturePattern) {
+    isLoadingPrediction = true;
+    currentPrediction = null;
+
+    try {
+      const prediction = await successPredictor.predictSuccess({
+        patternId: pattern.id,
+        stackId: config.selectedStack?.id,
+        userId: undefined, // TODO: Add user ID from auth system
+        metadata: {
+          primaryLanguage: config.primaryLanguage,
+          complexity: pattern.complexity,
+          includesTests: config.includeTests,
+          includesCI: config.includeCI
+        }
+      });
+
+      currentPrediction = prediction;
+    } catch (error) {
+      console.error('Failed to calculate success prediction:', error);
+      currentPrediction = null;
+    } finally {
+      isLoadingPrediction = false;
+    }
   }
 
   // Toggle legacy single-component mode
@@ -292,6 +329,110 @@
       </div>
     {/if}
   </div>
+
+  <!-- Success Prediction Panel -->
+  {#if showPredictionPanel && config.architecturePattern}
+    <div class="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/30 rounded-lg p-6">
+      <div class="flex items-start justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-zinc-100">Success Prediction</h3>
+            <p class="text-sm text-zinc-400">For {config.architecturePattern.displayName}</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onclick={() => showPredictionPanel = false}
+          class="text-zinc-400 hover:text-zinc-200 transition-colors"
+          aria-label="Close prediction panel"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      {#if isLoadingPrediction}
+        <div class="flex items-center justify-center py-8">
+          <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      {:else if currentPrediction}
+        <!-- Probability Display -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="bg-gunmetal-900/50 rounded-lg p-4">
+            <p class="text-sm text-zinc-400 mb-1">Success Probability</p>
+            <p class="text-3xl font-bold {getSuccessProbabilityColor(currentPrediction.probability)}">
+              {formatProbability(currentPrediction.probability)}
+            </p>
+          </div>
+          <div class="bg-gunmetal-900/50 rounded-lg p-4">
+            <p class="text-sm text-zinc-400 mb-1">Confidence</p>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border capitalize {getConfidenceBadgeClass(currentPrediction.confidence)}">
+              {currentPrediction.confidence}
+            </span>
+          </div>
+          <div class="bg-gunmetal-900/50 rounded-lg p-4">
+            <p class="text-sm text-zinc-400 mb-1">Data Sample</p>
+            <p class="text-2xl font-bold text-zinc-200">{currentPrediction.sampleSize} projects</p>
+          </div>
+        </div>
+
+        <!-- Contributing Factors -->
+        <div class="mb-4">
+          <h4 class="text-sm font-semibold text-zinc-300 mb-3">Contributing Factors</h4>
+          <div class="space-y-2">
+            {#each currentPrediction.factors as factor}
+              <div class="bg-gunmetal-900/50 rounded-lg p-3">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-medium text-zinc-200">{factor.name}</span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs text-zinc-400">{(factor.weight * 100).toFixed(0)}% weight</span>
+                    <span class="text-sm font-semibold {factor.impact > 0 ? 'text-green-400' : factor.impact < 0 ? 'text-red-400' : 'text-zinc-400'}">
+                      {factor.value.toFixed(0)}
+                    </span>
+                  </div>
+                </div>
+                <p class="text-xs text-zinc-500">{factor.description}</p>
+                <!-- Progress bar showing factor value -->
+                <div class="mt-2 h-1 bg-gunmetal-700 rounded-full overflow-hidden">
+                  <div
+                    class="h-full transition-all {factor.value >= 75 ? 'bg-green-500' : factor.value >= 50 ? 'bg-yellow-500' : 'bg-red-500'}"
+                    style="width: {factor.value}%"
+                  ></div>
+                </div>
+              </div>
+            {/each}
+          </div>
+        </div>
+
+        <!-- Confidence Reasons -->
+        {#if currentPrediction.confidenceReasons.length > 0}
+          <div class="bg-gunmetal-900/50 rounded-lg p-4">
+            <h4 class="text-sm font-semibold text-zinc-300 mb-2">Why this confidence level?</h4>
+            <ul class="space-y-1 text-sm text-zinc-400">
+              {#each currentPrediction.confidenceReasons as reason}
+                <li class="flex items-start gap-2">
+                  <svg class="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  <span>{reason}</span>
+                </li>
+              {/each}
+            </ul>
+          </div>
+        {/if}
+      {:else}
+        <div class="text-center py-8 text-zinc-400">
+          <p>Unable to calculate prediction at this time.</p>
+        </div>
+      {/if}
+    </div>
+  {/if}
 
   <!-- Floating Compare Button -->
   {#if $comparisonCount > 0}

@@ -503,28 +503,30 @@ export const cliToolPattern: ArchitecturePattern = {
 							{ path: 'commands' }
 						],
 						files: [
-							{ path: 'main.rs', content: mainRsTemplate, templateEngine: 'handlebars' },
-							{ path: 'config.rs', content: configRsTemplate, templateEngine: 'handlebars' },
-							{ path: 'utils.rs', content: utilsRsTemplate, templateEngine: 'handlebars' }
+							{ path: 'main.rs', content: mainRsTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'config.rs', content: configRsTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'utils.rs', content: utilsRsTemplate, templateEngine: 'handlebars', overwritable: false }
 						]
 					},
 					{
 						path: 'src/commands',
 						files: [
-							{ path: 'mod.rs', content: 'pub mod init;\npub mod run;\npub mod status;\n' },
-							{ path: 'init.rs', content: initCommandTemplate, templateEngine: 'handlebars' },
-							{ path: 'run.rs', content: runCommandTemplate, templateEngine: 'handlebars' },
-							{ path: 'status.rs', content: statusCommandTemplate, templateEngine: 'handlebars' }
+							{ path: 'mod.rs', content: 'pub mod init;\npub mod run;\npub mod status;\n', overwritable: false },
+							{ path: 'init.rs', content: initCommandTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'run.rs', content: runCommandTemplate, templateEngine: 'handlebars', overwritable: false },
+							{ path: 'status.rs', content: statusCommandTemplate, templateEngine: 'handlebars', overwritable: false }
 						]
 					},
 					{ path: 'tests' },
 					{ path: 'docs' }
 				],
 				files: [
-					{ path: 'Cargo.toml', content: cargoTomlTemplate, templateEngine: 'handlebars' },
-					{ path: 'README.md', content: readmeTemplate, templateEngine: 'handlebars' },
-					{ path: '.gitignore', content: 'target/\n*.log\n.env\n.DS_Store\n' }
-				]
+					{ path: 'Cargo.toml', content: cargoTomlTemplate, templateEngine: 'handlebars', overwritable: false },
+					{ path: 'README.md', content: readmeTemplate, templateEngine: 'handlebars', overwritable: false },
+					{ path: '.gitignore', content: 'target/\n*.log\n.env\n.DS_Store\n', overwritable: false }
+				],
+				packageFiles: {},
+				configFiles: {}
 			},
 			dependencies: []
 		}

@@ -19,19 +19,22 @@
   });
 
   // Reactive bindings to wizard store
-  let primaryLanguage = $state(wizardStore.data.primaryLanguage);
-  let secondaryLanguages = $state([...wizardStore.data.secondaryLanguages]);
+  let primaryLanguage = $state(wizardStore.config.primaryLanguage);
+  let secondaryLanguages = $state([...wizardStore.config.secondaryLanguages]);
 
   // Sync to store on change
   $effect(() => {
-    wizardStore.updateData('primaryLanguage', primaryLanguage);
+    wizardStore.config.primaryLanguage = primaryLanguage;
   });
 
   $effect(() => {
-    wizardStore.updateData('secondaryLanguages', secondaryLanguages);
+    wizardStore.config.secondaryLanguages = secondaryLanguages;
   });
 
-  const validation = $derived(wizardStore.validation.languages);
+  // Validation
+  const languageError = $derived(
+    !primaryLanguage ? 'Please select a primary language' : null
+  );
 
   function setPrimary(langId: string): void {
     primaryLanguage = langId;
@@ -108,9 +111,9 @@
       {/each}
     </div>
 
-    {#if validation.errors.some(e => e.includes('language'))}
+    {#if languageError}
       <p class="mt-2 text-sm text-red-400">
-        {validation.errors.find(e => e.includes('language'))}
+        {languageError}
       </p>
     {/if}
   </div>
@@ -149,12 +152,6 @@
           </button>
         {/each}
       </div>
-
-      {#if validation.warnings.some(w => w.includes('language'))}
-        <p class="mt-2 text-sm text-amber-400">
-          ⚠️ {validation.warnings.find(w => w.includes('language'))}
-        </p>
-      {/if}
     </div>
   {/if}
 

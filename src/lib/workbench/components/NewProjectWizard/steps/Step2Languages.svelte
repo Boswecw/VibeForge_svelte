@@ -1,8 +1,41 @@
 <script lang="ts">
   import { wizardStore } from '../../../stores';
   import { LANGUAGES } from '../../../types/project';
+  import RuntimeRequirements from '$lib/components/dev/RuntimeRequirements.svelte';
 
   let { config } = $props<{ config: typeof wizardStore.config }>();
+
+  // Map language selections to runtime IDs
+  const languageToRuntime: Record<string, string> = {
+    typescript: 'javascript-typescript',
+    javascript: 'javascript-typescript',
+    python: 'python',
+    go: 'go',
+    rust: 'rust',
+    java: 'java',
+    kotlin: 'kotlin',
+    swift: 'swift',
+    dart: 'dart',
+  };
+
+  const requiredRuntimes = $derived(() => {
+    const runtimes: string[] = [];
+    if (config.primaryLanguage && languageToRuntime[config.primaryLanguage]) {
+      runtimes.push(languageToRuntime[config.primaryLanguage]);
+    }
+    config.additionalLanguages.forEach(lang => {
+      if (languageToRuntime[lang] && !runtimes.includes(languageToRuntime[lang])) {
+        runtimes.push(languageToRuntime[lang]);
+      }
+    });
+    // Always include git as baseline requirement
+    if (!runtimes.includes('git')) runtimes.push('git');
+    // Include npm for JavaScript/TypeScript projects
+    if (config.primaryLanguage === 'typescript' || config.primaryLanguage === 'javascript') {
+      if (!runtimes.includes('npm')) runtimes.push('npm');
+    }
+    return runtimes;
+  });
 </script>
 
 <div class="space-y-6">
@@ -65,4 +98,14 @@
       {/each}
     </div>
   </div>
+
+  <!-- Runtime Requirements -->
+  {#if config.primaryLanguage}
+    <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+        Runtime Requirements
+      </h3>
+      <RuntimeRequirements requiredRuntimes={requiredRuntimes()} />
+    </div>
+  {/if}
 </div>

@@ -240,7 +240,7 @@ no description yet
 						<span class="text-3xl shrink-0">{language.icon}</span>
 							<div class="flex-1 min-w-0">
 								<h4 class="font-bold text-gray-900 truncate">{language.name}</h4>
-								<p class="text-xs text-gray-600 capitalize">{language.ecosystem_support} ecosystem</p>
+								<p class="text-xs text-gray-600 capitalize">{language.ecosystemSupport} ecosystem</p>
 							</div>
 					</div>
 					{#if selectedLanguages.includes(language.id)}
@@ -250,9 +250,9 @@ no description yet
 						{/if}
 					</div>
 					<p class="text-sm text-gray-700 line-clamp-2">{language.description}</p>
-					{#if language.compatible_stacks.length > 0}
+					{#if language.compatibleStacks.length > 0}
 						<div class="mt-2 text-xs text-gray-500">
-							{language.compatible_stacks.length} compatible stack{language.compatible_stacks.length > 1 ? 's' : ''}
+							{language.compatibleStacks.length} compatible stack{language.compatibleStacks.length > 1 ? 's' : ''}
 						</div>
 					{/if}
 				</button>

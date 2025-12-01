@@ -14,6 +14,7 @@ import type {
   ModelPerformanceResponse,
   UserPreferenceSummary,
   StackSuccessRate,
+  ProjectType,
 } from "$lib/types/learning";
 import { learningClient } from "$lib/api/vibeforgeClient";
 
@@ -95,7 +96,7 @@ function createLearningStore() {
      */
     async startProject(projectData: {
       project_name: string;
-      project_type: string;
+      project_type: ProjectType;
       description?: string;
       selected_languages: string[];
       selected_stack: string;

@@ -205,72 +205,78 @@ Provide findings in this format:
     },
     {
       id: "pat-004",
-      name: "Story Beat Expander",
-      category: "writing",
-      useCase: "Worldbuilding and story development",
-      models: ["Claude", "GPT-5.x"],
+      name: "REST API Endpoint Generator",
+      category: "backend",
+      useCase: "API development and documentation",
+      models: ["Claude", "GPT-4"],
       complexity: "intermediate",
-      tags: ["Creative Writing", "Story", "Worldbuilding"],
+      tags: ["REST API", "Backend", "OpenAPI", "Documentation"],
       updatedAt: "1 week ago",
       summary:
-        "Expand a brief story beat into a detailed scene with character depth, sensory details, and narrative momentum.",
-      template: `Expand the following story beat into a {{WORD_COUNT}} word scene:
+        "Generate complete REST API endpoint implementation with validation, error handling, and OpenAPI documentation.",
+      template: `Generate a complete REST API endpoint for {{RESOURCE_NAME}}:
 
-**Beat:** {{STORY_BEAT}}
+**HTTP Method:** {{HTTP_METHOD}}
+**Endpoint:** {{ENDPOINT_PATH}}
+**Framework:** {{FRAMEWORK}}
 
-**Setting:** {{SETTING}}
+**Requirements:**
+- Request/response schemas with validation
+- Error handling (400, 401, 404, 500)
+- Authentication: {{AUTH_TYPE}}
+- Database operations ({{DATABASE}})
+- Unit tests with {{TEST_FRAMEWORK}}
+- OpenAPI/Swagger documentation
 
-**Characters:**
-{{CHARACTERS}}
-
-**Tone:** {{TONE}}
-
-**Focus on:**
-- Sensory details (sight, sound, smell, touch, taste)
-- Character emotions and motivations
-- Subtext and tension
-- Dialogue that reveals character
-- Setting that influences mood
+**Business Logic:**
+{{BUSINESS_LOGIC}}
 
 **Constraints:**
-- Show, don't tell
-- Maintain {{POV}} point of view
-- End with {{ENDING_TYPE}}`,
+- Follow RESTful conventions
+- Include TypeScript types (if applicable)
+- Add JSDoc/docstrings
+- Handle edge cases (null, empty, duplicates)
+- Include rate limiting headers`,
       slots: [
         {
-          name: "WORD_COUNT",
-          label: "Word Count",
-          description: "Target word count for the scene",
+          name: "RESOURCE_NAME",
+          label: "Resource Name",
+          description: "API resource (e.g., 'users', 'products', 'orders')",
         },
         {
-          name: "STORY_BEAT",
-          label: "Story Beat",
-          description: "The brief story moment to expand",
+          name: "HTTP_METHOD",
+          label: "HTTP Method",
+          description: "GET, POST, PUT, PATCH, DELETE",
         },
         {
-          name: "SETTING",
-          label: "Setting",
-          description: "Where and when the scene takes place",
+          name: "ENDPOINT_PATH",
+          label: "Endpoint Path",
+          description: "API route (e.g., '/api/v1/users/:id')",
         },
         {
-          name: "CHARACTERS",
-          label: "Characters",
-          description: "Characters involved in the scene",
+          name: "FRAMEWORK",
+          label: "Framework",
+          description: "Express, FastAPI, Django, Actix-Web, etc.",
         },
         {
-          name: "TONE",
-          label: "Tone",
-          description: "Emotional tone of the scene",
+          name: "AUTH_TYPE",
+          label: "Authentication",
+          description: "JWT, OAuth, API Key, Session, None",
         },
         {
-          name: "POV",
-          label: "POV",
-          description: "Point of view (first, third limited, etc.)",
+          name: "DATABASE",
+          label: "Database",
+          description: "PostgreSQL, MongoDB, MySQL, Redis, etc.",
         },
         {
-          name: "ENDING_TYPE",
-          label: "Ending",
-          description: "How the scene should end",
+          name: "TEST_FRAMEWORK",
+          label: "Test Framework",
+          description: "Jest, Pytest, Mocha, Vitest, etc.",
+        },
+        {
+          name: "BUSINESS_LOGIC",
+          label: "Business Logic",
+          description: "Specific requirements and validation rules",
         },
       ],
     },

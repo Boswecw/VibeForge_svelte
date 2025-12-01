@@ -773,8 +773,10 @@ export const monorepoPattern: ArchitecturePattern = {
 					}
 				],
 				files: [
-					{ path: 'apps/web/package.json', content: webAppPackageJsonTemplate, templateEngine: 'handlebars' }
-				]
+					{ path: 'apps/web/package.json', content: webAppPackageJsonTemplate, templateEngine: 'handlebars', overwritable: false }
+				],
+				packageFiles: {},
+				configFiles: {}
 			},
 			dependencies: [
 				{ componentId: 'ui-package', type: 'workspace' },
@@ -799,8 +801,10 @@ export const monorepoPattern: ArchitecturePattern = {
 					}
 				],
 				files: [
-					{ path: 'apps/admin/package.json', content: adminAppPackageJsonTemplate, templateEngine: 'handlebars' }
-				]
+					{ path: 'apps/admin/package.json', content: adminAppPackageJsonTemplate, templateEngine: 'handlebars', overwritable: false }
+				],
+				packageFiles: {},
+				configFiles: {}
 			},
 			dependencies: [
 				{ componentId: 'ui-package', type: 'workspace' },
@@ -825,8 +829,10 @@ export const monorepoPattern: ArchitecturePattern = {
 					}
 				],
 				files: [
-					{ path: 'apps/docs/package.json', content: docsAppPackageJsonTemplate, templateEngine: 'handlebars' }
-				]
+					{ path: 'apps/docs/package.json', content: docsAppPackageJsonTemplate, templateEngine: 'handlebars', overwritable: false }
+				],
+				packageFiles: {},
+				configFiles: {}
 			},
 			dependencies: [
 				{ componentId: 'ui-package', type: 'workspace' }
@@ -844,15 +850,17 @@ export const monorepoPattern: ArchitecturePattern = {
 					{
 						path: 'packages/ui/src',
 						files: [
-							{ path: 'Button.svelte', content: uiButtonComponentTemplate },
-							{ path: 'Card.svelte', content: uiCardComponentTemplate },
-							{ path: 'index.ts', content: uiIndexTemplate }
+							{ path: 'Button.svelte', content: uiButtonComponentTemplate, overwritable: false },
+							{ path: 'Card.svelte', content: uiCardComponentTemplate, overwritable: false },
+							{ path: 'index.ts', content: uiIndexTemplate, overwritable: false }
 						]
 					}
 				],
 				files: [
-					{ path: 'packages/ui/package.json', content: uiPackageJsonTemplate, templateEngine: 'handlebars' }
-				]
+					{ path: 'packages/ui/package.json', content: uiPackageJsonTemplate, templateEngine: 'handlebars', overwritable: false }
+				],
+				packageFiles: {},
+				configFiles: {}
 			},
 			dependencies: []
 		},
@@ -868,16 +876,18 @@ export const monorepoPattern: ArchitecturePattern = {
 					{
 						path: 'packages/utils/src',
 						files: [
-							{ path: 'index.ts', content: utilsIndexTemplate },
-							{ path: 'string.ts', content: utilsStringTemplate },
-							{ path: 'date.ts', content: utilsDateTemplate },
-							{ path: 'validation.ts', content: utilsValidationTemplate }
+							{ path: 'index.ts', content: utilsIndexTemplate, overwritable: false },
+							{ path: 'string.ts', content: utilsStringTemplate, overwritable: false },
+							{ path: 'date.ts', content: utilsDateTemplate, overwritable: false },
+							{ path: 'validation.ts', content: utilsValidationTemplate, overwritable: false }
 						]
 					}
 				],
 				files: [
-					{ path: 'packages/utils/package.json', content: utilsPackageJsonTemplate, templateEngine: 'handlebars' }
-				]
+					{ path: 'packages/utils/package.json', content: utilsPackageJsonTemplate, templateEngine: 'handlebars', overwritable: false }
+				],
+				packageFiles: {},
+				configFiles: {}
 			},
 			dependencies: []
 		},
@@ -893,13 +903,15 @@ export const monorepoPattern: ArchitecturePattern = {
 					{
 						path: 'packages/types/src',
 						files: [
-							{ path: 'index.ts', content: typesIndexTemplate }
+							{ path: 'index.ts', content: typesIndexTemplate, overwritable: false }
 						]
 					}
 				],
 				files: [
-					{ path: 'packages/types/package.json', content: typesPackageJsonTemplate, templateEngine: 'handlebars' }
-				]
+					{ path: 'packages/types/package.json', content: typesPackageJsonTemplate, templateEngine: 'handlebars', overwritable: false }
+				],
+				packageFiles: {},
+				configFiles: {}
 			},
 			dependencies: []
 		}

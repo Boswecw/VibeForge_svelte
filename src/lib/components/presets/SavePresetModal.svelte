@@ -200,7 +200,7 @@ Save current Workbench/Quick Run configuration as a reusable preset
                 ? "bg-slate-900 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-amber-500 focus:outline-none"
                 : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none"
             }`}
-            placeholder="Story Beat Expander – v3"
+            placeholder="TypeScript Type Generator – v2"
             bind:value={name}
           />
         </div>

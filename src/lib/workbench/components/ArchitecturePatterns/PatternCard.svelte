@@ -71,16 +71,18 @@
   });
 </script>
 
-<button
-  type="button"
+<div
+  role="button"
+  tabindex="0"
   class="
-    w-full p-5 text-left rounded-xl border-2 transition-all duration-200
+    w-full p-5 text-left rounded-xl border-2 transition-all duration-200 cursor-pointer
     hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ember-500
     {selected
       ? 'border-ember-500 bg-ember-50/50 shadow-md'
       : 'border-gunmetal-700 bg-gunmetal-900 hover:border-ember-400'}
   "
   onclick={onClick}
+  onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick?.(); } }}
 >
   <!-- Header -->
   <div class="flex items-start justify-between mb-3">
@@ -102,23 +104,27 @@
     <!-- Compare & Selected Indicators -->
     <div class="flex items-center gap-2">
       <!-- Preview Button -->
-      <button
-        type="button"
+      <div
+        role="button"
+        tabindex="0"
         class="preview-btn"
         onclick={handlePreviewClick}
+        onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handlePreviewClick(e); } }}
         title="View pattern details"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-      </button>
+      </div>
 
       {#if showCompare}
-        <button
-          type="button"
+        <div
+          role="button"
+          tabindex="0"
           class="compare-btn {inComparison ? 'active' : ''} {!$canAddToComparison && !inComparison ? 'disabled' : ''}"
           onclick={handleCompareClick}
-          disabled={!$canAddToComparison && !inComparison}
+          onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCompareClick(e); } }}
+          aria-disabled={!$canAddToComparison && !inComparison}
           title={inComparison ? 'Remove from comparison' : 'Add to comparison'}
         >
           {#if inComparison}
@@ -129,7 +135,7 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-        </button>
+        </div>
       {/if}
 
       {#if selected}
@@ -210,7 +216,7 @@
       </div>
     </div>
   {/if}
-</button>
+</div>
 
 <!-- Pattern Preview Modal -->
 <PatternPreviewModal

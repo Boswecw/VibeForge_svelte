@@ -470,6 +470,69 @@ export async function getAbandonedSessions(
 }
 
 // ============================================================================
+// Time-Series Data (Phase 3.7)
+// ============================================================================
+
+export interface TimeSeriesBucket {
+  date: string; // ISO date (YYYY-MM-DD)
+  count: number;
+  successRate: number;
+  avgSatisfaction: number;
+  avgTestPassRate: number;
+}
+
+export interface OutcomesDateRangeFilters {
+  patternId?: string;
+  stackId?: string;
+  userId?: number;
+  status?: 'active' | 'archived' | 'deleted';
+}
+
+/**
+ * Get outcomes aggregated by date range
+ */
+export async function getOutcomesByDateRange(
+  startDate: string,
+  endDate: string,
+  filters?: OutcomesDateRangeFilters
+): Promise<TimeSeriesBucket[]> {
+  const queryParams = new URLSearchParams();
+  queryParams.set("start_date", startDate);
+  queryParams.set("end_date", endDate);
+
+  if (filters?.patternId) queryParams.set("pattern_id", filters.patternId);
+  if (filters?.stackId) queryParams.set("stack_id", filters.stackId);
+  if (filters?.userId) queryParams.set("user_id", filters.userId.toString());
+  if (filters?.status) queryParams.set("status", filters.status);
+
+  const url = `${API_BASE}${LEARNING_PATH}/analytics/outcomes-by-date?${queryParams}`;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: getHeaders(),
+  });
+
+  return handleResponse<TimeSeriesBucket[]>(response);
+}
+
+/**
+ * Get trend data for a specific pattern
+ */
+export async function getPatternTrend(
+  patternId: string,
+  days: number = 30
+): Promise<TimeSeriesBucket[]> {
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  return getOutcomesByDateRange(
+    startDate.toISOString().split('T')[0],
+    endDate.toISOString().split('T')[0],
+    { patternId, status: 'active' }
+  );
+}
+
+// ============================================================================
 // Health Check
 // ============================================================================
 
@@ -525,6 +588,10 @@ export const learningClient = {
   getStackSuccessRates,
   getModelAcceptanceRates,
   getAbandonedSessions,
+
+  // Time-Series (Phase 3.7)
+  getOutcomesByDateRange,
+  getPatternTrend,
 
   // Health
   checkHealth,

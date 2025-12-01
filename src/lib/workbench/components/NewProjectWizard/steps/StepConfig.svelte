@@ -25,21 +25,21 @@
   ];
 
   // Reactive bindings to wizard store
-  let features = $state<FeatureSelection>({ ...wizardStore.data.features });
-  let teamSize = $state(wizardStore.data.teamSize);
-  let timeline = $state(wizardStore.data.timeline);
+  let features = $state<FeatureSelection>({ ...wizardStore.config.features });
+  let teamSize = $state(wizardStore.config.teamSize);
+  let timeline = $state(wizardStore.config.timeline);
 
   // Sync to store on change
   $effect(() => {
-    wizardStore.updateData('features', features);
+    wizardStore.config.features = features;
   });
 
   $effect(() => {
-    wizardStore.updateData('teamSize', teamSize);
+    wizardStore.config.teamSize = teamSize;
   });
 
   $effect(() => {
-    wizardStore.updateData('timeline', timeline);
+    wizardStore.config.timeline = timeline;
   });
 
   function toggleFeature(key: string): void {
@@ -49,7 +49,6 @@
     };
   }
 
-  const validation = $derived(wizardStore.validation.config);
   const enabledCount = $derived(Object.values(features).filter(Boolean).length);
 </script>
 

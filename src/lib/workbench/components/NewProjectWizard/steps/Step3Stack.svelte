@@ -1,6 +1,7 @@
 <script lang="ts">
   import { wizardStore } from '../../../stores';
   import { STACKS } from '../../../types/project';
+  import RuntimeRequirements from '$lib/components/dev/RuntimeRequirements.svelte';
 
   let { config } = $props<{ config: typeof wizardStore.config }>();
 
@@ -10,6 +11,61 @@
       stack => !config.primaryLanguage || stack.languages.includes(config.primaryLanguage)
     )
   );
+
+  // Map language and stack to runtime requirements
+  const languageToRuntime: Record<string, string> = {
+    typescript: 'javascript-typescript',
+    javascript: 'javascript-typescript',
+    python: 'python',
+    go: 'go',
+    rust: 'rust',
+    java: 'java',
+    kotlin: 'kotlin',
+    swift: 'swift',
+    dart: 'dart',
+  };
+
+  const stackRuntimeRequirements: Record<string, string[]> = {
+    'svelte': ['pnpm'],
+    'sveltekit': ['pnpm'],
+    'react': ['pnpm'],
+    'next': ['pnpm'],
+    'vue': ['pnpm'],
+    'nuxt': ['pnpm'],
+    'fastapi': ['python'],
+    'flask': ['python'],
+    'django': ['python'],
+    'express': ['javascript-typescript', 'pnpm'],
+    'nestjs': ['javascript-typescript', 'pnpm'],
+  };
+
+  const requiredRuntimes = $derived(() => {
+    const runtimes: string[] = [];
+
+    // Add language runtime
+    if (config.primaryLanguage && languageToRuntime[config.primaryLanguage]) {
+      runtimes.push(languageToRuntime[config.primaryLanguage]);
+    }
+
+    // Add stack-specific runtimes
+    if (config.stack && config.stack !== 'none' && stackRuntimeRequirements[config.stack]) {
+      stackRuntimeRequirements[config.stack].forEach(runtime => {
+        if (!runtimes.includes(runtime)) {
+          runtimes.push(runtime);
+        }
+      });
+    }
+
+    // Always include git
+    if (!runtimes.includes('git')) runtimes.push('git');
+
+    // Include npm for JavaScript/TypeScript projects
+    if (config.primaryLanguage === 'typescript' || config.primaryLanguage === 'javascript') {
+      if (!runtimes.includes('npm')) runtimes.push('npm');
+    }
+
+    return runtimes;
+  });
 </script>
 
 <div class="space-y-6">
@@ -71,4 +127,14 @@
       </div>
     </button>
   </div>
+
+  <!-- Runtime Requirements -->
+  {#if config.stack}
+    <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+        Required Runtimes for Selected Stack
+      </h3>
+      <RuntimeRequirements requiredRuntimes={requiredRuntimes()} />
+    </div>
+  {/if}
 </div>

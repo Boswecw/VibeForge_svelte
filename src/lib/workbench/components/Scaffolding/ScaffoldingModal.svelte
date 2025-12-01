@@ -10,6 +10,7 @@
 	import { generateProject, listenToScaffoldingProgress } from '../../services/scaffolder';
 	import { getStageIcon, getStageName, getStageIndex, isStageActive, isStageCompleted } from '../../types/scaffolding';
 	import type { UnlistenFn } from '@tauri-apps/api/event';
+	import { projectOutcomesStore } from '$lib/stores/projectOutcomes.svelte';
 
 	// ============================================================================
 	// PROPS
@@ -98,6 +99,18 @@
 			result = scaffoldResult;
 			updateProgress('complete', 100, 'Project created successfully!');
 
+			// Create project outcome record for tracking and feedback
+			await projectOutcomesStore.createOutcome({
+				projectName: config.projectName,
+				projectPath: scaffoldResult.projectPath,
+				patternId: config.patternId,
+				patternName: config.patternName,
+				componentsGenerated: scaffoldResult.componentsGenerated || [],
+				filesCreated: scaffoldResult.filesCreated,
+				languagesUsed: config.components.map(c => c.language),
+				dependenciesInstalled: [] // Will be populated by actual installers
+			});
+
 			if (onComplete) {
 				onComplete(scaffoldResult);
 			}
@@ -139,11 +152,15 @@
 			onCancel();
 		}
 	}
+
+	function handleContentClick(e: MouseEvent) {
+		e.stopPropagation();
+	}
 </script>
 
 {#if isOpen && config}
 	<div class="modal-overlay" onclick={handleClose} role="button" tabindex="-1">
-		<div class="modal-content" onclick|stopPropagation role="dialog">
+		<div class="modal-content" onclick={handleContentClick} role="dialog">
 			<!-- Header -->
 			<div class="modal-header">
 				<div>

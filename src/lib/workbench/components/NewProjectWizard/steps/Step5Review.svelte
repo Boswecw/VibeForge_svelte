@@ -1,18 +1,82 @@
 <script lang="ts">
   import { wizardStore } from '../../../stores';
   import { PROJECT_TYPES, LANGUAGES, STACKS } from '../../../types/project';
+  import RuntimeRequirements from '$lib/components/dev/RuntimeRequirements.svelte';
 
   let { config } = $props<{ config: typeof wizardStore.config }>();
 
   const projectType = $derived(PROJECT_TYPES.find(t => t.value === config.projectType));
   const primaryLanguage = $derived(LANGUAGES.find(l => l.value === config.primaryLanguage));
   const stack = $derived(STACKS.find(s => s.value === config.stack));
-  
+
   const enabledFeatures = $derived(
     Object.entries(config.features)
       .filter(([, enabled]) => enabled)
       .map(([key]) => key)
   );
+
+  // Compute required runtimes based on full configuration
+  const languageToRuntime: Record<string, string> = {
+    typescript: 'javascript-typescript',
+    javascript: 'javascript-typescript',
+    python: 'python',
+    go: 'go',
+    rust: 'rust',
+    java: 'java',
+    kotlin: 'kotlin',
+    swift: 'swift',
+    dart: 'dart',
+  };
+
+  const stackRuntimeRequirements: Record<string, string[]> = {
+    'svelte': ['pnpm'],
+    'sveltekit': ['pnpm'],
+    'react': ['pnpm'],
+    'next': ['pnpm'],
+    'vue': ['pnpm'],
+    'nuxt': ['pnpm'],
+    'fastapi': ['python'],
+    'flask': ['python'],
+    'django': ['python'],
+    'express': ['javascript-typescript', 'pnpm'],
+    'nestjs': ['javascript-typescript', 'pnpm'],
+  };
+
+  const requiredRuntimes = $derived.by(() => {
+    const runtimes: string[] = [];
+
+    // Add language runtime
+    if (config.primaryLanguage && languageToRuntime[config.primaryLanguage]) {
+      runtimes.push(languageToRuntime[config.primaryLanguage]);
+    }
+
+    // Add additional language runtimes
+    config.additionalLanguages.forEach((lang: string) => {
+      const runtime = languageToRuntime[lang];
+      if (runtime && !runtimes.includes(runtime)) {
+        runtimes.push(runtime);
+      }
+    });
+
+    // Add stack-specific runtimes
+    if (config.stack && config.stack !== 'none' && stackRuntimeRequirements[config.stack]) {
+      stackRuntimeRequirements[config.stack].forEach((runtime: string) => {
+        if (!runtimes.includes(runtime)) {
+          runtimes.push(runtime);
+        }
+      });
+    }
+
+    // Always include git
+    if (!runtimes.includes('git')) runtimes.push('git');
+
+    // Include npm for JavaScript/TypeScript projects
+    if (config.primaryLanguage === 'typescript' || config.primaryLanguage === 'javascript') {
+      if (!runtimes.includes('npm')) runtimes.push('npm');
+    }
+
+    return runtimes;
+  });
 </script>
 
 <div class="space-y-6">
@@ -96,6 +160,14 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Runtime Checklist -->
+  <div>
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+      Runtime Checklist
+    </h3>
+    <RuntimeRequirements requiredRuntimes={requiredRuntimes} showInstallButton={false} />
   </div>
 
   <!-- Ready to create info -->

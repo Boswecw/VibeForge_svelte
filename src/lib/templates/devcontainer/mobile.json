@@ -1,0 +1,74 @@
+{
+  "name": "VibeForge Mobile Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts",
+      "nodeGypDependencies": true
+    },
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "installGradle": true,
+      "installMaven": false
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "username": "vscode",
+      "uid": "1000",
+      "gid": "1000"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Dart-Code.dart-code",
+        "Dart-Code.flutter",
+        "vscjava.vscode-java-pack",
+        "fwcd.kotlin",
+        "GitHub.copilot",
+        "eamodio.gitlens",
+        "usernamehw.errorlens"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "dart.flutterSdkPath": "/opt/flutter",
+        "java.home": "/usr/local/sdkman/candidates/java/current",
+        "editor.formatOnSave": true
+      }
+    }
+  },
+  "forwardPorts": [8080, 5555],
+  "portsAttributes": {
+    "8080": {
+      "label": "Flutter Dev Server",
+      "onAutoForward": "notify"
+    },
+    "5555": {
+      "label": "Android Emulator",
+      "onAutoForward": "silent"
+    }
+  },
+  "postCreateCommand": "bash /workspace/.devcontainer/setup-mobile.sh",
+  "remoteUser": "vscode",
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "source=flutter-sdk,target=/opt/flutter,type=volume",
+    "source=android-sdk,target=/opt/android-sdk,type=volume"
+  ],
+  "runArgs": [
+    "--privileged",
+    "--device=/dev/kvm"
+  ],
+  "initializeCommand": "echo 'Preparing mobile development environment...'",
+  "updateContentCommand": "echo 'Updating Flutter and Android SDK...'",
+  "containerEnv": {
+    "ANDROID_SDK_ROOT": "/opt/android-sdk",
+    "ANDROID_HOME": "/opt/android-sdk",
+    "FLUTTER_ROOT": "/opt/flutter",
+    "PATH": "${PATH}:/opt/flutter/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/cmdline-tools/latest/bin"
+  }
+}

@@ -7,7 +7,8 @@
   import ContextColumn from "$lib/workbench/context/ContextColumn.svelte";
   import PromptColumn from "$lib/workbench/prompt/PromptColumn.svelte";
   import OutputColumn from "$lib/workbench/output/OutputColumn.svelte";
-  import { AnalysisDrawer } from "$lib/workbench/analysis";
+  // TEMPORARILY COMMENTED OUT FOR SCAFFOLDING TESTING - Node.js module issue
+  // import { AnalysisDrawer } from "$lib/workbench/analysis";
 </script>
 
 <svelte:head>
@@ -42,5 +43,6 @@
   </div>
 
   <!-- Analysis Drawer (Bottom) -->
-  <AnalysisDrawer />
+  <!-- TEMPORARILY COMMENTED OUT FOR SCAFFOLDING TESTING -->
+  <!-- <AnalysisDrawer /> -->
 </div>

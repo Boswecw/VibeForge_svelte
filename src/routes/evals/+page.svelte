@@ -13,29 +13,29 @@
   const mockEvaluations: EvaluationSession[] = [
     {
       id: "eval-001",
-      name: "Story beat expansion – v3",
-      workspace: "AuthorForge",
-      project: "Novel Drafting",
+      name: "API security review – authentication endpoints",
+      workspace: "VibeForge Dev",
+      project: "REST API Security Audit",
       createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
       models: ["Claude", "GPT-5.x"],
       status: "in-progress",
-      tags: ["story", "consistency-test"],
+      tags: ["security", "code-review", "authentication"],
       promptSummary:
-        "Expand the middle act of a story to include character tension and subplot development.",
+        "Review authentication endpoints for security vulnerabilities and best practices.",
       prompt:
-        "You are a professional fiction editor. Given the following story synopsis and outline, expand the middle act with:\n1. Character tension between the protagonist and secondary character\n2. A subplot that weaves into the main plot\n3. Foreshadowing of the climax\n\nSynopsis: A detective on the verge of retirement uncovers a cold case connected to her partner's death.\n\nMiddle act beat points:\n- Discover new evidence\n- Confront the prime suspect\n- Realize the conspiracy is bigger than expected",
+        "You are a security expert specializing in API security. Review the following authentication endpoints and identify:\n1. Security vulnerabilities (injection, XSS, CSRF)\n2. Authentication weaknesses (weak hashing, session management)\n3. Authorization issues (privilege escalation, IDOR)\n4. Rate limiting and brute force protection\n5. Input validation gaps\n\nCode to review:\n```typescript\napp.post('/api/auth/login', async (req, res) => {\n  const { email, password } = req.body;\n  const user = await db.query('SELECT * FROM users WHERE email = ' + email);\n  if (user && user.password === password) {\n    res.json({ token: user.id, success: true });\n  }\n});\n```\n\nProvide severity ratings (CRITICAL, HIGH, MEDIUM, LOW) and actionable fixes.",
       contextBlocks: [
-        { name: "Story Guidelines", type: "design" },
-        { name: "Character Profiles", type: "project" },
+        { name: "OWASP Top 10", type: "design" },
+        { name: "API Security Checklist", type: "project" },
       ],
       outputs: [
         {
           id: "out-001-claude",
           model: "Claude",
-          text: "Detective Sarah arrives at the precinct just before dawn, evidence box in hand. The case file for James—her partner of fifteen years—sits sealed in her drawer. She had buried it three years ago, just as he deserved.\n\nBut the new DNA results don't lie. The fiber evidence from the warehouse matches Marcus Chen, the mob accountant they could never pin down. Sarah's hands shake as she photographs the report.\n\nJimmy enters without knocking. \"You're here early.\" His voice carries that edge it always does when he's stressed—the same edge she heard the night of the stakeout gone wrong. Sarah has worked beside Jimmy for five years. Good detective. Solid instincts. But in his eyes now, she sees something new: recognition. Fear.\n\n\"We need to talk about the cold case files,\" she says carefully. \"The Chen investigation—there's been a development.\"\n\nJimmy's jaw tightens. \"Some cases are meant to stay buried, Sarah. For everyone's sake.\"\n\nThe implication hangs between them. Sarah realizes then that Jimmy wasn't just present the night James died. He was complicit. And she suspects he still has connections—connections that reach deeper into the department than she ever realized.\n\nAs she drives home that evening, Sarah thinks about her daughter. About the good years with James before everything went dark. She makes a choice: not to run with this, but to run toward it. James deserves justice, even if it costs her everything.\n\nIn the darkness of her car, she sets up a secure communication with a FBI contact. The conspiracy is larger. The stakes are higher. And Sarah has nothing left to lose.",
+          text: "**Security Review: CRITICAL Issues Found**\n\n**1. SQL Injection (CRITICAL)**\n- Line 3: Direct string concatenation in SQL query\n- Vulnerable code: `'SELECT * FROM users WHERE email = ' + email`\n- **Impact:** Attacker can execute arbitrary SQL (e.g., `' OR '1'='1`)\n- **Fix:** Use parameterized queries: `db.query('SELECT * FROM users WHERE email = $1', [email])`\n\n**2. Plaintext Password Comparison (CRITICAL)**\n- Line 4: Passwords stored and compared in plaintext\n- **Impact:** Database breach exposes all passwords\n- **Fix:** Use bcrypt: `await bcrypt.compare(password, user.password_hash)`\n\n**3. Weak Token Generation (HIGH)**\n- Line 5: Using user.id as authentication token\n- **Impact:** Predictable tokens, trivial session hijacking\n- **Fix:** Generate JWT with proper signing: `jwt.sign({ userId: user.id }, SECRET, { expiresIn: '1h' })`\n\n**4. Missing Input Validation (HIGH)**\n- No validation on email/password format\n- **Fix:** Validate with Zod/Yup schema\n\n**5. No Rate Limiting (MEDIUM)**\n- Allows brute force attacks\n- **Fix:** Add express-rate-limit middleware\n\n**Recommended Secure Implementation:**\n```typescript\napp.post('/api/auth/login', \n  rateLimiter({ windowMs: 15 * 60 * 1000, max: 5 }),\n  validateRequest(loginSchema),\n  async (req, res) => {\n    const { email, password } = req.body;\n    const user = await db.query(\n      'SELECT id, password_hash FROM users WHERE email = $1',\n      [email]\n    );\n    if (!user || !await bcrypt.compare(password, user.password_hash)) {\n      return res.status(401).json({ error: 'Invalid credentials' });\n    }\n    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });\n    res.json({ token });\n  }\n);\n```",
           score: 5,
-          label: "Rich character tension",
+          label: "Comprehensive security analysis",
           isWinner: true,
         },
         {

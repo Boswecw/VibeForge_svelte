@@ -8,29 +8,33 @@
   import { LANGUAGES } from '$lib/data/languages';
 
   // Reactive bindings to wizard store
-  let outputPath = $state(wizardStore.data.outputPath);
-  let generateReadme = $state(wizardStore.data.generateReadme);
-  let initGit = $state(wizardStore.data.initGit);
+  let outputPath = $state(wizardStore.config.outputPath);
+  let generateReadme = $state(wizardStore.config.generateReadme);
+  let initGit = $state(wizardStore.config.initGit);
 
   // Sync to store on change
   $effect(() => {
-    wizardStore.updateData('outputPath', outputPath);
+    wizardStore.config.outputPath = outputPath;
   });
 
   $effect(() => {
-    wizardStore.updateData('generateReadme', generateReadme);
+    wizardStore.config.generateReadme = generateReadme;
   });
 
   $effect(() => {
-    wizardStore.updateData('initGit', initGit);
+    wizardStore.config.initGit = initGit;
   });
 
-  const validation = $derived(wizardStore.validation.launch);
+  // Validation
+  const outputPathError = $derived(
+    !outputPath || outputPath.trim().length === 0 ? 'Output directory is required' : null
+  );
+
   const summary = $derived(wizardStore.projectSummary);
 
   // Get enabled features
   const enabledFeatures = $derived(
-    Object.entries(wizardStore.data.features)
+    Object.entries(wizardStore.config.features)
       .filter(([_, enabled]) => enabled)
       .map(([name]) => name)
   );
@@ -121,7 +125,7 @@
           text-zinc-100 placeholder:text-zinc-600
           focus:outline-none focus:ring-2 focus:ring-ember-500/50
           transition-all
-          {validation.errors.some(e => e.includes('output'))
+          {outputPathError
             ? 'border-red-500'
             : 'border-gunmetal-700 focus:border-ember-500'}
         "
@@ -137,9 +141,9 @@
         </svg>
       </button>
     </div>
-    {#if validation.errors.some(e => e.includes('output'))}
+    {#if outputPathError}
       <p class="mt-1 text-sm text-red-400">
-        {validation.errors.find(e => e.includes('output'))}
+        {outputPathError}
       </p>
     {:else if outputPath}
       <p class="mt-1 text-xs text-zinc-500">
