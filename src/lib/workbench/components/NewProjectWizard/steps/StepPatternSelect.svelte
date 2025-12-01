@@ -22,6 +22,7 @@
   import { successPredictor } from '$lib/services/successPredictor';
   import type { SuccessPrediction } from '$lib/types/success-prediction';
   import { formatProbability, getSuccessProbabilityColor, getConfidenceBadgeClass } from '$lib/types/success-prediction';
+  import TeamRecommendations from '../TeamRecommendations.svelte';
 
   interface Props {
     config: ProjectConfig;
@@ -185,6 +186,9 @@
 
   <!-- Runtime Detection Panel -->
   <RuntimeDetectionPanel onPatternSelect={selectPattern} />
+
+  <!-- Team Recommendations -->
+  <TeamRecommendations />
 
   <!-- Filters -->
   <PatternFilters

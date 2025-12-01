@@ -2,6 +2,7 @@
   import { wizardStore } from '../../../stores';
   import { STACKS } from '../../../types/project';
   import RuntimeRequirements from '$lib/components/dev/RuntimeRequirements.svelte';
+  import TeamRecommendations from '../TeamRecommendations.svelte';
 
   let { config } = $props<{ config: typeof wizardStore.config }>();
 
@@ -80,6 +81,9 @@
       {/if}
     </p>
   </div>
+
+  <!-- Team Recommendations -->
+  <TeamRecommendations />
 
   <!-- Stack Selection -->
   <div>
