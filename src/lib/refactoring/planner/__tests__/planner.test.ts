@@ -354,6 +354,10 @@ describe('RefactoringPlanner', () => {
 			analysisId: 'analysis-1',
 			standardsId: 'preset-balanced',
 			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+			name: 'Test Plan',
+			description: 'Test plan for validation',
+			goals: ['Test validation'],
 			phases: [
 				{
 					id: 'phase-1',
@@ -380,6 +384,11 @@ describe('RefactoringPlanner', () => {
 					required: true
 				}
 			],
+			estimate: {
+				totalHours: 2,
+				breakdown: { testing: 2 },
+				confidence: 'medium' as const
+			},
 			totalEstimatedHours: 2,
 			prompts: [
 				{
@@ -389,10 +398,14 @@ describe('RefactoringPlanner', () => {
 					generatedAt: new Date().toISOString()
 				}
 			],
+			qualityGates: [],
+			riskFactors: [],
+			prerequisites: [],
+			deliverables: [],
 			status: 'draft' as const
 		};
 
-		const result = planner.validatePlan(validPlan);
+		const result = planner.validatePlan(validPlan as any);
 
 		expect(result.valid).toBe(true);
 		expect(result.errors).toHaveLength(0);

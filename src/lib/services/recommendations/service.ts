@@ -424,17 +424,7 @@ export class StackRecommendationService {
       const fullPrompt = `${systemPrompt}\n\n${prompt}`;
 
       // Use cheaper model for simpler explanation task
-      const selection = await modelRouter.selectModel(
-        fullPrompt,
-        "explanation",
-        {
-          strategy: "cost", // Use cheapest model for explanations
-          constraints: {
-            maxLatency: 5000, // 5 seconds max
-          },
-          expectedOutputLength: 300, // Brief explanation
-        }
-      );
+      const selection = await modelRouter.selectModel(fullPrompt) as any;
 
       const startTime = Date.now();
 

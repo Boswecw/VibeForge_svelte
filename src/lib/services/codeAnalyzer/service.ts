@@ -266,7 +266,7 @@ export class CodeAnalyzerService {
     const stackFrameworks = [
       ...(stack.technologies.frontend || []),
       ...(stack.technologies.backend || []),
-    ].map((f) => f.toLowerCase());
+    ].map((f) => (typeof f === 'string' ? f : (f as any).name || String(f)).toLowerCase());
     const profileFrameworks = profile.frameworks.map((f) =>
       f.name.toLowerCase()
     );

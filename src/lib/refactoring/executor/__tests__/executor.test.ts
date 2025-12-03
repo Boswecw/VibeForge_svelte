@@ -25,6 +25,10 @@ function createMockProject(): RefactoringProject {
 		analysisId: 'analysis-1',
 		standardsId: 'preset-balanced',
 		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
+		name: 'Test Refactoring Plan',
+		description: 'Mock plan for testing',
+		goals: ['Improve code quality', 'Add tests'],
 		phases: [
 			{
 				id: 'phase-1',
@@ -64,8 +68,17 @@ function createMockProject(): RefactoringProject {
 				required: true
 			}
 		],
+		estimate: {
+			totalHours: 5,
+			breakdown: { testing: 2, type_safety: 3 },
+			confidence: 'medium'
+		},
 		totalEstimatedHours: 5,
 		prompts: [],
+		qualityGates: [],
+		riskFactors: [],
+		prerequisites: [],
+		deliverables: [],
 		status: 'draft'
 	};
 
@@ -476,6 +489,10 @@ describe('TaskExecutor', () => {
 			analysisId: 'analysis-1',
 			standardsId: 'preset-balanced',
 			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+			name: 'Test Plan',
+			description: 'Test refactoring plan',
+			goals: ['Test goals'],
 			phases: [
 				{
 					id: 'phase-1',
@@ -502,8 +519,17 @@ describe('TaskExecutor', () => {
 					required: true
 				}
 			],
+			estimate: {
+				totalHours: 2,
+				breakdown: { testing: 2 },
+				confidence: 'medium'
+			},
 			totalEstimatedHours: 2,
 			prompts: [],
+			qualityGates: [],
+			riskFactors: [],
+			prerequisites: [],
+			deliverables: [],
 			status: 'draft'
 		};
 
