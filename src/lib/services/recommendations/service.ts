@@ -89,7 +89,8 @@ export class StackRecommendationService {
         requiresReasoning: true,
         requiresCreativity: true,
         requiresAccuracy: true,
-        promptTokens: estimatedTokens
+        promptTokens: estimatedTokens,
+        expectedOutputTokens: 500 // Recommendations typically ~500 tokens
       };
       const selection = await modelRouter.selectModel(criteria);
 
@@ -440,6 +441,7 @@ export class StackRecommendationService {
         requiresCreativity: false,
         requiresAccuracy: true,
         promptTokens: estimatedTokens,
+        expectedOutputTokens: 200, // Explanations typically ~200 tokens
         maxCostPerRequest: 0.01 // Prefer cheaper models for explanations
       };
       const selection = await modelRouter.selectModel(criteria);

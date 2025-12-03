@@ -421,17 +421,18 @@ class WizardStore {
 
       const result = await invoke<{
         success: boolean;
-        project_path: string;
+        projectPath: string; // Changed from project_path
         message: string;
-        files_created: number;
+        filesCreated: number; // Changed from files_created
+        componentsGenerated?: string[]; // Added missing field
       }>('generate_project', {
         config: legacyConfig,
         outputDir: this.config.projectPath,
       });
 
       console.log('Legacy project generated:', result);
-      console.log(`Created ${result.files_created} files`);
-      console.log(`Project path: ${result.project_path}`);
+      console.log(`Created ${result.filesCreated} files`);
+      console.log(`Project path: ${result.projectPath}`);
     } else {
       // In development/web mode, just simulate
       console.log('Legacy project generation (simulated):', legacyConfig);
