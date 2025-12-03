@@ -149,4 +149,4 @@ export async function healthCheck(): Promise<boolean> {
 // Export Configuration
 // ============================================================================
 
-export { API_BASE, API_KEY };
+export { API_BASE };

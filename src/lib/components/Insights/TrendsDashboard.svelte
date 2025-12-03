@@ -65,8 +65,8 @@ let selectedTab = $state<'technologies' | 'combinations' | 'patterns' | 'trends'
 // Lifecycle
 // ============================================================================
 
-onMount(async () => {
-  await loadAllData();
+onMount(() => {
+  loadAllData(); // Call async function without awaiting
 
   return () => {
     if (refreshInterval) {

@@ -127,6 +127,7 @@ export interface ProgressData {
   elapsed_time_seconds: number;
   estimated_remaining_seconds: number | null;
   error_message: string | null;
+  [key: string]: unknown; // Index signature for Record<string, unknown> compatibility
 }
 
 export interface StageInfo {

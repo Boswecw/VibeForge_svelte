@@ -236,6 +236,7 @@ describe('Architecture Patterns', () => {
 					expect(desktopAppPattern.documentation.deployment).toBeDefined();
 					expect(desktopAppPattern.documentation.troubleshooting).toBeDefined();
 				}
+			});
 		});
 
 		describe('Full-Stack Web Pattern', () => {

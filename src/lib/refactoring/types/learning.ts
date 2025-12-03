@@ -64,7 +64,7 @@ export interface RefactoringOutcome {
 	userSatisfaction?: number; // 1-5 rating from user
 
 	// Estimation feedback
-	estimationFeedback?: EstimationFeedback;
+	estimationFeedback?: EstimationFeedback[];
 
 	notes?: string;
 	lessonsLearned?: string[];

@@ -188,7 +188,7 @@ export class EstimationEngine {
 					recommendation.estimate.hours,
 					task.category
 				);
-				const currentAIEstimate = task.estimatedMinutesAI;
+				const currentAIEstimate = task.estimatedMinutesAI ?? 0;
 				const confidence = recommendation.confidence;
 
 				// Blend learned and current AI estimates based on confidence

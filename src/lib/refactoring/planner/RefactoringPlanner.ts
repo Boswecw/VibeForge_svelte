@@ -90,7 +90,7 @@ export class RefactoringPlanner {
 		// Step 7: Create plan
 		const createdAt = new Date().toISOString();
 		const totalTasks = tasks.length;
-		const qualityGates = phases.map((p) => p.gate);
+		const qualityGates = phases.map((p) => p.gate).filter((g): g is QualityGate => g !== undefined);
 
 		const plan: RefactoringPlan = {
 			id: this.generatePlanId(),

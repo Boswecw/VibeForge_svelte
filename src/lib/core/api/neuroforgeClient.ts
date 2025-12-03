@@ -21,14 +21,14 @@ function getApiUrl(path: string): string {
 }
 
 function getHeaders(): HeadersInit {
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
 
   // Add JWT authentication
   const authHeader = getAuthHeader();
   if (authHeader) {
-    headers["Authorization"] = authHeader;
+    Object.assign(headers, authHeader);
   }
 
   return headers;

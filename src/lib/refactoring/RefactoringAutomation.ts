@@ -126,7 +126,7 @@ export class RefactoringAutomation {
 		const plannerConfig: PlannerConfig = {
 			standards,
 			complexity,
-			recommendations: this.learningLoop.convertRecommendationsToEstimates(recommendations)
+			recommendations // Pass TaskRecommendation[] directly
 		};
 
 		return this.planner.createPlan(analysis, plannerConfig);

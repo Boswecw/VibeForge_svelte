@@ -295,10 +295,10 @@ export class TaskExecutor {
 				passed: true,
 				checks: [
 					{
-						check: 'Tests passing',
+						checkId: 'tests-passing',
 						passed: true,
 						actual: '100%',
-						expected: '100%'
+						message: 'All tests passing'
 					}
 				],
 				summary: 'All quality gates passed',
