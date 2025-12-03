@@ -241,20 +241,22 @@
               </div>
 
               <!-- Commands Preview -->
-              <div>
-                <label class="block text-xs font-medium text-zinc-400 mb-2">Commands</label>
-                <div class="bg-gunmetal-900 border border-gunmetal-700 rounded-lg p-3 space-y-2 text-xs font-mono">
-                  {#if component.commands.dev}
-                    <div><span class="text-zinc-500">Dev:</span> <span class="text-zinc-300">{component.commands.dev.join(' ')}</span></div>
-                  {/if}
-                  {#if component.commands.build}
-                    <div><span class="text-zinc-500">Build:</span> <span class="text-zinc-300">{component.commands.build.join(' ')}</span></div>
-                  {/if}
-                  {#if component.commands.test}
-                    <div><span class="text-zinc-500">Test:</span> <span class="text-zinc-300">{component.commands.test.join(' ')}</span></div>
-                  {/if}
+              {#if component.commands}
+                <div>
+                  <label class="block text-xs font-medium text-zinc-400 mb-2">Commands</label>
+                  <div class="bg-gunmetal-900 border border-gunmetal-700 rounded-lg p-3 space-y-2 text-xs font-mono">
+                    {#if component.commands?.dev}
+                      <div><span class="text-zinc-500">Dev:</span> <span class="text-zinc-300">{component.commands.dev.join(' ')}</span></div>
+                    {/if}
+                    {#if component.commands?.build}
+                      <div><span class="text-zinc-500">Build:</span> <span class="text-zinc-300">{component.commands.build.join(' ')}</span></div>
+                    {/if}
+                    {#if component.commands?.test}
+                      <div><span class="text-zinc-500">Test:</span> <span class="text-zinc-300">{component.commands.test.join(' ')}</span></div>
+                    {/if}
+                  </div>
                 </div>
-              </div>
+              {/if}
             </div>
           {/if}
         </div>

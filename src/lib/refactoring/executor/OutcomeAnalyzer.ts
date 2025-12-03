@@ -203,7 +203,7 @@ export class OutcomeAnalyzer {
 
 		// Calculate planned AI minutes from all tasks
 		const plannedMinutesAI = project.plan.phases.reduce(
-			(sum, phase) => sum + phase.tasks.reduce((taskSum, task) => taskSum + task.estimatedMinutesAI, 0),
+			(sum, phase) => sum + phase.tasks.reduce((taskSum, task) => taskSum + (task.estimatedMinutesAI || 0), 0),
 			0
 		);
 

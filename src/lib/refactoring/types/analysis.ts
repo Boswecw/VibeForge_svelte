@@ -147,7 +147,8 @@ export type IssueCategory =
 	| 'type-safety'
 	| 'code-quality'
 	| 'architecture'
-	| 'security';
+	| 'security'
+	| 'performance';
 
 export interface DetectedIssue {
 	id: string;

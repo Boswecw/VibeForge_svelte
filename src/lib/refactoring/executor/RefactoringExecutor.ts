@@ -341,7 +341,7 @@ export class RefactoringExecutor {
 
 					taskExecution.aiMetrics = {
 						executorType: 'ai-claude-code',
-						estimatedMinutes: planTask.estimatedMinutesAI,
+						estimatedMinutes: planTask.estimatedMinutesAI || 30,
 						actualMinutes,
 						firstPassSuccess: true,
 						iterationCount: 1,

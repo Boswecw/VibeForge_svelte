@@ -6,7 +6,7 @@
    * Displays runtime requirements for selected languages/stacks with status indicators
    */
 
-  import { invoke } from '@tauri-apps/api/tauri';
+  import { invoke } from '@tauri-apps/api/core';
   import { onMount } from 'svelte';
 
   // ============================================================================
@@ -307,7 +307,7 @@
 {/if}
 
 <style>
-  .runtime-requirements.compact .space-y-2 {
-    @apply space-y-1;
+  .runtime-requirements.compact .space-y-2 > * + * {
+    margin-top: 0.25rem;
   }
 </style>

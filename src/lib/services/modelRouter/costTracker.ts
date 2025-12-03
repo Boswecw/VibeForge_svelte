@@ -58,6 +58,26 @@ export class CostTracker {
   }
 
   /**
+   * Track usage with simplified parameters (convenience method)
+   */
+  trackUsage(
+    provider: LLMProvider,
+    modelId: string,
+    taskCategory: TaskCategory,
+    promptTokens: number,
+    completionTokens: number
+  ): CostEntry {
+    return this.track({
+      modelId,
+      provider,
+      taskCategory,
+      promptTokens,
+      completionTokens,
+      totalTokens: promptTokens + completionTokens,
+    });
+  }
+
+  /**
    * Set budget limits
    */
   setBudget(budget: Partial<CostBudget>): void {
@@ -290,6 +310,7 @@ export class CostTracker {
       TaskCategory,
       { cost: number; tokens: number; requests: number }
     >;
+    entries: CostEntry[];
   } {
     const filtered = this.filterEntries(startDate, endDate);
 
@@ -332,6 +353,7 @@ export class CostTracker {
       totalRequests: filtered.length,
       byProvider: byProvider as Record<LLMProvider, { cost: number; tokens: number; requests: number }>,
       byCategory: byCategory as Record<TaskCategory, { cost: number; tokens: number; requests: number }>,
+      entries: filtered,
     };
   }
 

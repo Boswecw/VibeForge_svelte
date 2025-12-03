@@ -7,6 +7,7 @@ import { llmClient } from "../llm/client";
 import { modelRouter, costTracker, performanceMetrics } from "../modelRouter";
 import { StackRecommendationPrompts, type PromptContext } from "./prompts";
 import type { LLMChatResponse } from "../llm/types";
+import type { ProjectType } from "$lib/workbench/types/wizard";
 
 export interface StackRecommendation {
   stackId: string;
@@ -94,7 +95,7 @@ export class StackRecommendationService {
       );
 
       console.log(
-        `[Recommendations] Selected model: ${selection.model.provider}/${selection.model.modelId}`,
+        `[Recommendations] Selected model: ${selection.provider}/${selection.modelId}`,
         `\nEstimated cost: $${selection.estimatedCost.toFixed(4)}`,
         `\nEstimated latency: ${selection.estimatedLatency}ms`,
         `\nExplanation: ${selection.explanation}`
@@ -111,7 +112,7 @@ export class StackRecommendationService {
         ],
         {
           // Override with selected model
-          model: selection.model.modelId,
+          model: selection.modelId,
         }
       );
 
@@ -123,8 +124,8 @@ export class StackRecommendationService {
 
       // Track cost
       await costTracker.trackUsage(
-        selection.model.provider,
-        selection.model.modelId,
+        selection.provider,
+        selection.modelId,
         "recommendation",
         tokenCount.input,
         tokenCount.output
@@ -136,8 +137,8 @@ export class StackRecommendationService {
       // Record performance metrics (accepted = true if we got valid recommendations)
       const accepted = llmRecommendations.length > 0;
       await performanceMetrics.recordMetric(
-        selection.model.provider,
-        selection.model.modelId,
+        selection.provider,
+        selection.modelId,
         "recommendation",
         responseTime,
         accepted,
@@ -413,7 +414,7 @@ export class StackRecommendationService {
    */
   async explainStack(
     stackName: string,
-    projectType: string,
+    projectType: ProjectType,
     languages: string[]
   ): Promise<string> {
     try {
@@ -456,7 +457,7 @@ export class StackRecommendationService {
           { role: "user", content: prompt },
         ],
         {
-          model: selection.model.modelId,
+          model: selection.modelId,
         }
       );
 
@@ -469,16 +470,16 @@ export class StackRecommendationService {
       };
 
       await costTracker.trackUsage(
-        selection.model.provider,
-        selection.model.modelId,
+        selection.provider,
+        selection.modelId,
         "explanation",
         tokenCount.input,
         tokenCount.output
       );
 
       await performanceMetrics.recordMetric(
-        selection.model.provider,
-        selection.model.modelId,
+        selection.provider,
+        selection.modelId,
         "explanation",
         responseTime,
         true,

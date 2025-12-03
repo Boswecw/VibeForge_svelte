@@ -16,6 +16,7 @@ import type {
   TaskCategory,
   ComplexityFactors,
   ModelCapabilities,
+  LLMProvider,
 } from "./types";
 import { MODEL_CAPABILITIES } from "./types";
 
@@ -539,7 +540,7 @@ export class ModelRouter {
    */
   private checkABTests(
     taskCategory: TaskCategory
-  ): { modelId: string; provider: string } | null {
+  ): { modelId: string; provider: LLMProvider } | null {
     for (const testId of this.config.activeABTests.map((t) => t.id)) {
       const test = performanceMetrics.getABTest(testId);
       if (

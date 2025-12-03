@@ -6,7 +6,7 @@
    * Displays detected runtimes with status, version, and path information
    */
 
-  import { invoke } from '@tauri-apps/api/tauri';
+  import { invoke } from '@tauri-apps/api/core';
   import { onMount } from 'svelte';
 
   // ============================================================================

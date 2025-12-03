@@ -170,7 +170,7 @@ export class CodeAnalyzerService {
 
     // Database
     if (profile.database) {
-      parts.push(`with ${profile.database.db_type} database`);
+      parts.push(`with ${profile.database.type} database`);
     }
 
     return parts.join(" ") || "Existing codebase";
@@ -301,7 +301,7 @@ export class CodeAnalyzerService {
     }
 
     if (profile.database) {
-      lines.push("", `**Database:** ${profile.database.db_type}`);
+      lines.push("", `**Database:** ${profile.database.type}`);
     }
 
     if (profile.authentication) {

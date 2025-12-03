@@ -3,7 +3,7 @@
 	import { RefactoringAutomation } from '$lib/refactoring';
 	import type { RefactoringProject, PhaseExecution } from '$lib/refactoring/types/execution';
 
-	let state = $derived(refactoringStore.state);
+	let refactoringState = $derived(refactoringStore.state);
 	let plan = $derived(refactoringStore.plan);
 	let project = $derived(refactoringStore.project);
 	let automation = $derived(refactoringStore.automation);
@@ -18,14 +18,14 @@
 	);
 
 	async function handleStartExecution() {
-		if (!plan || !automation || !state.analysis) return;
+		if (!plan || !automation || !refactoringState.analysis) return;
 
 		try {
 			isExecuting = true;
 			refactoringStore.startExecution();
 
 			// Create and start project
-			const newProject = await automation.execute(plan, state.analysis);
+			const newProject = await automation.execute(plan, refactoringState.analysis);
 			refactoringStore.updateProject(newProject);
 
 			// Execute phases and tasks
@@ -228,10 +228,10 @@
 				{/each}
 			</div>
 
-			{#if state.executeError}
+			{#if refactoringState.executeError}
 				<div class="error-message">
 					<strong>Error:</strong>
-					{state.executeError}
+					{refactoringState.executeError}
 				</div>
 			{/if}
 

@@ -6,7 +6,7 @@
    * Provides platform-specific installation instructions with copy-to-clipboard functionality
    */
 
-  import { invoke } from '@tauri-apps/api/tauri';
+  import { invoke } from '@tauri-apps/api/core';
 
   // ============================================================================
   // Props

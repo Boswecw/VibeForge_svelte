@@ -12,10 +12,12 @@ Displays cost breakdown with pie charts, line charts, and provider/category anal
 
   interface CostSummary {
     totalCost: number;
+    total?: number; // Alias for totalCost
     totalTokens: number;
     totalRequests: number;
     byProvider: Record<string, { cost: number; tokens: number; requests: number }>;
     byCategory: Record<string, { cost: number; tokens: number; requests: number }>;
+    entries: CostEntry[];
   }
 
   let summary: CostSummary | null = null;
@@ -37,28 +39,30 @@ Displays cost breakdown with pie charts, line charts, and provider/category anal
 
     // Group by provider
     costByProvider = new Map();
-    for (const [provider, cost] of summary.byProvider.entries()) {
-      costByProvider.set(provider, cost);
+    for (const provider in summary.byProvider) {
+      const data = summary.byProvider[provider as keyof typeof summary.byProvider];
+      costByProvider.set(provider, data.cost);
     }
 
     // Group by category
     costByCategory = new Map();
-    for (const [category, cost] of summary.byCategory.entries()) {
-      costByCategory.set(category, cost);
+    for (const category in summary.byCategory) {
+      const data = summary.byCategory[category as keyof typeof summary.byCategory];
+      costByCategory.set(category, data.cost);
     }
 
     // Group by model
     costByModel = new Map();
     for (const entry of summary.entries) {
-      const key = `${entry.provider}/${entry.model}`;
-      costByModel.set(key, (costByModel.get(key) || 0) + entry.cost);
+      const key = `${entry.provider}/${entry.modelId || entry.model || 'unknown'}`;
+      costByModel.set(key, (costByModel.get(key) || 0) + (entry.cost || entry.totalCost));
     }
 
     // Daily costs for line chart
     const dailyMap = new Map<string, number>();
     for (const entry of summary.entries) {
       const date = new Date(entry.timestamp).toISOString().split("T")[0];
-      dailyMap.set(date, (dailyMap.get(date) || 0) + entry.cost);
+      dailyMap.set(date, (dailyMap.get(date) || 0) + (entry.cost || entry.totalCost));
     }
     dailyCosts = Array.from(dailyMap.entries())
       .map(([date, cost]) => ({ date, cost }))
@@ -102,7 +106,7 @@ Displays cost breakdown with pie charts, line charts, and provider/category anal
           <div>
             <div class="text-xs text-slate-400">Total Spent</div>
             <div class="text-2xl font-bold text-forge-ember mt-1">
-              ${summary.total.toFixed(4)}
+              ${summary.total || summary.totalCost.toFixed(4)}
             </div>
           </div>
           <div>
@@ -115,7 +119,7 @@ Displays cost breakdown with pie charts, line charts, and provider/category anal
             <div class="text-xs text-slate-400">Avg Cost per Call</div>
             <div class="text-2xl font-bold text-green-400 mt-1">
               ${summary.entries.length > 0
-                ? (summary.total / summary.entries.length).toFixed(4)
+                ? (summary.total || summary.totalCost / summary.entries.length).toFixed(4)
                 : "0.0000"}
             </div>
           </div>
@@ -194,12 +198,12 @@ Displays cost breakdown with pie charts, line charts, and provider/category anal
                     class="h-full transition-all"
                     style="width: {calculatePercentage(
                       cost,
-                      summary.total
+                      summary.total || summary.totalCost
                     )}%; background-color: {getProviderColor(provider)}"
                   />
                 </div>
                 <div class="text-xs text-slate-400 mt-1">
-                  {calculatePercentage(cost, summary.total).toFixed(1)}% of
+                  {calculatePercentage(cost, summary.total || summary.totalCost).toFixed(1)}% of
                   total
                 </div>
               </div>
@@ -245,12 +249,12 @@ Displays cost breakdown with pie charts, line charts, and provider/category anal
                       class="h-full transition-all"
                       style="width: {calculatePercentage(
                         cost,
-                        summary.total
+                        summary.total || summary.totalCost
                       )}%; background-color: {getCategoryColor(category)}"
                     />
                   </div>
                   <div class="text-xs text-slate-400 mt-1">
-                    {calculatePercentage(cost, summary.total).toFixed(1)}% of
+                    {calculatePercentage(cost, summary.total || summary.totalCost).toFixed(1)}% of
                     total
                   </div>
                 </div>
@@ -296,7 +300,7 @@ Displays cost breakdown with pie charts, line charts, and provider/category anal
                       >${cost.toFixed(4)}</td
                     >
                     <td class="py-2 text-sm text-slate-400 text-right">
-                      {calculatePercentage(cost, summary.total).toFixed(1)}%
+                      {calculatePercentage(cost, summary.total || summary.totalCost).toFixed(1)}%
                     </td>
                   </tr>
                 {/each}

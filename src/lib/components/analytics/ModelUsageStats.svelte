@@ -9,7 +9,7 @@ Displays model usage counts, acceptance rates, and call distribution
   export let dateRange: { start: Date; end: Date };
 
   interface ModelStats {
-    totalCount: number;
+    totalRequests: number;
     acceptedCount: number;
     errorCount: number;
     avgResponseTime: number;
@@ -42,15 +42,15 @@ Displays model usage counts, acceptance rates, and call distribution
     totalCalls = 0;
 
     for (const { id, provider } of models) {
-      const stats = performanceMetrics.getMetrics(provider, id);
-      if (stats && stats.totalCount > 0) {
+      const stats = performanceMetrics.getMetrics(provider as any, id);
+      if (stats && stats.totalRequests > 0) {
         modelStats.push({ model: id, provider, stats });
-        totalCalls += stats.totalCount;
+        totalCalls += stats.totalRequests;
       }
     }
 
     // Sort by usage
-    modelStats.sort((a, b) => b.stats.totalCount - a.stats.totalCount);
+    modelStats.sort((a, b) => b.stats.totalRequests - a.stats.totalRequests);
   }
 
   function getModelColor(index: number): string {
@@ -72,8 +72,8 @@ Displays model usage counts, acceptance rates, and call distribution
   }
 
   function getAcceptanceRate(stats: ModelStats): number {
-    return stats.totalCount > 0
-      ? (stats.acceptedCount / stats.totalCount) * 100
+    return stats.totalRequests > 0
+      ? (stats.acceptedCount / stats.totalRequests) * 100
       : 0;
   }
 </script>
@@ -98,10 +98,10 @@ Displays model usage counts, acceptance rates, and call distribution
               </div>
               <div class="flex items-center gap-3">
                 <span class="text-sm text-slate-100"
-                  >{stats.totalCount} calls</span
+                  >{stats.totalRequests} calls</span
                 >
                 <span class="text-xs text-slate-400">
-                  {calculatePercentage(stats.totalCount, totalCalls).toFixed(
+                  {calculatePercentage(stats.totalRequests, totalCalls).toFixed(
                     1
                   )}%
                 </span>
@@ -111,7 +111,7 @@ Displays model usage counts, acceptance rates, and call distribution
               <div
                 class="h-full transition-all"
                 style="width: {calculatePercentage(
-                  stats.totalCount,
+                  stats.totalRequests,
                   totalCalls
                 )}%; background-color: {getModelColor(index)}"
               />
@@ -147,7 +147,7 @@ Displays model usage counts, acceptance rates, and call distribution
               <span class="text-xs text-slate-400">accepted</span>
             </div>
             <div class="text-xs text-slate-400">
-              {stats.acceptedCount} / {stats.totalCount} calls
+              {stats.acceptedCount} / {stats.totalRequests} calls
             </div>
           </div>
         {/each}
@@ -195,7 +195,7 @@ Displays model usage counts, acceptance rates, and call distribution
                   <div class="text-sm text-slate-100">{provider}/{model}</div>
                 </td>
                 <td class="py-3 px-2 text-sm text-slate-100 text-right"
-                  >{stats.totalCount}</td
+                  >{stats.totalRequests}</td
                 >
                 <td class="py-3 px-2 text-sm text-green-400 text-right"
                   >{stats.acceptedCount}</td

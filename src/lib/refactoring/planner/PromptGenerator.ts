@@ -77,8 +77,8 @@ ${task.affectedFiles.length > 0 ? task.affectedFiles.map((f) => `- ${f}`).join('
 ## Estimated Time
 
 **Human Estimate:** ${task.estimatedHours} hour${task.estimatedHours > 1 ? 's' : ''}
-**AI Estimate (Claude Code):** ${task.estimatedMinutesAI} minute${task.estimatedMinutesAI > 1 ? 's' : ''} (~${Math.round(task.estimatedHours / (task.estimatedMinutesAI / 60))}x faster)
-**Confidence:** ${Math.round(task.aiEstimateConfidence * 100)}%
+**AI Estimate (Claude Code):** ${task.estimatedMinutesAI || 30} minute${(task.estimatedMinutesAI || 30) > 1 ? 's' : ''} (~${Math.round(task.estimatedHours / ((task.estimatedMinutesAI || 30) / 60))}x faster)
+**Confidence:** ${Math.round((task.aiEstimateConfidence || 0.8) * 100)}%
 
 > 💡 AI execution is typically 8-15x faster than human execution due to parallel processing and instant code comprehension.
 
@@ -101,12 +101,12 @@ ${task.affectedFiles.length > 0 ? task.affectedFiles.map((f) => `- ${f}`).join('
 			title: task.title,
 			content,
 			plan: plan as any, // Circular reference - will be set by planner
-			phase: task.phase,
+			phase: task.phase || 0,
 			generatedAt: new Date().toISOString(),
 			prompt: content, // Same as content
 			context: {
 				codebaseInfo: `Tech stack: ${standards.preset} standards`,
-				currentState: `Task ${task.id} in phase ${task.phase}`,
+				currentState: `Task ${task.id} in phase ${task.phase || 0}`,
 				goals: task.acceptanceCriteria.join('; '),
 				constraints: 'Maintain backward compatibility, no breaking changes'
 			},
@@ -135,7 +135,7 @@ ${task.affectedFiles.length > 0 ? task.affectedFiles.map((f) => `- ${f}`).join('
 		const totalTasks = phases.reduce((sum, phase) => sum + phase.tasks.length, 0);
 		const totalHours = phases.reduce((sum, phase) => sum + phase.estimatedHours, 0);
 		const totalAIMinutes = phases.reduce(
-			(sum, phase) => sum + phase.tasks.reduce((taskSum, task) => taskSum + task.estimatedMinutesAI, 0),
+			(sum, phase) => sum + phase.tasks.reduce((taskSum, task) => taskSum + (task.estimatedMinutesAI || 0), 0),
 			0
 		);
 
@@ -163,7 +163,7 @@ This refactoring plan consists of ${phases.length} phase${phases.length > 1 ? 's
 ${phases
 	.map(
 		(phase, i) => {
-			const phaseAIMinutes = phase.tasks.reduce((sum, task) => sum + task.estimatedMinutesAI, 0);
+			const phaseAIMinutes = phase.tasks.reduce((sum, task) => sum + (task.estimatedMinutesAI || 0), 0);
 			return `### Phase ${phase.number}: ${phase.name}
 **Status**: ${phase.required ? 'Required' : 'Optional'}
 **Estimated Time (Human)**: ${phase.estimatedHours} hours

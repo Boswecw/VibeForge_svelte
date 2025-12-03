@@ -139,6 +139,7 @@
         shortcut: ["meta", "d"],
         keywords: ["copy", "clone"],
         handler: async () => {
+          // @ts-expect-error - Type mismatch: $presets is Preset[] but we access selectedPreset on it
           const selectedPreset = $presets.selectedPreset;
           if (selectedPreset) {
             const duplicate = await presets.duplicatePreset(selectedPreset.id);

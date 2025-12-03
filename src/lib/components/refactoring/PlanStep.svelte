@@ -3,7 +3,7 @@
 	import { RefactoringAutomation } from '$lib/refactoring';
 	import { balancedStandards, strictStandards, startupStandards, legacyStandards } from '$lib/refactoring/standards/presets';
 
-	let state = $derived(refactoringStore.state);
+	let refactoringState = $derived(refactoringStore.state);
 	let isPlanning = $derived(refactoringStore.isPlanning);
 	let plan = $derived(refactoringStore.plan);
 	let analysis = $derived(refactoringStore.analysis);
@@ -26,7 +26,7 @@
 			const result = await automation.createPlan(analysis, {
 				standards: selectedStandards,
 				complexity,
-				getLearningRecommendations: getLearningRecommendations && state.enableLearning
+				getLearningRecommendations: getLearningRecommendations && refactoringState.enableLearning
 			});
 
 			refactoringStore.completePlanning(result);
@@ -39,7 +39,7 @@
 		refactoringStore.startExecution();
 	}
 
-	function getTotalTasks(plan: NonNullable<typeof state.plan>) {
+	function getTotalTasks(plan: NonNullable<typeof refactoringState.plan>) {
 		return plan.phases.reduce((sum, phase) => sum + phase.tasks.length, 0);
 	}
 </script>
@@ -79,7 +79,7 @@
 				<p class="help-text">Higher complexity adds more time buffer to estimates</p>
 			</div>
 
-			{#if state.enableLearning}
+			{#if refactoringState.enableLearning}
 				<label class="checkbox">
 					<input type="checkbox" bind:checked={getLearningRecommendations} disabled={isPlanning} />
 					<span>Get AI-powered recommendations from historical data</span>
@@ -96,10 +96,10 @@
 				</button>
 			</div>
 
-			{#if state.planError}
+			{#if refactoringState.planError}
 				<div class="error-message">
 					<strong>Error:</strong>
-					{state.planError}
+					{refactoringState.planError}
 				</div>
 			{/if}
 		</div>

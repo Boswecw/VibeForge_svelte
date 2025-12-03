@@ -80,6 +80,13 @@ export interface Model {
   maxTokens: number;
   supportsStreaming: boolean;
   costPer1kTokens?: number;
+  description?: string; // Model description for display
+  contextWindow?: number; // Context window size in tokens
+  pricing?: {
+    inputCostPer1kTokens?: number;
+    outputCostPer1kTokens?: number;
+    [key: string]: unknown;
+  };
   metadata?: Record<string, unknown>;
 }
 
@@ -87,7 +94,7 @@ export interface Model {
 // RUNS (Prompt Executions)
 // ============================================================================
 
-export type RunStatus = 'pending' | 'running' | 'success' | 'error' | 'cancelled';
+export type RunStatus = 'pending' | 'running' | 'success' | 'error' | 'cancelled' | 'completed' | 'failed';
 
 export interface PromptRun {
   id: string;
@@ -97,6 +104,7 @@ export interface PromptRun {
   modelId: string;
   status: RunStatus;
   startedAt: string;
+  createdAt?: string; // Alias for startedAt
   completedAt?: string;
   durationMs?: number;
   inputTokens?: number;
@@ -106,6 +114,12 @@ export interface PromptRun {
   output?: string;
   error?: string;
   metadata?: Record<string, unknown>;
+  metrics?: {
+    totalTokens?: number;
+    duration?: number;
+    cost?: number;
+    [key: string]: unknown;
+  };
 }
 
 // ============================================================================

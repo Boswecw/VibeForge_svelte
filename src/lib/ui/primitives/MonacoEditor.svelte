@@ -31,7 +31,7 @@
     // Load Monaco
     monaco = await loader.init();
 
-    if (!editorContainer) return;
+    if (!editorContainer || !monaco) return;
 
     // Configure Monaco theme
     monaco.editor.defineTheme("vibeforge-dark", {

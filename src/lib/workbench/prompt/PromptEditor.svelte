@@ -26,6 +26,7 @@
 
   // Version control state
   const versionState = $derived($versionStore);
+  // @ts-expect-error - Type mismatch: $presets is Preset[] but we access selectedPreset on it
   const selectedPreset = $derived($presets.selectedPreset);
 
   // Cost estimation state

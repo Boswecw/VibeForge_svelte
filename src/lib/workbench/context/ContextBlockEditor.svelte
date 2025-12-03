@@ -44,7 +44,7 @@
 				source,
 				kind,
 				isActive,
-				updatedAt: new Date()
+				updatedAt: new Date().toISOString()
 			});
 		} else {
 			// Create new block
@@ -55,8 +55,8 @@
 				source,
 				kind,
 				isActive,
-				createdAt: new Date(),
-				updatedAt: new Date()
+				createdAt: new Date().toISOString(),
+				updatedAt: new Date().toISOString()
 			};
 			contextBlocksStore.addBlock(newBlock);
 		}

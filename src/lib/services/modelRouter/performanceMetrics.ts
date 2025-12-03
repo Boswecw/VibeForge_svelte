@@ -48,6 +48,33 @@ export class PerformanceMetricsCollector {
   }
 
   /**
+   * Record a metric with individual parameters (convenience method)
+   */
+  recordMetric(
+    provider: LLMProvider,
+    modelId: string,
+    taskCategory: TaskCategory,
+    responseTimeMs: number,
+    accepted: boolean,
+    errorOccurred: boolean,
+    tokens: number = 0,
+    cost: number = 0,
+    userRating?: number
+  ): void {
+    this.record({
+      modelId,
+      provider,
+      taskCategory,
+      responseTimeMs,
+      tokens,
+      cost,
+      accepted,
+      errorOccurred,
+      userRating,
+    });
+  }
+
+  /**
    * Get performance metrics for a model
    */
   getMetrics(

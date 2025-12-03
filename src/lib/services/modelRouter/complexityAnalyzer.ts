@@ -35,6 +35,12 @@ export class ComplexityAnalyzer {
         outputStructure: "structured" as const,
         requiresMultiStep: true,
       },
+      recommendation: {
+        reasoningDepth: 6,
+        domainComplexity: 6,
+        outputStructure: "structured" as const,
+        requiresMultiStep: false,
+      },
       code_analysis: {
         reasoningDepth: 7,
         domainComplexity: 8,

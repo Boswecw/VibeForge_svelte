@@ -52,7 +52,9 @@ export type IntegrationProtocol =
 	| 'grpc' // Microservices: gRPC
 	| 'websocket' // Real-time: WebSocket
 	| 'ipc' // Process: Inter-process
-	| 'shared-memory'; // Native: Shared memory
+	| 'shared-memory' // Native: Shared memory
+	| 'browser-api' // Browser: Web APIs
+	| 'workspace'; // Monorepo: Workspace protocol
 
 // ============================================================================
 // COMPONENT DEPENDENCY
@@ -74,11 +76,11 @@ export interface ComponentDependency {
 	/** ID of the component this depends on */
 	componentId: string;
 
-	/** Whether the dependency is required or optional */
-	type: 'required' | 'optional';
+	/** Whether the dependency is required or optional, or the protocol type (workspace, http) */
+	type: 'required' | 'optional' | 'workspace' | 'http';
 
 	/** Type of relationship */
-	relationship: 'calls' | 'imports' | 'embeds' | 'extends';
+	relationship?: 'calls' | 'imports' | 'embeds' | 'extends';
 }
 
 // ============================================================================
@@ -209,7 +211,7 @@ export interface ProjectComponent {
 	name: string;
 
 	/** Description of component purpose */
-	description: string;
+	description?: string;
 
 	// Technology
 	/** Primary programming language */
@@ -232,7 +234,7 @@ export interface ProjectComponent {
 
 	// Build/dev commands
 	/** Commands for development and build */
-	commands: {
+	commands?: {
 		/** Install dependencies */
 		install?: string[];
 
@@ -292,8 +294,8 @@ export interface ComponentIntegration {
 	/** Share configuration files? */
 	sharedConfig: boolean;
 
-	/** Code generation for bindings */
-	generateBindings?: BindingGeneration[];
+	/** Code generation for bindings (can be binding objects or format strings) */
+	generateBindings?: (BindingGeneration | string)[];
 }
 
 // ============================================================================
@@ -330,10 +332,13 @@ export interface PatternPrerequisites {
 	tools: string[];
 
 	/** Required knowledge/skills */
-	skills: string[];
+	skills?: string[];
 
 	/** Estimated time to set up */
-	timeEstimate: string;
+	timeEstimate?: string;
+
+	/** Required knowledge/expertise areas (optional) */
+	knowledge?: string[];
 }
 
 /**
@@ -429,7 +434,10 @@ export interface ArchitecturePattern {
 	notIdealFor: string[];
 
 	/** Example projects using this pattern */
-	examples: string[];
+	examples?: string[];
+
+	/** Tags for categorization and search */
+	tags?: string[];
 
 	// Requirements
 	/** Prerequisites for using this pattern */
@@ -437,5 +445,9 @@ export interface ArchitecturePattern {
 
 	// Documentation
 	/** Complete documentation */
-	documentation: PatternDocumentation;
+	documentation?: PatternDocumentation;
+
+	// Root-level files (optional)
+	/** Files to generate in the project root */
+	rootFiles?: FileTemplate[];
 }

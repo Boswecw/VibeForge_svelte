@@ -136,20 +136,26 @@ export interface PatternAnalytics {
 
   // Usage Metrics
   totalProjects: number;
+  totalUses?: number; // Alias for totalProjects
   projectsLast30Days: number;
   projectsLast7Days: number;
 
   // Health Metrics
   successfulBuilds: number;
+  successfulProjects?: number; // Alias for successfulBuilds
   failedBuilds: number;
   buildSuccessRate: number | null; // Percentage (0-100)
 
   // Feedback Metrics
   feedbackCount: number;
   avgSatisfaction: number | null; // 1-5
+  averageSatisfaction?: number | null; // Alias for avgSatisfaction
   avgUsefulness: number | null; // 1-5
   avgNps: number | null; // 1-10
   recommendationCount: number;
+
+  // Test Metrics
+  averageTestPassRate?: number | null; // Test pass rate percentage
 
   // Time Metrics
   avgTimeToBuildMinutes: number | null;

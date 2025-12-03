@@ -173,7 +173,8 @@ export class ClaudeCodeBridge {
 		await this.delay(500);
 
 		// Simulate file modifications
-		for (const file of task.files) {
+		const taskFiles = task.files || task.affectedFiles || [];
+		for (const file of taskFiles) {
 			session.filesModified.push(file);
 			this.emitEvent(session.id, {
 				type: 'file_modified',
@@ -187,7 +188,7 @@ export class ClaudeCodeBridge {
 		// Simulate output
 		const simulatedOutput = [
 			`Reading task: ${task.title}`,
-			`Analyzing ${task.files.length} files...`,
+			`Analyzing ${taskFiles.length} files...`,
 			'Running refactoring operations...',
 			'Verifying changes...',
 			'All acceptance criteria met ✓'

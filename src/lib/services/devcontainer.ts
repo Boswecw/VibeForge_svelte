@@ -27,6 +27,8 @@ export interface DevContainerTemplate {
   languages: string[];
   devcontainerConfig: DevContainerConfig;
   dockerfile?: string;
+  complexity?: 'beginner' | 'intermediate' | 'advanced';
+  useCases?: string[];
 }
 
 /**

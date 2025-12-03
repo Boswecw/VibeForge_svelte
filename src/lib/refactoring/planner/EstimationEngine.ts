@@ -211,6 +211,6 @@ export class EstimationEngine {
 	 * Calculates total estimated AI minutes for all tasks
 	 */
 	calculateTotalAIEstimate(tasks: RefactoringTask[]): number {
-		return tasks.reduce((sum, task) => sum + task.estimatedMinutesAI, 0);
+		return tasks.reduce((sum, task) => sum + (task.estimatedMinutesAI || 0), 0);
 	}
 }

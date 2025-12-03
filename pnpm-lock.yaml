@@ -17,6 +17,9 @@ importers:
       chart.js:
         specifier: ^4.5.1
         version: 4.5.1
+      lucide-svelte:
+        specifier: ^0.555.0
+        version: 0.555.0(svelte@5.43.10)
       monaco-editor:
         specifier: ^0.55.1
         version: 0.55.1
@@ -1111,6 +1114,11 @@ packages:
   lru-cache@11.2.2:
     resolution: {integrity: sha512-F9ODfyqML2coTIsQpSkRHnLSZMtkU8Q+mSfcaIyKwy58u+8k5nvAYeiNhsyMARvzNcXJ9QfWVrcPsC9e9rAxtg==}
     engines: {node: 20 || >=22}
+
+  lucide-svelte@0.555.0:
+    resolution: {integrity: sha512-2kWIcstKGgQObLGpYXmcYwm/Y83Am+AQcP7MnybrmaRU1+QUJ/WSEpv/wAbwaSkrWUiN1TX/9FuWQKLeEeWCrQ==}
+    peerDependencies:
+      svelte: ^3 || ^4 || ^5.0.0-next.42
 
   lz-string@1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
@@ -2348,6 +2356,10 @@ snapshots:
   locate-character@3.0.0: {}
 
   lru-cache@11.2.2: {}
+
+  lucide-svelte@0.555.0(svelte@5.43.10):
+    dependencies:
+      svelte: 5.43.10
 
   lz-string@1.5.0: {}
 

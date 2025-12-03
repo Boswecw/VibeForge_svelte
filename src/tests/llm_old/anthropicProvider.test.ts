@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { AnthropicProvider } from "$lib/services/llm/anthropicProvider";
+// @ts-expect-error - Old test file, types have been refactored
 import type { LLMRequest, LLMResponse } from "$lib/types/llm";
 
 describe("AnthropicProvider", () => {

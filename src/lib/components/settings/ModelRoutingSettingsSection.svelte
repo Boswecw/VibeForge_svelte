@@ -34,17 +34,17 @@ Configure intelligent model selection, cost tracking, and performance monitoring
     description: string;
   }[] = [
     {
-      value: "cost",
+      value: "cost-optimized",
       label: "💰 Cost-Optimized",
       description: "Use cheapest models (e.g., GPT-3.5, Claude Haiku)",
     },
     {
-      value: "performance",
+      value: "performance-optimized",
       label: "⚡ Performance",
       description: "Prioritize speed and low latency",
     },
     {
-      value: "quality",
+      value: "quality-optimized",
       label: "🎯 Quality",
       description: "Best reasoning models (e.g., GPT-4, Claude Opus)",
     },
@@ -147,8 +147,8 @@ Configure intelligent model selection, cost tracking, and performance monitoring
 
     for (const model of models) {
       const provider = model.startsWith("gpt") ? "openai" : "anthropic";
-      const stats = performanceMetrics.getMetrics(provider, model);
-      if (stats && stats.totalCount > 0) {
+      const stats = performanceMetrics.getMetrics(provider as any, model);
+      if (stats && stats.totalRequests > 0) {
         performanceStats[model] = stats;
       }
     }
@@ -379,12 +379,12 @@ Configure intelligent model selection, cost tracking, and performance monitoring
                   >
                     <div>
                       <span class="text-slate-300"
-                        >{entry.provider}/{entry.model}</span
+                        >{entry.provider}/{entry.modelId || entry.model}</span
                       >
-                      <span class="text-slate-400 ml-2">({entry.category})</span
+                      <span class="text-slate-400 ml-2">({entry.taskCategory || entry.category})</span
                       >
                     </div>
-                    <div class="text-forge-ember">${entry.cost.toFixed(4)}</div>
+                    <div class="text-forge-ember">${(entry.cost || entry.totalCost).toFixed(4)}</div>
                   </div>
                 {/each}
               </div>
@@ -411,7 +411,7 @@ Configure intelligent model selection, cost tracking, and performance monitoring
               <div class="flex justify-between items-center mb-2">
                 <span class="text-sm font-medium text-slate-100">{model}</span>
                 <span class="text-xs text-slate-400"
-                  >{stats.totalCount} calls</span
+                  >{stats.totalRequests} calls</span
                 >
               </div>
               <div class="grid grid-cols-3 gap-2 text-xs">
@@ -424,7 +424,7 @@ Configure intelligent model selection, cost tracking, and performance monitoring
                 <div>
                   <div class="text-slate-400">Accepted</div>
                   <div class="text-slate-100">
-                    {stats.acceptedCount} / {stats.totalCount}
+                    {stats.acceptedCount} / {stats.totalRequests}
                   </div>
                 </div>
                 <div>

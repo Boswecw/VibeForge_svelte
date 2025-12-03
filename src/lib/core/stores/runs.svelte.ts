@@ -155,6 +155,9 @@ async function execute(prompt: string, modelId: string, contextBlocks?: string[]
     // Convert SimplifiedExecuteResponse to PromptRun format
     const run: PromptRun = {
       id: result.run_id,
+      workspaceId: 'default', // SimplifiedExecuteResponse doesn't include workspace_id
+      promptSnapshot: prompt,
+      contextBlockIds: contextBlocks || [],
       modelId: result.model_id,
       output: result.output,
       status: 'success',

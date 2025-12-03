@@ -12,8 +12,8 @@ export interface DevContainerTemplate {
   icon: string;
   languages: string[];
   tools: string[];
-  use Cases: string[];
-  complexity: 'simple' | 'moderate' | 'complex';
+  useCases: string[];
+  complexity: 'simple' | 'moderate' | 'complex' | 'beginner' | 'intermediate' | 'advanced';
   templatePath: string;
 }
 

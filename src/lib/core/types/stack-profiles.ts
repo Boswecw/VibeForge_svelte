@@ -9,7 +9,7 @@
 // Core Types
 // ============================================================================
 
-export type StackCategory = "web" | "mobile" | "desktop" | "api" | "ai";
+export type StackCategory = "web" | "mobile" | "desktop" | "api" | "ai" | "fullstack" | "backend";
 
 export type ComplexityLevel = "beginner" | "intermediate" | "advanced";
 
@@ -123,6 +123,8 @@ export interface StackRequirements {
   teamSize: "solo" | "small" | "medium" | "large";
   budget: "low" | "medium" | "high" | "enterprise";
   maintenance: "low" | "medium" | "high";
+  prerequisites?: string[];
+  node_version?: string;
 }
 
 export interface StackScore {
@@ -151,6 +153,14 @@ export interface StackProfile {
   icon?: string;
   color?: string;
   badge?: string;
+
+  // Convenience properties (optional shortcuts)
+  complexity?: ComplexityLevel;
+  compatibleLanguages?: string[];
+  deployment?: {
+    platforms?: string[];
+    docker_support?: boolean;
+  };
 
   // Technology stack
   technologies: {

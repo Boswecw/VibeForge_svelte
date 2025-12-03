@@ -15,9 +15,10 @@ import type {
 } from '../types/scaffolding';
 
 // Conditionally import Tauri APIs (only available in Tauri context)
-let invoke: any;
-let listen: any;
-let UnlistenFn: any;
+type UnlistenFn = () => void;
+let invoke: <T>(cmd: string, args?: Record<string, unknown>) => Promise<T>;
+let listen: <T>(event: string, handler: (event: { payload: T }) => void) => Promise<UnlistenFn>;
+let UnlistenFnType: any;
 
 if (browser && (window as any).__TAURI__) {
 	// Running in Tauri desktop app
@@ -26,7 +27,7 @@ if (browser && (window as any).__TAURI__) {
 	});
 	import('@tauri-apps/api/event').then(module => {
 		listen = module.listen;
-		UnlistenFn = module.UnlistenFn;
+		UnlistenFnType = module.UnlistenFn;
 	});
 }
 
@@ -142,7 +143,7 @@ export async function listenToScaffoldingProgress(
 	}
 
 	// Tauri mode
-	return await listen<ScaffoldProgressEvent>('scaffolding-progress', (event) => {
+	return await listen<ScaffoldProgressEvent>('scaffolding-progress', (event: { payload: ScaffoldProgressEvent }) => {
 		callback(event.payload);
 	});
 }
@@ -162,7 +163,7 @@ export async function listenToScaffoldingComplete(
 	}
 
 	// Tauri mode
-	return await listen<ScaffoldResult>('scaffolding-complete', (event) => {
+	return await listen<ScaffoldResult>('scaffolding-complete', (event: { payload: ScaffoldResult }) => {
 		callback(event.payload);
 	});
 }
@@ -173,7 +174,7 @@ export async function listenToScaffoldingComplete(
 export async function listenToScaffoldingError(
 	callback: (error: { message: string; details?: string }) => void
 ): Promise<UnlistenFn> {
-	return await listen<{ message: string; details?: string }>('scaffolding-error', (event) => {
+	return await listen<{ message: string; details?: string }>('scaffolding-error', (event: { payload: { message: string; details?: string } }) => {
 		callback(event.payload);
 	});
 }

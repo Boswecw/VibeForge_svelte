@@ -7,6 +7,9 @@
 
 import type { StackProfile } from "$lib/core/types/stack-profiles";
 
+// Re-export types for external use
+export type { StackProfile } from "$lib/core/types/stack-profiles";
+
 // Import all stack profile JSON files
 import t3StackData from "./t3-stack.json";
 import mernStackData from "./mern-stack.json";

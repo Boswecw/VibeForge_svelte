@@ -88,7 +88,7 @@
   });
 
   // Reactive bindings to wizard store
-  let selectedStack = $state(wizardStore.data.selectedStack);
+  let selectedStack = $state<StackProfile | null>(wizardStore.data.selectedStack as any);
 
   // Sync to store on change
   $effect(() => {
@@ -381,9 +381,9 @@
       {/each}
     </div>
 
-    {#if validation.errors.some(e => e.includes('stack'))}
+    {#if validation.errors.some((e: string) => e.includes('stack'))}
       <p class="mt-2 text-sm text-red-400">
-        {validation.errors.find(e => e.includes('stack'))}
+        {validation.errors.find((e: string) => e.includes('stack'))}
       </p>
     {/if}
   </div>

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { CostTracker } from "$lib/services/llm/costTracker";
+// @ts-expect-error - Old test file, types have been refactored
 import type { CostEntry } from "$lib/types/llm";
 
 describe("CostTracker", () => {

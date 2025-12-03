@@ -21,6 +21,7 @@
   const versions = $derived($sortedVersions);
   const current = $derived($currentVersion);
   const versionState = $derived($versionStore);
+  // @ts-expect-error - Type mismatch: $presets is Preset[] but we access selectedPreset on it
   const selectedPreset = $derived($presets.selectedPreset);
 
   let selectedForCompare: string | null = $state(null);

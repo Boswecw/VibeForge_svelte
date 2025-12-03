@@ -20,9 +20,12 @@ export interface ProjectConfig {
   // Step 3: Languages (Legacy - for single-component projects)
   primaryLanguage: string | null;
   additionalLanguages: string[];
+  secondaryLanguages?: string[]; // Alias for additionalLanguages
 
   // Step 4: Stack (Legacy - for single-component projects)
   stack: string | null;
+  selectedStack?: string; // Alias for stack
+  selectedPattern?: string; // Selected architecture pattern ID
 
   // Step 5: Configuration
   features: {
@@ -35,7 +38,15 @@ export interface ProjectConfig {
 
   // Additional
   projectPath: string;
+  outputPath?: string; // Alias for projectPath
   license: string;
+
+  // Optional metadata
+  timeline?: string; // Project timeline estimate
+  teamSize?: string | number; // Team size
+  complexity?: string; // Project complexity level
+  initGit?: boolean; // Initialize git repository
+  generateReadme?: boolean; // Generate README file
 }
 
 export const DEFAULT_PROJECT_CONFIG: ProjectConfig = {

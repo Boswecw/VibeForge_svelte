@@ -869,7 +869,7 @@ export const monorepoPattern: ArchitecturePattern = {
 			role: 'library',
 			name: 'Utilities',
 			language: 'typescript',
-			framework: null,
+			framework: 'none',
 			location: 'packages/utils',
 			scaffolding: {
 				directories: [
@@ -896,7 +896,7 @@ export const monorepoPattern: ArchitecturePattern = {
 			role: 'library',
 			name: 'TypeScript Types',
 			language: 'typescript',
-			framework: null,
+			framework: 'none',
 			location: 'packages/types',
 			scaffolding: {
 				directories: [

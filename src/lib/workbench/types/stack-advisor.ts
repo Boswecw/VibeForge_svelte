@@ -296,13 +296,13 @@ export function mapPatternAnalyticsToHistoricalData(
   }
 
   // Aggregate data across patterns
-  const totalProjects = relevantAnalytics.reduce((sum, a) => sum + a.totalUses, 0);
-  const successfulBuilds = relevantAnalytics.reduce((sum, a) => sum + a.successfulProjects, 0);
+  const totalProjects = relevantAnalytics.reduce((sum, a) => sum + (a.totalUses || a.totalProjects || 0), 0);
+  const successfulBuilds = relevantAnalytics.reduce((sum, a) => sum + (a.successfulProjects || a.successfulBuilds || 0), 0);
   const avgSatisfaction =
-    relevantAnalytics.reduce((sum, a) => sum + a.averageSatisfaction * a.totalUses, 0) /
+    relevantAnalytics.reduce((sum, a) => sum + a.averageSatisfaction * (a.totalUses || a.totalProjects || 0), 0) /
     totalProjects;
   const avgTestPassRate =
-    relevantAnalytics.reduce((sum, a) => sum + (a.averageTestPassRate || 0) * a.totalUses, 0) /
+    relevantAnalytics.reduce((sum, a) => sum + (a.averageTestPassRate || 0) * (a.totalUses || a.totalProjects || 0), 0) /
     totalProjects;
 
   return {

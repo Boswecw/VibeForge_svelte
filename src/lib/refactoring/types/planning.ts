@@ -19,7 +19,7 @@ export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'blocked' | '
 
 export interface RefactoringTask {
 	id: string;
-	phase: number;
+	phase?: number; // Optional for backward compatibility
 	category: TaskCategory;
 	priority: TaskPriority;
 	status: TaskStatus;
@@ -27,38 +27,38 @@ export interface RefactoringTask {
 
 	title: string;
 	description: string;
-	rationale: string; // Why this task is needed
+	rationale?: string; // Optional - why this task is needed
 
 	estimatedHours: number;
 	actualHours?: number;
 
 	// AI-specific estimate (minutes, not hours)
-	estimatedMinutesAI: number;
-	aiEstimateConfidence: number; // 0-1
+	estimatedMinutesAI?: number; // Optional for backward compatibility
+	aiEstimateConfidence?: number; // 0-1, optional
 
-	files: string[];
+	files?: string[]; // Optional - use affectedFiles for legacy
 	affectedFiles: string[]; // Legacy alias for files
 	dependencies: string[]; // Task IDs that must complete first
 	blockedBy?: string[]; // Issue IDs blocking this task
 
-	acceptance: string[]; // Acceptance criteria (bullets)
+	acceptance?: string[]; // Acceptance criteria (bullets), optional
 	acceptanceCriteria: string[]; // Legacy alias for acceptance
 	commands?: string[]; // Verification commands
 
-	autoExecutable: boolean;
+	autoExecutable?: boolean; // Optional for backward compatibility
 	claudePrompt?: string; // Prompt for Claude Code execution
 }
 
 export interface RefactoringPhase {
 	id: string;
-	phase: number;
+	phase?: number; // Optional - use 'number' for legacy compatibility
 	number: number; // Legacy alias for phase
 	name: string;
 	description: string;
 	required: boolean;
 
 	tasks: RefactoringTask[];
-	gate: QualityGate;
+	gate?: QualityGate; // Optional for backward compatibility
 
 	estimatedHours: number;
 	actualHours?: number;

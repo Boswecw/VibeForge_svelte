@@ -3,7 +3,10 @@
  * Intelligent model selection based on task complexity, cost, and performance
  */
 
-import type { LLMProvider } from "../llm/types";
+import type { LLMProviderType } from "../llm/types";
+
+// Re-export for convenience (alias for compatibility)
+export type LLMProvider = LLMProviderType;
 
 /**
  * Task complexity levels
@@ -15,6 +18,7 @@ export type TaskComplexity = "simple" | "medium" | "complex" | "expert";
  */
 export type TaskCategory =
   | "stack_recommendation"
+  | "recommendation" // General recommendation category
   | "code_analysis"
   | "explanation"
   | "validation"
@@ -116,6 +120,7 @@ export interface CostEntry {
 
   // Model info
   modelId: string;
+  model?: string; // Alias for modelId (for backward compatibility)
   provider: LLMProvider;
 
   // Usage
@@ -127,9 +132,11 @@ export interface CostEntry {
   inputCost: number; // USD
   outputCost: number; // USD
   totalCost: number; // USD
+  cost?: number; // Alias for totalCost (for backward compatibility)
 
   // Context
   taskCategory: TaskCategory;
+  category?: TaskCategory; // Alias for taskCategory (for backward compatibility)
   sessionId?: string;
   userId?: string;
 }
@@ -468,6 +475,12 @@ export const TASK_CATEGORY_DEFAULTS: Record<
     domainComplexity: 7,
     outputStructure: "structured",
     requiresMultiStep: true,
+  },
+  recommendation: {
+    reasoningDepth: 6,
+    domainComplexity: 6,
+    outputStructure: "structured",
+    requiresMultiStep: false,
   },
   code_analysis: {
     reasoningDepth: 7,

@@ -229,11 +229,13 @@ describe('Architecture Patterns', () => {
 			});
 
 			it('should have valid documentation', () => {
-				expect(desktopAppPattern.documentation.quickStart).toBeDefined();
-				expect(desktopAppPattern.documentation.architecture).toBeDefined();
-				expect(desktopAppPattern.documentation.deployment).toBeDefined();
-				expect(desktopAppPattern.documentation.troubleshooting).toBeDefined();
-			});
+				expect(desktopAppPattern.documentation).toBeDefined();
+				if (desktopAppPattern.documentation) {
+					expect(desktopAppPattern.documentation.quickStart).toBeDefined();
+					expect(desktopAppPattern.documentation.architecture).toBeDefined();
+					expect(desktopAppPattern.documentation.deployment).toBeDefined();
+					expect(desktopAppPattern.documentation.troubleshooting).toBeDefined();
+				}
 		});
 
 		describe('Full-Stack Web Pattern', () => {

@@ -2,7 +2,7 @@
 	import { refactoringStore } from '$lib/stores/refactoringStore.svelte';
 	import { RefactoringAutomation } from '$lib/refactoring';
 
-	let state = $derived(refactoringStore.state);
+	let refactoringState = $derived(refactoringStore.state);
 	let project = $derived(refactoringStore.project);
 	let automation = $derived(refactoringStore.automation);
 	let outcome = $derived(refactoringStore.outcome);
@@ -11,19 +11,19 @@
 	let finalAnalysisPath = $state('');
 
 	async function handleCompleteProject() {
-		if (!project || !automation || !state.analysis) return;
+		if (!project || !automation || !refactoringState.analysis) return;
 
 		try {
 			isAnalyzing = true;
 
 			// Analyze final state
-			const finalAnalysis = await automation.analyze(finalAnalysisPath || state.repositoryPath);
+			const finalAnalysis = await automation.analyze(finalAnalysisPath || refactoringState.repositoryPath);
 
 			// Complete project and get outcome
 			const { project: completedProject, outcome: refactoringOutcome } = await automation.complete(
 				project,
 				finalAnalysis,
-				state.analysis
+				refactoringState.analysis
 			);
 
 			refactoringStore.updateProject(completedProject);
@@ -99,7 +99,7 @@
 					id="final-path"
 					type="text"
 					bind:value={finalAnalysisPath}
-					placeholder={state.repositoryPath}
+					placeholder={refactoringState.repositoryPath}
 					disabled={isAnalyzing}
 				/>
 				<p class="help-text">Leave empty to use the original repository path</p>

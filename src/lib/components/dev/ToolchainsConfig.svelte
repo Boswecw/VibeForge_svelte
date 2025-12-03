@@ -6,7 +6,7 @@
    * Allows manual path overrides and per-runtime configuration with persistence
    */
 
-  import { invoke } from '@tauri-apps/api/tauri';
+  import { invoke } from '@tauri-apps/api/core';
   import { onMount } from 'svelte';
 
   // ============================================================================

@@ -135,6 +135,20 @@ class WizardStore {
   }
 
   /**
+   * Legacy alias for currentStep
+   */
+  get currentStepIndex(): number {
+    return this.currentStep;
+  }
+
+  /**
+   * Legacy alias for config
+   */
+  get data(): ProjectConfig {
+    return this.config;
+  }
+
+  /**
    * Open wizard (load draft if exists)
    */
   open() {

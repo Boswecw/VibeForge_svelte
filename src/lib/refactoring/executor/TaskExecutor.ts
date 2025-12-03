@@ -483,7 +483,7 @@ export class TaskExecutor {
 		const actualMinutes = Math.ceil((endTime - startTime) / 60000);
 
 		// Simulate token usage based on task complexity
-		const estimatedTokens = task.files.length * 1000 + task.description.length * 2;
+		const estimatedTokens = (task.files || task.affectedFiles || []).length * 1000 + task.description.length * 2;
 		const inputTokens = Math.floor(estimatedTokens * 0.6);
 		const outputTokens = Math.floor(estimatedTokens * 0.4);
 		const totalTokens = inputTokens + outputTokens;
@@ -499,14 +499,14 @@ export class TaskExecutor {
 
 		return {
 			executorType: this.config.executorType || 'ai-claude-code',
-			estimatedMinutes: task.estimatedMinutesAI,
+			estimatedMinutes: task.estimatedMinutesAI || 30,
 			actualMinutes,
 			totalTokens,
 			inputTokens,
 			outputTokens,
 			apiCalls: iterationCount,
 			retryCount: iterationCount - 1,
-			estimatedCost: (task.estimatedMinutesAI / actualMinutes) * actualCost,
+			estimatedCost: ((task.estimatedMinutesAI || 30) / actualMinutes) * actualCost,
 			actualCost,
 			firstPassSuccess,
 			iterationCount,

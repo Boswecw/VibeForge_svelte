@@ -3,7 +3,7 @@
 	import { RefactoringAutomation } from '$lib/refactoring';
 	import AnalysisResults from './AnalysisResults.svelte';
 
-	let state = $derived(refactoringStore.state);
+	let refactoringState = $derived(refactoringStore.state);
 	let isAnalyzing = $derived(refactoringStore.isAnalyzing);
 	let analysis = $derived(refactoringStore.analysis);
 
@@ -22,8 +22,8 @@
 
 			automation = new RefactoringAutomation({
 				repositoryPath: projectPath,
-				enableLearning: state.enableLearning,
-				createCheckpoints: state.createCheckpoints
+				enableLearning: refactoringState.enableLearning,
+				createCheckpoints: refactoringState.createCheckpoints
 			});
 
 			// Store automation instance for later use
@@ -69,7 +69,7 @@
 				<label class="checkbox">
 					<input
 						type="checkbox"
-						checked={state.enableLearning}
+						checked={refactoringState.enableLearning}
 						onchange={(e) => refactoringStore.setEnableLearning(e.currentTarget.checked)}
 						disabled={isAnalyzing}
 					/>
@@ -79,7 +79,7 @@
 				<label class="checkbox">
 					<input
 						type="checkbox"
-						checked={state.createCheckpoints}
+						checked={refactoringState.createCheckpoints}
 						onchange={(e) => refactoringStore.setCreateCheckpoints(e.currentTarget.checked)}
 						disabled={isAnalyzing}
 					/>
@@ -97,10 +97,10 @@
 				</button>
 			</div>
 
-			{#if state.analyzeError}
+			{#if refactoringState.analyzeError}
 				<div class="error-message">
 					<strong>Error:</strong>
-					{state.analyzeError}
+					{refactoringState.analyzeError}
 				</div>
 			{/if}
 		</div>

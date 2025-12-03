@@ -9,7 +9,13 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true
-	}
+	},
+	"exclude": [
+		"**/archive/**",
+		"**/_archive/**",
+		"**/node_modules/**",
+		"**/.svelte-kit/**"
+	]
 	// Path aliases are handled by https://svelte.dev/docs/kit/configuration#alias
 	// except $lib which is handled by https://svelte.dev/docs/kit/configuration#files
 	//

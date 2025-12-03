@@ -26,8 +26,8 @@
 
   // Reactive bindings to wizard store
   let features = $state<FeatureSelection>({ ...wizardStore.config.features });
-  let teamSize = $state(wizardStore.config.teamSize);
-  let timeline = $state(wizardStore.config.timeline);
+  let teamSize = $state(typeof wizardStore.config.teamSize === 'number' ? wizardStore.config.teamSize : 1);
+  let timeline = $state(wizardStore.config.timeline || '');
 
   // Sync to store on change
   $effect(() => {

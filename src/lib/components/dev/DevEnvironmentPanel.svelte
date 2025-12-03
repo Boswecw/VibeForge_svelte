@@ -6,7 +6,7 @@
    * Main container for development environment management with tab navigation
    */
 
-  import { invoke } from '@tauri-apps/api/tauri';
+  import { invoke } from '@tauri-apps/api/core';
   import { onMount } from 'svelte';
   import RuntimeStatusTable from './RuntimeStatusTable.svelte';
   import InstallationGuide from './InstallationGuide.svelte';

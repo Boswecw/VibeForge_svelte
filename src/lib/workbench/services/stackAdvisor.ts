@@ -530,8 +530,8 @@ export class StackAdvisor {
     return {
       stackId: stack.id,
       patternId,
-      totalProjects: patternAnalytics.totalUses,
-      successfulBuilds: patternAnalytics.successfulProjects,
+      totalProjects: patternAnalytics.totalUses || 0,
+      successfulBuilds: patternAnalytics.successfulProjects || 0,
       avgTestPassRate: patternAnalytics.averageTestPassRate || 0,
       avgSatisfaction: patternAnalytics.averageSatisfaction,
       npsScore: 0, // TODO: Calculate from feedback

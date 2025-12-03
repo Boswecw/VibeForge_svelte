@@ -9,13 +9,17 @@ Displays model performance metrics including response times, error rates, and pe
   export let dateRange: { start: Date; end: Date };
 
   interface PerformanceStats {
-    totalCount: number;
+    totalRequests: number;
     errorCount: number;
     acceptedCount: number;
     avgResponseTime: number;
     p50ResponseTime: number;
     p95ResponseTime: number;
     p99ResponseTime: number;
+    // Aliases for shorter access
+    p50?: number;
+    p95?: number;
+    p99?: number;
   }
 
   let modelPerformance: Array<{ model: string; provider: string; stats: PerformanceStats }> = [];
@@ -43,8 +47,8 @@ Displays model performance metrics including response times, error rates, and pe
     modelPerformance = [];
 
     for (const { id, provider } of models) {
-      const stats = performanceMetrics.getMetrics(provider, id);
-      if (stats && stats.totalCount > 0) {
+      const stats = performanceMetrics.getMetrics(provider as any, id);
+      if (stats && stats.totalRequests > 0) {
         modelPerformance.push({ model: id, provider, stats });
       }
     }
@@ -66,13 +70,13 @@ Displays model performance metrics including response times, error rates, and pe
   }
 
   function calculateErrorRate(stats: PerformanceStats): number {
-    return stats.totalCount > 0 ? (stats.errorCount / stats.totalCount) * 100 : 0;
+    return stats.totalRequests > 0 ? (stats.errorCount / stats.totalRequests) * 100 : 0;
   }
 
   function getPerformanceGrade(stats: PerformanceStats): string {
     const avgTime = stats.avgResponseTime;
     const errorRate = calculateErrorRate(stats);
-    const acceptanceRate = stats.totalCount > 0 ? (stats.acceptedCount / stats.totalCount) * 100 : 0;
+    const acceptanceRate = stats.totalRequests > 0 ? (stats.acceptedCount / stats.totalRequests) * 100 : 0;
 
     let score = 0;
     
@@ -175,7 +179,7 @@ Displays model performance metrics including response times, error rates, and pe
                 <td class="py-3 pr-4">
                   <div class="text-sm text-slate-100">{provider}/{model}</div>
                 </td>
-                <td class="py-3 px-2 text-sm text-slate-100 text-right">{stats.totalCount}</td>
+                <td class="py-3 px-2 text-sm text-slate-100 text-right">{stats.totalRequests}</td>
                 <td class="py-3 px-2 text-sm {getResponseTimeColor(stats.avgResponseTime)} text-right">
                   {Math.round(stats.avgResponseTime)}ms
                 </td>
