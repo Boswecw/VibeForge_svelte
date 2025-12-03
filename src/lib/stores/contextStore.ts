@@ -59,7 +59,7 @@ function createContextStore() {
       try {
         const response = await dataforgeClient.listContextBlocks(workspaceId);
         if (response.success && response.data) {
-          set(response.data.items);
+          set(response.data.items as any); // Type mismatch: domain vs UI ContextBlock
         }
       } catch (error) {
         console.error("Failed to load contexts from DataForge:", error);

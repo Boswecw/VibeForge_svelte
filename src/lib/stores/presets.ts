@@ -215,7 +215,7 @@ function createPresetsStore() {
     writable<Preset | null>(null);
   let isLoading = false;
 
-  return {
+  const store = {
     subscribe,
 
     // Selected preset management
@@ -360,7 +360,7 @@ function createPresetsStore() {
       }
 
       // Create a copy with modified name
-      const duplicate = await this.createPreset({
+      const duplicate = await store.createPreset({
         ...presetToDuplicate,
         name: `${presetToDuplicate.name} (Copy)`,
         pinned: false,
@@ -369,6 +369,8 @@ function createPresetsStore() {
       return duplicate;
     },
   };
+
+  return store;
 }
 
 export const presets = createPresetsStore();
