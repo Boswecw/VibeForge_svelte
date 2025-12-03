@@ -7,6 +7,47 @@ import type { ComponentConfig } from './wizard';
 
 export type ProjectType = 'web' | 'api' | 'library' | 'cli' | 'fullstack';
 
+export interface Project {
+  id: string;
+  name: string;
+  description: string;
+  path: string;
+  projectType: ProjectType | null;
+  primaryLanguage: string;
+  secondaryLanguages: string[];
+  stack: any; // TODO: Define proper stack type
+  features: {
+    testing: boolean;
+    linting: boolean;
+    git: boolean;
+    docker: boolean;
+    ci: boolean;
+  };
+  createdAt: string;
+  lastOpenedAt: string;
+}
+
+export interface ProjectSummary {
+  id: string;
+  name: string;
+  path: string;
+  lastOpened: string;
+  stack: string;
+  primaryLanguage: string;
+}
+
+export interface ProjectGenerationResult {
+  projectId: string;
+  path: string;
+  filesCreated?: string[];
+}
+
+export interface ProjectCreationRecord {
+  projectId: string;
+  timestamp: string;
+  wizardData: any; // TODO: Define proper type
+}
+
 export interface ProjectConfig {
   // Step 1: Project Intent
   projectName: string;

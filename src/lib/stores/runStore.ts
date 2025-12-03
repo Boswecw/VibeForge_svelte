@@ -31,19 +31,32 @@ function createRunStore() {
           return null;
         }
 
-        const run = response.data;
+        const runs = response.data;
+        const run = runs[0]; // Get first run from array
+
+        // Convert PromptRun to ModelRun
+        const modelRun: ModelRun = {
+          id: run.id,
+          modelId: run.modelId,
+          modelLabel: run.modelId, // Use modelId as label for now
+          createdAt: run.createdAt || run.startedAt,
+          promptSnapshot: run.promptSnapshot,
+          contextTitles: [], // Not available from PromptRun
+          status: run.status,
+          outputText: run.output || '',
+        };
 
         // 2. Add to local state
         update((state) => ({
-          runs: [run, ...state.runs],
-          activeRunId: run.id,
+          runs: [modelRun, ...state.runs],
+          activeRunId: modelRun.id,
         }));
 
         // 3. Log to DataForge for analytics/history
         // TODO: Implement when DataForge /api/v1/runs endpoint is ready
-        // await dataforgeClient.logRun(run);
+        // await dataforgeClient.logRun(modelRun);
 
-        return run;
+        return modelRun;
       } catch (error) {
         console.error("Run execution failed:", error);
         return null;
