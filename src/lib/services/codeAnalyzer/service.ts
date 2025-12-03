@@ -264,8 +264,8 @@ export class CodeAnalyzerService {
 
     // Check framework match
     const stackFrameworks = [
-      ...stack.technologies.frontend,
-      ...stack.technologies.backend,
+      ...(stack.technologies.frontend || []),
+      ...(stack.technologies.backend || []),
     ].map((f) => f.toLowerCase());
     const profileFrameworks = profile.frameworks.map((f) =>
       f.name.toLowerCase()
@@ -287,7 +287,7 @@ export class CodeAnalyzerService {
   formatAnalysisSummary(profile: ProjectProfile): string {
     const lines: string[] = [
       `📁 ${profile.projectName}`,
-      `📊 ${profile.filesScanned} files scanned`,
+      `📂 ${profile.projectPath}`,
       "",
       `**Languages:**`,
       ...profile.languages

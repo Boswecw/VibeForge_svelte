@@ -9,7 +9,7 @@ import { PhaseGenerator } from './PhaseGenerator';
 import { EstimationEngine } from './EstimationEngine';
 import { PromptGenerator } from './PromptGenerator';
 import type { CodebaseAnalysis } from '../types/analysis';
-import type { QualityStandards } from '../types/standards';
+import type { QualityStandards, QualityGate } from '../types/standards';
 import type { RefactoringPlan, ClaudePromptDocument } from '../types/planning';
 import type { TaskRecommendation } from '../types/learning';
 

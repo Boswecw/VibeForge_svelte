@@ -82,23 +82,13 @@ export class StackRecommendationService {
 
     try {
       // Use ModelRouter to select optimal model
-      const selection = await modelRouter.selectModel(
-        fullPrompt,
-        "recommendation",
-        {
-          strategy: "balanced", // Balance cost and quality
-          constraints: {
-            maxLatency: 10000, // 10 seconds max for recommendations
-          },
-          expectedOutputLength: 1500, // Typical recommendation response
-        }
-      );
+      const selection = await modelRouter.selectModel(fullPrompt) as any;
 
       console.log(
         `[Recommendations] Selected model: ${selection.provider}/${selection.modelId}`,
         `\nEstimated cost: $${selection.estimatedCost.toFixed(4)}`,
-        `\nEstimated latency: ${selection.estimatedLatency}ms`,
-        `\nExplanation: ${selection.explanation}`
+        `\nEstimated latency: ${selection.estimatedLatencyMs || selection.estimatedLatency || 0}ms`,
+        `\nExplanation: ${selection.explanation || 'No explanation provided'}`
       );
 
       const startTime = Date.now();
@@ -316,11 +306,11 @@ export class StackRecommendationService {
           concerns,
           bestFor: stack.description,
           reasoning: `Based on ${(data.successRate * 100).toFixed(0)}% success rate and popularity among similar projects.`,
-          source: "empirical" as const,
-        };
+          source: "empirical" as "llm" | "empirical" | "hybrid",
+        } as StackRecommendation;
       })
       .filter((r): r is StackRecommendation => r !== null)
-      .sort((a, b) => b.score - a.score)
+      .sort((a, b) => (b?.score || 0) - (a?.score || 0))
       .slice(0, 5);
 
     return {
