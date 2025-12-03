@@ -84,12 +84,14 @@ export interface TimeEstimate {
 }
 
 export interface CostEstimate {
-	developmentHours: number;
-	testingHours: number;
-	reviewHours: number;
+	developmentHours?: number;
+	testingHours?: number;
+	reviewHours?: number;
 	totalHours: number;
-	weekEstimate: number;
-	assumptions: string[];
+	weekEstimate?: number;
+	assumptions?: string[];
+	breakdown?: Record<string, number>; // Task category breakdown
+	confidence?: 'low' | 'medium' | 'high';
 }
 
 export interface RefactoringPlan {
