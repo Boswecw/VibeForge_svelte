@@ -14,7 +14,7 @@
 		maxlength?: number;
 		name?: string;
 		id?: string;
-		autocomplete?: string;
+		autocomplete?: string | null; // Allow null for HTML autocomplete attribute
 		oninput?: (event: Event & { currentTarget: HTMLInputElement }) => void;
 		onchange?: (event: Event & { currentTarget: HTMLInputElement }) => void;
 		onfocus?: (event: FocusEvent & { currentTarget: HTMLInputElement }) => void;
@@ -79,7 +79,7 @@
 	readonly={readonly}
 	required={required}
 	maxlength={maxlength}
-	autocomplete={autocomplete}
+	autocomplete={autocomplete as any}
 	value={value}
 	oninput={oninput}
 	onchange={onchange}

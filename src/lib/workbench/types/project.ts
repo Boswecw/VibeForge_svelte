@@ -3,9 +3,10 @@
  */
 
 import type { ArchitecturePattern } from './architecture';
-import type { ComponentConfig } from './wizard';
+import type { ComponentConfig, ProjectType as WizardProjectType } from './wizard';
 
-export type ProjectType = 'web' | 'api' | 'library' | 'cli' | 'fullstack';
+// Re-export wizard ProjectType for compatibility
+export type ProjectType = WizardProjectType;
 
 export interface Project {
   id: string;

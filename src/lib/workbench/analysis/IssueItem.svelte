@@ -25,7 +25,8 @@
 		'type-safety': 'Type Safety',
 		'code-quality': 'Code Quality',
 		architecture: 'Architecture',
-		security: 'Security'
+		security: 'Security',
+		performance: 'Performance'
 	};
 </script>
 

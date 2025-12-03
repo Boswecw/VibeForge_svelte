@@ -82,7 +82,16 @@ export class StackRecommendationService {
 
     try {
       // Use ModelRouter to select optimal model
-      const selection = await modelRouter.selectModel(fullPrompt) as any;
+      const estimatedTokens = Math.ceil(fullPrompt.length / 4); // Rough token estimate
+      const criteria = {
+        taskComplexity: 'medium' as const,
+        taskCategory: 'generation' as const,
+        requiresReasoning: true,
+        requiresCreativity: true,
+        requiresAccuracy: true,
+        promptTokens: estimatedTokens
+      };
+      const selection = await modelRouter.selectModel(criteria);
 
       console.log(
         `[Recommendations] Selected model: ${selection.provider}/${selection.modelId}`,
@@ -424,7 +433,17 @@ export class StackRecommendationService {
       const fullPrompt = `${systemPrompt}\n\n${prompt}`;
 
       // Use cheaper model for simpler explanation task
-      const selection = await modelRouter.selectModel(fullPrompt) as any;
+      const estimatedTokens = Math.ceil(fullPrompt.length / 4);
+      const criteria = {
+        taskComplexity: 'simple' as const,
+        taskCategory: 'generation' as const,
+        requiresReasoning: false,
+        requiresCreativity: false,
+        requiresAccuracy: true,
+        promptTokens: estimatedTokens,
+        maxCostPerRequest: 0.01 // Prefer cheaper models for explanations
+      };
+      const selection = await modelRouter.selectModel(criteria);
 
       const startTime = Date.now();
 

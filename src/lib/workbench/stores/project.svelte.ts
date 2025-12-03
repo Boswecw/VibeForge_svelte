@@ -102,7 +102,13 @@ async function createFromWizard(wizardData: WizardData): Promise<Project> {
       primaryLanguage: wizardData.primaryLanguage!,
       secondaryLanguages: wizardData.secondaryLanguages,
       stack: wizardData.selectedStack!,
-      features: wizardData.features,
+      features: {
+        testing: wizardData.features.testing ?? true,
+        linting: true, // Always enabled by default
+        git: true, // Always enabled by default
+        docker: wizardData.features.docker ?? false,
+        ci: wizardData.features.ci ?? false,
+      },
       createdAt: new Date().toISOString(),
       lastOpenedAt: new Date().toISOString(),
     };
