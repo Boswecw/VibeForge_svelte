@@ -261,15 +261,5 @@ export interface PatternRecommender {
 // EXPORTS
 // ============================================================================
 
-export type {
-	DetectedLanguage,
-	DetectedFramework,
-	DetectedBuildTool,
-	DetectedDatabase,
-	ProjectStructure,
-	TechnologyStack,
-	FileIndicator,
-	PatternRecommendation,
-	RecommendationResult,
-	RuntimeAnalysisOptions
-};
+// Types are already exported inline above - no need to re-export
+// (Removed duplicate exports to fix TypeScript conflicts)

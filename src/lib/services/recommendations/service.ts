@@ -85,7 +85,7 @@ export class StackRecommendationService {
       const estimatedTokens = Math.ceil(fullPrompt.length / 4); // Rough token estimate
       const criteria = {
         taskComplexity: 'medium' as const,
-        taskCategory: 'generation' as const,
+        taskCategory: 'stack_recommendation' as const,
         requiresReasoning: true,
         requiresCreativity: true,
         requiresAccuracy: true,
@@ -96,8 +96,7 @@ export class StackRecommendationService {
       console.log(
         `[Recommendations] Selected model: ${selection.provider}/${selection.modelId}`,
         `\nEstimated cost: $${selection.estimatedCost.toFixed(4)}`,
-        `\nEstimated latency: ${selection.estimatedLatencyMs || selection.estimatedLatency || 0}ms`,
-        `\nExplanation: ${selection.explanation || 'No explanation provided'}`
+        `\nEstimated latency: ${selection.estimatedLatencyMs}ms`
       );
 
       const startTime = Date.now();
@@ -436,7 +435,7 @@ export class StackRecommendationService {
       const estimatedTokens = Math.ceil(fullPrompt.length / 4);
       const criteria = {
         taskComplexity: 'simple' as const,
-        taskCategory: 'generation' as const,
+        taskCategory: 'explanation' as const,
         requiresReasoning: false,
         requiresCreativity: false,
         requiresAccuracy: true,
