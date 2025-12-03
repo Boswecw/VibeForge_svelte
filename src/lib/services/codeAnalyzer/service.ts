@@ -45,7 +45,7 @@ export class CodeAnalyzerService {
   async analyzeProject(): Promise<AnalysisResult> {
     try {
       // Open directory picker
-      const selectedPath = await open({
+      const selectedPath = await (open as any)({
         directory: true,
         multiple: false,
         title: "Select Project Folder to Analyze",
@@ -250,12 +250,12 @@ export class CodeAnalyzerService {
     let factors = 0;
 
     // Check language match
-    const stackLanguages = stack.technologies.languages.map((l) =>
+    const stackLanguages = ((stack.technologies as any).languages || []).map((l: string) =>
       l.toLowerCase()
     );
     const profileLanguageIds = profile.languages.map((l) => l.id);
     const languageMatches = profileLanguageIds.filter((id) =>
-      stackLanguages.some((sl) => sl.includes(id.split("-")[0]))
+      stackLanguages.some((sl: string) => sl.includes(id.split("-")[0]))
     );
     if (languageMatches.length > 0) {
       confidence += languageMatches.length / stackLanguages.length;
