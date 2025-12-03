@@ -120,7 +120,7 @@ For each prompt:
     id: "preset-4",
     name: "SQL Query Optimizer",
     description: "Analyze and optimize SQL queries for performance.",
-    category: "database",
+    category: "analysis",
     workspace: "VibeForge Dev",
     tags: ["sql", "database", "optimization", "performance"],
     basePrompt: `You are a database performance expert specializing in SQL optimization.
