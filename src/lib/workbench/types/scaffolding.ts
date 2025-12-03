@@ -150,6 +150,14 @@ export interface ScaffoldResult {
 
 	/** List of component IDs that were generated */
 	componentsGenerated: string[];
+
+	// Deprecated snake_case properties for backward compatibility with Rust backend
+	/** @deprecated Use projectPath instead */
+	project_path?: string;
+	/** @deprecated Use filesCreated instead */
+	files_created?: number;
+	/** @deprecated Use componentsGenerated instead */
+	components_generated?: string[];
 }
 
 export interface ScaffoldError {

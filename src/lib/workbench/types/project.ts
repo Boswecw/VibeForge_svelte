@@ -89,6 +89,10 @@ export interface ProjectConfig {
   complexity?: string; // Project complexity level
   initGit?: boolean; // Initialize git repository
   generateReadme?: boolean; // Generate README file
+
+  // Feature aliases for backward compatibility
+  includeTests?: boolean; // Alias for features.testing
+  includeCI?: boolean; // Alias for features.ci
 }
 
 export const DEFAULT_PROJECT_CONFIG: ProjectConfig = {
