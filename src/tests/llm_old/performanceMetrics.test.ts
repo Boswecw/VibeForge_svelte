@@ -1,6 +1,6 @@
+// @ts-nocheck - Old test file using deprecated API, excluded from type checking
 import { describe, it, expect, beforeEach } from "vitest";
 import { PerformanceMetricsCollector as PerformanceMetrics } from "$lib/services/modelRouter/performanceMetrics";
-// @ts-expect-error - MetricEntry type no longer exists, test file needs updating
 type MetricEntry = any;
 
 describe("PerformanceMetrics", () => {
