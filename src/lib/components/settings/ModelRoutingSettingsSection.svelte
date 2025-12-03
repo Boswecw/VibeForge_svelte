@@ -6,6 +6,7 @@ Configure intelligent model selection, cost tracking, and performance monitoring
   import { onMount } from "svelte";
   import { costTracker, performanceMetrics } from "$lib/services/modelRouter";
   import type { RoutingStrategy, CostBudget, CostEntry } from "$lib/services/modelRouter/types";
+  import type { LLMProviderType } from "$lib/services/llm/types";
 
   // Routing settings
   let strategy: RoutingStrategy = "balanced";
@@ -146,8 +147,8 @@ Configure intelligent model selection, cost tracking, and performance monitoring
     performanceStats = {};
 
     for (const model of models) {
-      const provider = model.startsWith("gpt") ? "openai" : "anthropic";
-      const stats = performanceMetrics.getMetrics(provider as any, model);
+      const provider: LLMProviderType = model.startsWith("gpt") ? "openai" : "anthropic";
+      const stats = performanceMetrics.getMetrics(provider, model);
       if (stats && stats.totalRequests > 0) {
         performanceStats[model] = stats;
       }

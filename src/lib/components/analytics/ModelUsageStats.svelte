@@ -5,6 +5,7 @@ Displays model usage counts, acceptance rates, and call distribution
 <script lang="ts">
   import { onMount } from "svelte";
   import { performanceMetrics } from "$lib/services/modelRouter";
+  import type { LLMProviderType } from "$lib/services/llm/types";
 
   export let dateRange: { start: Date; end: Date };
 
@@ -15,7 +16,7 @@ Displays model usage counts, acceptance rates, and call distribution
     avgResponseTime: number;
   }
 
-  let modelStats: Array<{ model: string; provider: string; stats: ModelStats }> = [];
+  let modelStats: Array<{ model: string; provider: LLMProviderType; stats: ModelStats }> = [];
   let totalCalls = 0;
 
   $: if (dateRange) {
@@ -27,7 +28,7 @@ Displays model usage counts, acceptance rates, and call distribution
   });
 
   function loadUsageData() {
-    const models = [
+    const models: Array<{ id: string; provider: LLMProviderType }> = [
       { id: "gpt-4", provider: "openai" },
       { id: "gpt-4o", provider: "openai" },
       { id: "gpt-3.5-turbo", provider: "openai" },
@@ -42,7 +43,7 @@ Displays model usage counts, acceptance rates, and call distribution
     totalCalls = 0;
 
     for (const { id, provider } of models) {
-      const stats = performanceMetrics.getMetrics(provider as any, id);
+      const stats = performanceMetrics.getMetrics(provider, id);
       if (stats && stats.totalRequests > 0) {
         modelStats.push({ model: id, provider, stats });
         totalCalls += stats.totalRequests;

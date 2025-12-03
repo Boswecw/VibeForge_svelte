@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { ModelRouter } from "$lib/services/llm/modelRouter";
-import { CostTracker } from "$lib/services/llm/costTracker";
-import { PerformanceMetrics } from "$lib/services/llm/performanceMetrics";
+import { ModelRouter } from "$lib/services/modelRouter";
+import { CostTracker } from "$lib/services/modelRouter/costTracker";
+import { PerformanceMetricsCollector as PerformanceMetrics } from "$lib/services/modelRouter/performanceMetrics";
 // @ts-expect-error - Old test file, types have been refactored
 import type { LLMProvider, LLMRequest, RoutingStrategy } from "$lib/types/llm";
 

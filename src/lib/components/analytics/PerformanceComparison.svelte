@@ -5,6 +5,7 @@ Displays model performance metrics including response times, error rates, and pe
 <script lang="ts">
   import { onMount } from "svelte";
   import { performanceMetrics } from "$lib/services/modelRouter";
+  import type { LLMProviderType } from "$lib/services/llm/types";
 
   export let dateRange: { start: Date; end: Date };
 
@@ -22,7 +23,7 @@ Displays model performance metrics including response times, error rates, and pe
     p99?: number;
   }
 
-  let modelPerformance: Array<{ model: string; provider: string; stats: PerformanceStats }> = [];
+  let modelPerformance: Array<{ model: string; provider: LLMProviderType; stats: PerformanceStats }> = [];
 
   $: if (dateRange) {
     loadPerformanceData();
@@ -33,7 +34,7 @@ Displays model performance metrics including response times, error rates, and pe
   });
 
   function loadPerformanceData() {
-    const models = [
+    const models: Array<{ id: string; provider: LLMProviderType }> = [
       { id: "gpt-4", provider: "openai" },
       { id: "gpt-4o", provider: "openai" },
       { id: "gpt-3.5-turbo", provider: "openai" },
@@ -47,7 +48,7 @@ Displays model performance metrics including response times, error rates, and pe
     modelPerformance = [];
 
     for (const { id, provider } of models) {
-      const stats = performanceMetrics.getMetrics(provider as any, id);
+      const stats = performanceMetrics.getMetrics(provider, id);
       if (stats && stats.totalRequests > 0) {
         modelPerformance.push({ model: id, provider, stats });
       }

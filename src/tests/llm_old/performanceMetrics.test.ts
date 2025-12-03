@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { PerformanceMetrics } from "$lib/services/llm/performanceMetrics";
+import { PerformanceMetricsCollector as PerformanceMetrics } from "$lib/services/modelRouter/performanceMetrics";
 // @ts-expect-error - MetricEntry type no longer exists, test file needs updating
 type MetricEntry = any;
 
