@@ -18,12 +18,15 @@
     dart: 'dart',
   };
 
+  // Type for language items
+  type LanguageItem = { value: string; label: string };
+
   const requiredRuntimes = $derived(() => {
     const runtimes: string[] = [];
     if (config.primaryLanguage && languageToRuntime[config.primaryLanguage]) {
       runtimes.push(languageToRuntime[config.primaryLanguage]);
     }
-    config.additionalLanguages.forEach(lang => {
+    config.additionalLanguages.forEach((lang: string) => {
       if (languageToRuntime[lang] && !runtimes.includes(languageToRuntime[lang])) {
         runtimes.push(languageToRuntime[lang]);
       }
@@ -77,12 +80,12 @@
       Additional Languages (Optional)
     </label>
     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-      {#each LANGUAGES.filter(l => l.value !== config.primaryLanguage) as language}
+      {#each LANGUAGES.filter((l) => l.value !== config.primaryLanguage) as language}
         <button
           type="button"
           onclick={() => {
             if (config.additionalLanguages.includes(language.value)) {
-              config.additionalLanguages = config.additionalLanguages.filter(l => l !== language.value);
+              config.additionalLanguages = config.additionalLanguages.filter((l) => l !== language.value);
             } else {
               config.additionalLanguages = [...config.additionalLanguages, language.value];
             }

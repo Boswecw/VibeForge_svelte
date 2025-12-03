@@ -185,7 +185,7 @@
             <div class="section">
               <h3>Technologies</h3>
               <div class="tags">
-                {#each pattern.tags as tag}
+                {#each pattern.tags || [] as tag}
                   <span class="tag">{tag}</span>
                 {/each}
               </div>
@@ -335,7 +335,7 @@
           <span class="maturity-badge">{pattern.maturity}</span>
           <span class="stat-text">
             {pattern.components.length} components •
-            {pattern.tags.length} technologies
+            {pattern.tags?.length || 0} technologies
           </span>
         </div>
         {#if onSelect}
