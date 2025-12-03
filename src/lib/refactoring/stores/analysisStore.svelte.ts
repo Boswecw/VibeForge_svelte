@@ -158,15 +158,15 @@ function createAnalysisStore() {
 			state.error = null;
 
 			try {
-				const engine = new StandardsEngine();
-				const evaluation = await engine.evaluate(state.analysis, standards);
+				const engine = new StandardsEngine(standards);
+				const evaluation = await engine.evaluate(state.analysis);
 
 				// Store engine and attach evaluation to analysis
 				state.engine = engine;
 				state.analysis = {
 					...state.analysis,
 					evaluation
-				};
+				} as any; // evaluation is dynamically added
 			} catch (error) {
 				state.error = error instanceof Error ? error.message : String(error);
 				throw error;
@@ -189,7 +189,7 @@ function createAnalysisStore() {
 
 			try {
 				// Get project path from current analysis
-				const projectPath = state.analysis?.projectPath || '/';
+				const projectPath = state.analysis?.path || '/';
 
 				state.progress = 10;
 				const analysis = await state.analyzer.analyze(projectPath);
