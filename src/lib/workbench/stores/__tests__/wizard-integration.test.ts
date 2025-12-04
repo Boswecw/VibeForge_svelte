@@ -43,7 +43,7 @@ describe('Wizard Integration Tests', () => {
 			{
 				id: 'frontend',
 				name: 'Frontend',
-				role: 'UI Layer',
+				role: 'frontend',
 				description: 'Frontend UI',
 				language: 'typescript',
 				framework: 'sveltekit',
@@ -65,7 +65,7 @@ describe('Wizard Integration Tests', () => {
 			{
 				id: 'backend',
 				name: 'Backend',
-				role: 'API Server',
+				role: 'backend',
 				description: 'Backend API',
 				language: 'typescript',
 				framework: 'express',

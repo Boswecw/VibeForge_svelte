@@ -187,7 +187,7 @@ describe("Context Blocks Store", () => {
 
       const updatedBlock = contextBlocksStore.getBlockById("block-1");
       expect(updatedBlock?.updatedAt).toBeTruthy();
-      expect(updatedBlock?.updatedAt >= beforeUpdate).toBe(true);
+      expect(updatedBlock?.updatedAt ? updatedBlock.updatedAt >= beforeUpdate : false).toBe(true);
     });
 
     it("should not affect other blocks", () => {

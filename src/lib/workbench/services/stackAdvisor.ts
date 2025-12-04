@@ -517,7 +517,7 @@ export class StackAdvisor {
     // Find analytics for this pattern
     const patternAnalytics = analytics.find((a) => a.patternId === patternId);
 
-    if (!patternAnalytics || patternAnalytics.totalUses === 0) {
+    if (!patternAnalytics || !patternAnalytics.totalUses) {
       return null;
     }
 
@@ -525,7 +525,7 @@ export class StackAdvisor {
     // For now, we use pattern-level analytics as a proxy
 
     const successRate =
-      patternAnalytics.successfulProjects / patternAnalytics.totalUses;
+      (patternAnalytics.successfulProjects || 0) / (patternAnalytics.totalUses || 1);
 
     return {
       stackId: stack.id,
