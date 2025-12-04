@@ -25,14 +25,14 @@
 
   $effect(() => {
     // Recalculate when pattern changes
-    const pattern = wizardStore.data.selectedPattern;
+    const pattern = wizardStore.data.architecturePattern;
     if (pattern) {
       calculateStackRecommendations();
     }
   });
 
   async function calculateStackRecommendations() {
-    const pattern = wizardStore.data.selectedPattern;
+    const pattern = wizardStore.data.architecturePattern;
     if (!pattern) return;
 
     isLoadingRecommendations = true;
@@ -92,10 +92,10 @@
 
   // Sync to store on change
   $effect(() => {
-    wizardStore.updateData('selectedStack', selectedStack);
+    // Update config.stack with the stack ID
+    wizardStore.config.stack = selectedStack?.id || null;
+    wizardStore.config.selectedStack = selectedStack?.id || null;
   });
-
-  const validation = $derived(wizardStore.validation.stack);
 
   function selectStack(stack: StackProfile): void {
     selectedStack = stack;
@@ -381,9 +381,9 @@
       {/each}
     </div>
 
-    {#if validation.errors.some((e: string) => e.includes('stack'))}
+    {#if !selectedStack && wizardStore.currentStep > 3}
       <p class="mt-2 text-sm text-red-400">
-        {validation.errors.find((e: string) => e.includes('stack'))}
+        Please select a technology stack to continue
       </p>
     {/if}
   </div>
