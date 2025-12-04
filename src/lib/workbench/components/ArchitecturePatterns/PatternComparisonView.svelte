@@ -7,6 +7,7 @@
 <script lang="ts">
   import { patternComparison } from '$lib/stores/patternComparison';
   import type { ArchitecturePattern } from '$lib/workbench/types/architecture';
+  import type { ArchitecturePatternId } from '$lib/data/architecture-patterns';
 
   export let onSelect: ((pattern: ArchitecturePattern) => void) | undefined = undefined;
 
@@ -18,7 +19,7 @@
   }
 
   function removePattern(patternId: string) {
-    patternComparison.removePattern(patternId);
+    patternComparison.removePattern(patternId as ArchitecturePatternId);
   }
 
   function selectPattern(pattern: ArchitecturePattern) {

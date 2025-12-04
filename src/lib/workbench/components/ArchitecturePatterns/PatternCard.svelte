@@ -22,12 +22,12 @@
   let inComparison = $derived($comparisonCount > 0 && $patternComparison.patterns.some(p => p.id === pattern.id));
   let showPreview = $state(false);
 
-  function handleCompareClick(e: MouseEvent) {
+  function handleCompareClick(e: Event) {
     e.stopPropagation();
     patternComparison.togglePattern(pattern);
   }
 
-  function handlePreviewClick(e: MouseEvent) {
+  function handlePreviewClick(e: Event) {
     e.stopPropagation();
     showPreview = true;
   }
