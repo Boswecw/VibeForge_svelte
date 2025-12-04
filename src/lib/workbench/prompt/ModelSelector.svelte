@@ -130,8 +130,8 @@
 									<!-- Pricing -->
 									{#if model.pricing}
 										<div class="text-xs text-slate-500 text-right">
-											<div>${(model.pricing.input * 1000000).toFixed(2)}/1M in</div>
-											<div>${(model.pricing.output * 1000000).toFixed(2)}/1M out</div>
+											<div>${((model.pricing.inputCostPer1kTokens || 0) * 1000).toFixed(2)}/1M in</div>
+											<div>${((model.pricing.outputCostPer1kTokens || 0) * 1000).toFixed(2)}/1M out</div>
 										</div>
 									{/if}
 								</label>

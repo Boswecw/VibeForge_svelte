@@ -72,7 +72,7 @@
 								</span>
 							</div>
 							<div class="text-xs text-slate-500 mt-0.5">
-								{run.createdAt.toLocaleTimeString()}
+								{run.createdAt ? new Date(run.createdAt).toLocaleTimeString() : 'Unknown time'}
 								{#if run.metrics?.totalTokens}
 									• {run.metrics.totalTokens} tokens
 								{/if}
