@@ -4,7 +4,7 @@
 	 * Modal or inline form for creating and editing context blocks
 	 */
 
-	import type { ContextBlock, ContextBlockKind } from '$lib/core/types';
+	import type { ContextBlock, ContextBlockKind, ContextSource } from '$lib/core/types';
 	import { contextBlocksStore } from '$lib/core/stores';
 	import Button from '$lib/ui/primitives/Button.svelte';
 	import Input from '$lib/ui/primitives/Input.svelte';
@@ -21,7 +21,7 @@
 	// Form state
 	let title = $state(block?.title || '');
 	let content = $state(block?.content || '');
-	let source = $state(block?.source || '');
+	let source = $state<ContextSource>(block?.source || 'local');
 	let kind: ContextBlockKind = $state(block?.kind || 'note');
 	let isActive = $state(block?.isActive ?? true);
 
@@ -75,6 +75,12 @@
 		{ value: 'url', label: 'URL' },
 		{ value: 'mcp_result', label: 'MCP Result' }
 	];
+
+	const sourceOptions: { value: ContextSource; label: string }[] = [
+		{ value: 'global', label: 'Global' },
+		{ value: 'workspace', label: 'Workspace' },
+		{ value: 'local', label: 'Local' }
+	];
 </script>
 
 <Panel variant="elevated" padding="lg" class="context-block-editor">
@@ -109,7 +115,18 @@
 			</div>
 
 			<div>
-				<Input bind:value={source} label="Source" placeholder="Optional source reference" />
+				<label for="source" class="block text-sm font-medium text-slate-300 mb-2">
+					Source <span class="text-red-500 ml-1">*</span>
+				</label>
+				<select
+					id="source"
+					bind:value={source}
+					class="w-full px-4 py-2 bg-forge-gunmetal border border-slate-600 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:border-forge-ember focus:ring-forge-ember/50 transition-all"
+				>
+					{#each sourceOptions as option}
+						<option value={option.value}>{option.label}</option>
+					{/each}
+				</select>
 			</div>
 		</div>
 

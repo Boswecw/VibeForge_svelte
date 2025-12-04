@@ -116,13 +116,21 @@
     currentPrediction = null;
 
     try {
+      // Map architecture complexity to prediction complexity
+      const complexityMap: Record<ComplexityLevel, 'simple' | 'intermediate' | 'complex'> = {
+        'simple': 'simple',
+        'intermediate': 'intermediate',
+        'complex': 'complex',
+        'enterprise': 'complex' // Map enterprise to complex
+      };
+
       const prediction = await successPredictor.predictSuccess({
         patternId: pattern.id,
         stackId: config.selectedStack?.id,
         userId: undefined, // TODO: Add user ID from auth system
         metadata: {
           primaryLanguage: config.primaryLanguage,
-          complexity: pattern.complexity,
+          complexity: complexityMap[pattern.complexity],
           includesTests: config.includeTests,
           includesCI: config.includeCI
         }

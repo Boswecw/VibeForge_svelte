@@ -39,6 +39,14 @@
     }
     return runtimes;
   });
+
+  function toggleLanguage(languageValue: string) {
+    if (config.additionalLanguages.includes(languageValue)) {
+      config.additionalLanguages = config.additionalLanguages.filter((l: string) => l !== languageValue);
+    } else {
+      config.additionalLanguages = [...config.additionalLanguages, languageValue];
+    }
+  }
 </script>
 
 <div class="space-y-6">
@@ -83,13 +91,7 @@
       {#each LANGUAGES.filter((l) => l.value !== config.primaryLanguage) as language}
         <button
           type="button"
-          onclick={() => {
-            if (config.additionalLanguages.includes(language.value)) {
-              config.additionalLanguages = config.additionalLanguages.filter((l) => l !== language.value);
-            } else {
-              config.additionalLanguages = [...config.additionalLanguages, language.value];
-            }
-          }}
+          onclick={() => toggleLanguage(language.value)}
           class="p-3 text-center border rounded-lg transition-all {config.additionalLanguages.includes(language.value)
             ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
             : 'border-gray-300 dark:border-gray-600 hover:border-green-300 dark:hover:border-green-700'}"
