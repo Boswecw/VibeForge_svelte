@@ -4,7 +4,7 @@
 	 * Modal or inline form for creating and editing context blocks
 	 */
 
-	import type { ContextBlock, ContextBlockKind, ContextSource } from '$lib/core/types';
+	import type { ContextBlock, ContextKind, ContextSource } from '$lib/core/types';
 	import { contextBlocksStore } from '$lib/core/stores';
 	import Button from '$lib/ui/primitives/Button.svelte';
 	import Input from '$lib/ui/primitives/Input.svelte';
@@ -21,8 +21,10 @@
 	// Form state
 	let title = $state(block?.title || '');
 	let content = $state(block?.content || '');
+	let description = $state(block?.description || '');
+	let tags = $state<string[]>(block?.tags || []);
 	let source = $state<ContextSource>(block?.source || 'local');
-	let kind: ContextBlockKind = $state(block?.kind || 'note');
+	let kind: ContextKind = $state(block?.kind || 'code');
 	let isActive = $state(block?.isActive ?? true);
 
 	const isEditing = $derived(!!block);
@@ -41,6 +43,8 @@
 			contextBlocksStore.updateBlock(block.id, {
 				title,
 				content,
+				description,
+				tags,
 				source,
 				kind,
 				isActive,
@@ -52,6 +56,8 @@
 				id: `ctx_${Date.now()}`,
 				title,
 				content,
+				description,
+				tags,
 				source,
 				kind,
 				isActive,
@@ -68,12 +74,13 @@
 		onclose?.();
 	}
 
-	const kindOptions: { value: ContextBlockKind; label: string }[] = [
-		{ value: 'document', label: 'Document' },
+	const kindOptions: { value: ContextKind; label: string }[] = [
+		{ value: 'system', label: 'System' },
+		{ value: 'design', label: 'Design' },
+		{ value: 'project', label: 'Project' },
 		{ value: 'code', label: 'Code' },
-		{ value: 'note', label: 'Note' },
-		{ value: 'url', label: 'URL' },
-		{ value: 'mcp_result', label: 'MCP Result' }
+		{ value: 'workflow', label: 'Workflow' },
+		{ value: 'data', label: 'Data' }
 	];
 
 	const sourceOptions: { value: ContextSource; label: string }[] = [
