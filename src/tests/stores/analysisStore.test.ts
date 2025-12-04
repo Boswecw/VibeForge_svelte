@@ -9,13 +9,37 @@ describe('Analysis Store', () => {
 		description: 'This is a test issue',
 		severity: 'warning',
 		category: 'code-quality',
-		filePath: 'test.ts',
+		files: ['test.ts'],
 		lineNumbers: [10, 11],
-		suggestions: ['Fix this', 'Or that'],
-		autoFixAvailable: false
+		suggestion: 'Fix this',
+		autoFixable: false
 	};
 
 	const mockAnalysis: CodebaseAnalysis = {
+		id: 'analysis-1',
+		path: '/test/project',
+		analyzedAt: new Date().toISOString(),
+		structure: {
+			totalFiles: 10,
+			totalDirectories: 3,
+			totalSize: 50000,
+			files: [],
+			filesByType: {
+				typescript: 5,
+				javascript: 2,
+				svelte: 2,
+				json: 1,
+				css: 0,
+				html: 0,
+				markdown: 0,
+				other: 0
+			},
+			testFiles: 2,
+			sourceFiles: 8
+		},
+		techStack: { framework: 'sveltekit', language: 'typescript', stateManagement: 'svelte-runes', dependencies: [] },
+		metrics: { totalFiles: 10, totalLines: 1000, testCoverage: { lines: 80, branches: 75, functions: 85, statements: 80 } },
+		patterns: [],
 		issues: [mockIssue],
 		summary: {
 			health: 'good',
@@ -29,7 +53,7 @@ describe('Analysis Store', () => {
 		// Reset store state before each test
 		analysisStore.clearAnalysis();
 		analysisStore.setAnalyzing(false);
-		analysisStore.setError(null);
+		analysisStore.setError('');
 	});
 
 	// ============================================================================
@@ -186,10 +210,10 @@ describe('Analysis Store', () => {
 			expect(analysisStore.error).toBe('Second error');
 		});
 
-		it('should allow clearing error by passing null', () => {
+		it('should allow clearing error by passing empty string', () => {
 			analysisStore.setError('Error message');
-			analysisStore.setError(null);
-			expect(analysisStore.error).toBeNull();
+			analysisStore.setError('');
+			expect(analysisStore.error).toBe('');
 		});
 	});
 
