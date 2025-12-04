@@ -448,7 +448,7 @@ export class StackAdvisor {
     }
 
     // Generic stack pros
-    if (stack.complexity === 'simple') {
+    if (stack.complexity && stack.complexity === 'simple') {
       pros.push('Quick setup and easy to learn');
     }
     if (stack.features?.includes('TypeScript')) {
@@ -533,7 +533,7 @@ export class StackAdvisor {
       totalProjects: patternAnalytics.totalUses || 0,
       successfulBuilds: patternAnalytics.successfulProjects || 0,
       avgTestPassRate: patternAnalytics.averageTestPassRate || 0,
-      avgSatisfaction: patternAnalytics.averageSatisfaction,
+      avgSatisfaction: patternAnalytics.averageSatisfaction ?? 0,
       npsScore: 0, // TODO: Calculate from feedback
       deployedProjects: 0, // TODO: Calculate from outcomes
       avgTimeToFirstBuild: null,

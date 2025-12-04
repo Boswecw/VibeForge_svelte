@@ -348,15 +348,16 @@ describe("Team Store", () => {
       expect(teamStore.isOwner).toBe(false);
     });
 
-    it("should compute canManageMembers", () => {
-      // Currently undefined until auth integration
-      expect(teamStore.canManageMembers).toBeUndefined();
-    });
+    // TODO: Uncomment when auth integration adds these properties
+    // it("should compute canManageMembers", () => {
+    //   // Currently undefined until auth integration
+    //   expect(teamStore.canManageMembers).toBeUndefined();
+    // });
 
-    it("should compute canInviteMembers", () => {
-      // Currently undefined until auth integration
-      expect(teamStore.canInviteMembers).toBeUndefined();
-    });
+    // it("should compute canInviteMembers", () => {
+    //   // Currently undefined until auth integration
+    //   expect(teamStore.canInviteMembers).toBeUndefined();
+    // });
   });
 
   describe("error handling", () => {

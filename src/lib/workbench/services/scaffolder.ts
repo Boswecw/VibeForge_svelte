@@ -84,7 +84,7 @@ export async function generateProject(config: ScaffoldConfig): Promise<ScaffoldR
 
 		return {
 			success: result.success,
-			projectPath: result.projectPath || result.project_path,
+			projectPath: result.projectPath || result.project_path || '',
 			message: result.message,
 			filesCreated: result.filesCreated || result.files_created || 0,
 			componentsGenerated: result.componentsGenerated || result.components_generated || []
