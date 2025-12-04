@@ -52,7 +52,7 @@
 				<p class="text-xs text-slate-400">
 					{selectedCount} selected
 					{#if selectedCount > 0 && estimatedCost}
-						• ~${estimatedCost(1000).toFixed(4)}/run
+						• ~${estimatedCost(1000, 1000).toFixed(4)}/run
 					{/if}
 				</p>
 			</div>

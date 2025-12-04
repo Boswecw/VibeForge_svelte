@@ -97,7 +97,8 @@
 		<!-- Title -->
 		<div>
 			<Input
-				bind:value={title}
+				value={title}
+				oninput={(e) => title = e.currentTarget.value}
 				label="Title"
 				placeholder="Enter a descriptive title"
 				required={true}

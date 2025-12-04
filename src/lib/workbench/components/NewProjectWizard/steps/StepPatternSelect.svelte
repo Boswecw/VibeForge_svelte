@@ -126,10 +126,10 @@
 
       const prediction = await successPredictor.predictSuccess({
         patternId: pattern.id,
-        stackId: config.selectedStack?.id,
+        stackId: config.selectedStack,
         userId: undefined, // TODO: Add user ID from auth system
         metadata: {
-          primaryLanguage: config.primaryLanguage,
+          primaryLanguage: config.primaryLanguage ?? '',
           complexity: complexityMap[pattern.complexity],
           includesTests: config.includeTests,
           includesCI: config.includeCI

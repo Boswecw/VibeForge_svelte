@@ -17,11 +17,11 @@
     onClose?: () => void;
   }
 
-  // Use props object directly
-  const props = $props<Props>();
+  // Use props destructuring (Svelte 5 syntax)
+  let { isOpen: isOpenProp, onClose }: Props = $props();
 
   // Helper for isOpen with default
-  const isOpen = $derived(props.isOpen ?? false);
+  const isOpen = $derived(isOpenProp ?? false);
 
   // Quick create state (minimal fields)
   let projectName = $state('');
@@ -94,7 +94,7 @@
 
       // Success - close dialog
       reset();
-      props.onClose?.();
+      onClose?.();
     } catch (e) {
       console.error('Quick create failed:', e);
       error = e instanceof Error ? e.message : 'Failed to create project';
@@ -114,14 +114,14 @@
   function handleClose(): void {
     if (!isCreating) {
       reset();
-      props.onClose?.();
+      onClose?.();
     }
   }
 
   function handleOpenWizard(): void {
     if (!isCreating) {
       reset();
-      props.onClose?.();
+      onClose?.();
       // Open wizard after Quick Create closes
       wizardStore.open();
     }
