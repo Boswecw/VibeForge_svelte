@@ -31,19 +31,16 @@
     runsStore.startExecution();
 
     try {
-      // Build the full context from active blocks
-      const contextContent = contextBlocksStore.activeBlocks
-        .map((block) => `[${block.kind}] ${block.title}\n${block.content}`)
-        .join("\n\n---\n\n");
-
       // Execute prompt with selected models
-      const runs = await neuroforgeClient.executePrompt({
+      const response = await neuroforgeClient.executePrompt({
+        workspaceId: "vibeforge_workspace", // TODO: Get from workspace context
         prompt: promptStore.resolvedPrompt,
-        context: contextContent,
+        contextBlocks: contextBlocksStore.activeBlocks.map((b) => b.id),
         modelIds: modelsStore.selectedModels.map((m) => m.id),
-        temperature: 0.7,
-        maxTokens: 4000,
       });
+
+      // Extract runs from API response
+      const runs = response.data || [];
 
       // Add runs to store
       for (const run of runs) {
