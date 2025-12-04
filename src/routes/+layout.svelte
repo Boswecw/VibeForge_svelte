@@ -365,7 +365,6 @@
 
 <svelte:window
   onkeydown={handleGlobalKeyDown}
-  onshow-quick-create={handleShowQuickCreate}
 />
 
 {#if isLoginPage}

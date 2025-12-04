@@ -41,7 +41,7 @@ test.describe('Phase 2.7 - Dev Environment Panel', () => {
 
       // Tab 3: Config
       await page.click('button:has-text("Config"), [role="tab"]:has-text("Config")');
-      await expect(page.getByText(/toolchains/i, /configuration/i)).toBeVisible({
+      await expect(page.getByText(/toolchains|configuration/i)).toBeVisible({
         timeout: 3000,
       });
 
@@ -62,7 +62,7 @@ test.describe('Phase 2.7 - Dev Environment Panel', () => {
 
     test('should display runtime status table', async ({ page }) => {
       // Should see table with runtimes
-      await expect(page.getByRole('table', 'grid')).toBeVisible({ timeout: 5000 });
+      await expect(page.getByRole('table')).toBeVisible({ timeout: 5000 });
 
       // Should see some common runtimes (Node, Python, Git, etc.)
       const table = page.locator('table, [role="grid"]').first();
