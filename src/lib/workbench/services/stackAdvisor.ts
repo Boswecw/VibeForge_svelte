@@ -9,8 +9,8 @@
  * - Explainable AI recommendations
  */
 
-import type { TechStack } from '../types/tech-stack';
 import type {
+  TechStack,
   StackScore,
   ScoreComponents,
   ConfidenceLevel,

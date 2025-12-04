@@ -6,8 +6,11 @@
  * historical success analysis, and explainable AI features.
  */
 
-import type { TechStack } from './tech-stack';
+import type { StackProfile } from '$lib/core/types/stack-profiles';
 import type { PatternAnalytics } from '$lib/types/outcome';
+
+// Type alias for compatibility
+export type TechStack = StackProfile;
 
 /**
  * Confidence level for stack recommendations
@@ -299,7 +302,7 @@ export function mapPatternAnalyticsToHistoricalData(
   const totalProjects = relevantAnalytics.reduce((sum, a) => sum + (a.totalUses || a.totalProjects || 0), 0);
   const successfulBuilds = relevantAnalytics.reduce((sum, a) => sum + (a.successfulProjects || a.successfulBuilds || 0), 0);
   const avgSatisfaction =
-    relevantAnalytics.reduce((sum, a) => sum + a.averageSatisfaction * (a.totalUses || a.totalProjects || 0), 0) /
+    relevantAnalytics.reduce((sum, a) => sum + (a.averageSatisfaction || 0) * (a.totalUses || a.totalProjects || 0), 0) /
     totalProjects;
   const avgTestPassRate =
     relevantAnalytics.reduce((sum, a) => sum + (a.averageTestPassRate || 0) * (a.totalUses || a.totalProjects || 0), 0) /

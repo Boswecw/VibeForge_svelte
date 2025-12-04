@@ -61,9 +61,9 @@
           contextBlocks: contextBlocksStore.activeBlocks.map((b) => b.id),
           models: runs.map((run) => ({
             modelId: run.modelId,
-            responseText: run.output,
-            tokensUsed: run.tokenCount || 0,
-            latencyMs: run.latency || 0,
+            responseText: run.output || '',
+            tokensUsed: run.totalTokens || run.metrics?.totalTokens || 0,
+            latencyMs: run.durationMs || run.metrics?.duration || 0,
             error: run.error,
           })),
         })
