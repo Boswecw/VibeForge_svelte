@@ -206,7 +206,7 @@ Provide findings in this format:
     {
       id: "pat-004",
       name: "REST API Endpoint Generator",
-      category: "backend",
+      category: "coding",
       useCase: "API development and documentation",
       models: ["Claude", "GPT-4"],
       complexity: "intermediate",

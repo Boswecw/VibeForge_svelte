@@ -9,6 +9,7 @@
   import TeamMetricsCard from '$lib/components/team/TeamMetricsCard.svelte';
   import TeamMembersCard from '$lib/components/team/TeamMembersCard.svelte';
   import { RefreshCw, Plus, Settings, Users } from 'lucide-svelte';
+  import type { TeamRole } from '$lib/types/team';
 
   // Store state
   let teams = $derived(teamStore.teams);
@@ -55,7 +56,7 @@
     }
   }
 
-  async function handleUpdateRole(userId: number, role: 'admin' | 'member') {
+  async function handleUpdateRole(userId: number, role: TeamRole) {
     if (!selectedTeamId) return;
     await teamStore.updateMemberRole(selectedTeamId, userId, role);
   }
@@ -90,7 +91,7 @@
           disabled={isLoadingDashboard}
           class="flex items-center gap-2 px-4 py-2 rounded bg-gunmetal-800 hover:bg-gunmetal-700 text-zinc-200 transition-colors disabled:opacity-50"
         >
-          <RefreshCw class="w-4 h-4" class:animate-spin={isLoadingDashboard} />
+          <RefreshCw class={`w-4 h-4 ${isLoadingDashboard ? 'animate-spin' : ''}`} />
           <span>Refresh</span>
         </button>
 
