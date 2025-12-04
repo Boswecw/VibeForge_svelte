@@ -26,8 +26,10 @@
 	}
 
 	// Format timestamp
-	function formatTime(date: Date): string {
-		return date.toLocaleTimeString();
+	function formatTime(date: Date | string | undefined): string {
+		if (!date) return 'N/A';
+		const dateObj = typeof date === 'string' ? new Date(date) : date;
+		return dateObj.toLocaleTimeString();
 	}
 
 	// Get status variant

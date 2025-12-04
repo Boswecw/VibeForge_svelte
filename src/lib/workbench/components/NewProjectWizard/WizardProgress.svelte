@@ -24,7 +24,7 @@
 
   function handleStepClick(step: WizardStep, index: number): void {
     if (index < wizardStore.currentStepIndex) {
-      wizardStore.goToStep(step);
+      wizardStore.goToStep(index);
     }
   }
 </script>

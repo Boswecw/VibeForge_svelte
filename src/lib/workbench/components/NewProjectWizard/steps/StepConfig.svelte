@@ -31,7 +31,14 @@
 
   // Sync to store on change
   $effect(() => {
-    wizardStore.config.features = features;
+    // Ensure all required properties have boolean values
+    wizardStore.config.features = {
+      testing: features.testing ?? false,
+      linting: features.linting ?? false,
+      git: features.git ?? false,
+      docker: features.docker ?? false,
+      ci: features.ci ?? false
+    };
   });
 
   $effect(() => {

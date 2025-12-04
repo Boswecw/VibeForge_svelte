@@ -3,7 +3,6 @@ no description yet
 -->
 <script lang="ts">
   import { themeStore } from "$lib/core/stores";
-  import type { Theme } from "$lib/core/stores";
 
   // Local state for appearance settings
   let selectedTheme = $state<"dark" | "light" | "system">("dark");
@@ -24,7 +23,7 @@ no description yet
   const handleThemeChange = (newTheme: "dark" | "light" | "system") => {
     selectedTheme = newTheme;
     if (newTheme === "dark" || newTheme === "light") {
-      theme.setTheme(newTheme as Theme);
+      themeStore.setTheme(newTheme);
     }
     // TODO: System theme detection and automatic switching
   };
