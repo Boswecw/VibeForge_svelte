@@ -43,7 +43,7 @@ Displays model usage counts, acceptance rates, and call distribution
     totalCalls = 0;
 
     for (const { id, provider } of models) {
-      const stats = performanceMetrics.getMetrics(provider, id);
+      const stats = performanceMetrics.getMetrics(provider as LLMProviderType, id);
       if (stats && stats.totalRequests > 0) {
         modelStats.push({ model: id, provider, stats });
         totalCalls += stats.totalRequests;

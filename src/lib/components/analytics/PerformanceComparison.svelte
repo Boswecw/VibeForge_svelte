@@ -48,7 +48,7 @@ Displays model performance metrics including response times, error rates, and pe
     modelPerformance = [];
 
     for (const { id, provider } of models) {
-      const stats = performanceMetrics.getMetrics(provider, id);
+      const stats = performanceMetrics.getMetrics(provider as LLMProviderType, id);
       if (stats && stats.totalRequests > 0) {
         modelPerformance.push({ model: id, provider, stats });
       }
