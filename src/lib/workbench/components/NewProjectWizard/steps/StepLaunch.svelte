@@ -86,11 +86,10 @@
         <p class="text-xs font-medium text-zinc-500 mb-1">Languages</p>
         <div class="flex flex-wrap gap-1.5 mt-1">
           {#each summary.languages as langId}
-            {@const lang = LANGUAGES[langId]}
-            {#if lang}
+            {#if langId && LANGUAGES[langId]}
               <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-gunmetal-900 border border-gunmetal-700 rounded text-xs text-zinc-400">
-                <span>{lang.icon}</span>
-                <span>{lang.name}</span>
+                <span>{LANGUAGES[langId].icon}</span>
+                <span>{LANGUAGES[langId].name}</span>
               </span>
             {/if}
           {/each}

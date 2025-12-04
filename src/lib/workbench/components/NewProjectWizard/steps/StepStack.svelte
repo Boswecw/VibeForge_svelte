@@ -94,7 +94,7 @@
   $effect(() => {
     // Update config.stack with the stack ID
     wizardStore.config.stack = selectedStack?.id || null;
-    wizardStore.config.selectedStack = selectedStack?.id || null;
+    wizardStore.config.selectedStack = selectedStack?.id;
   });
 
   function selectStack(stack: StackProfile): void {

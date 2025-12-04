@@ -20,7 +20,7 @@
 
   // Reactive bindings to wizard store
   let primaryLanguage = $state(wizardStore.config.primaryLanguage);
-  let secondaryLanguages = $state([...wizardStore.config.secondaryLanguages]);
+  let secondaryLanguages = $state([...(wizardStore.config.secondaryLanguages || [])]);
 
   // Sync to store on change
   $effect(() => {
