@@ -30,7 +30,16 @@
     !outputPath || outputPath.trim().length === 0 ? 'Output directory is required' : null
   );
 
-  const summary = $derived(wizardStore.projectSummary);
+  // Compute project summary from config
+  const summary = $derived({
+    name: wizardStore.config.projectName,
+    type: wizardStore.config.projectType || 'Unknown',
+    languages: [
+      wizardStore.config.primaryLanguage,
+      ...wizardStore.config.additionalLanguages
+    ].filter(Boolean),
+    stack: wizardStore.config.stack || wizardStore.config.architecturePattern?.displayName || 'Not selected'
+  });
 
   // Get enabled features
   const enabledFeatures = $derived(

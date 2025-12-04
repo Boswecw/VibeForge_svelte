@@ -19,7 +19,7 @@
   function canNavigateToStep(step: WizardStep, index: number): boolean {
     const currentIndex = wizardStore.currentStepIndex;
     // Can always go back, can only go forward if current is valid
-    return index < currentIndex || (index === currentIndex + 1 && wizardStore.canGoForward);
+    return index < currentIndex || (index === currentIndex + 1 && wizardStore.canGoNext);
   }
 
   function handleStepClick(step: WizardStep, index: number): void {
@@ -44,7 +44,7 @@
           {isClickable ? 'cursor-pointer' : 'cursor-default'}
         "
         disabled={!isClickable}
-        on:click={() => handleStepClick(step, index)}
+        onclick={() => handleStepClick(step, index)}
       >
         <!-- Circle -->
         <div

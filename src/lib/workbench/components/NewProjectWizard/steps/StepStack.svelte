@@ -182,7 +182,7 @@
               ? 'bg-ember-600/20 border-ember-500 ring-2 ring-ember-500/50'
               : 'bg-gunmetal-800 border-gunmetal-700 hover:border-gunmetal-600'}
           "
-          on:click={() => selectStack(stack)}
+          onclick={() => selectStack(stack)}
         >
           <!-- Recommendation Badge (Top Right) -->
           {#if score && score.finalScore >= 70}
