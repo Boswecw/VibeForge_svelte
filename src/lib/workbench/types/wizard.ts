@@ -64,6 +64,8 @@ export interface FeatureSelection {
   database?: boolean;
   api?: boolean;
   testing?: boolean;
+  linting?: boolean;
+  git?: boolean;
   docker?: boolean;
   ci?: boolean;
   monitoring?: boolean;

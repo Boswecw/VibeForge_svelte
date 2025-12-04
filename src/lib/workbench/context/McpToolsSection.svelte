@@ -35,16 +35,14 @@
 
 <Panel variant="bordered" padding="md" class="mcp-tools-section">
 	<SectionHeader title="MCP Tools" description={`${connectedServers.length} server(s) connected`} level={4}>
-		{#snippet actions()}
-			<Button variant="ghost" size="sm">
-				{#snippet children()}
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-					</svg>
-					Add Server
-				{/snippet}
-			</Button>
-		{/snippet}
+		<svelte:fragment slot="actions">
+			<button class="px-3 py-1.5 text-sm rounded-md bg-transparent text-slate-300 hover:bg-forge-gunmetal transition-colors flex items-center gap-2">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+				</svg>
+				Add Server
+			</button>
+		</svelte:fragment>
 	</SectionHeader>
 
 	<div class="space-y-3 mt-4">

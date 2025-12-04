@@ -27,7 +27,7 @@ if (browser && (window as any).__TAURI__) {
 	});
 	import('@tauri-apps/api/event').then(module => {
 		listen = module.listen;
-		UnlistenFnType = module.UnlistenFn;
+		// Note: UnlistenFn type is defined above (line 17), not exported from Tauri v2 API
 	});
 }
 

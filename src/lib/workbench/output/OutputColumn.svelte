@@ -30,7 +30,7 @@
 	<!-- Column Header -->
 	<div class="shrink-0 p-4 border-b border-slate-800">
 		<SectionHeader title="Output" description="View and manage LLM responses" level={2}>
-			{#snippet actions()}
+			<svelte:fragment slot="actions">
 				{#if runs.length > 1}
 					<button
 						onclick={() => (showRunSelector = !showRunSelector)}
@@ -47,7 +47,7 @@
 						History ({runs.length})
 					</button>
 				{/if}
-			{/snippet}
+			</svelte:fragment>
 		</SectionHeader>
 
 		<!-- Run Selector Dropdown -->
