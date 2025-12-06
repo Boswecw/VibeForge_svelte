@@ -2,9 +2,13 @@
  * VibeForge V2 - MCP Tools Store
  *
  * Manages MCP servers, tools, and invocations using Svelte 5 runes.
+ * Integrated with real MCP protocol implementation.
  */
 
 import type { McpServer, McpTool, McpToolInvocation, McpToolCategory } from '$lib/core/types';
+import { mcpManager } from '$lib/core/mcp/manager';
+import { listServers, listTools, invokeTool } from '$lib/core/api/mcpClient';
+import type { McpTool as McpProtocolTool } from '$lib/core/mcp/types';
 
 // ============================================================================
 // TOOLS STATE
@@ -212,6 +216,96 @@ function setError(error: string | null) {
 }
 
 // ============================================================================
+// MCP INTEGRATION ACTIONS
+// ============================================================================
+
+/**
+ * Sync servers and tools from MCP manager
+ * Call this to refresh the store with live MCP data
+ */
+async function syncFromMcpManager() {
+  try {
+    setLoading(true);
+    setError(null);
+
+    // Fetch servers from MCP client
+    const { servers: mcpServers } = await listServers({ includeDisconnected: true });
+    setServers(mcpServers);
+
+    // Fetch tools for each connected server
+    const allTools: McpTool[] = [];
+    for (const server of mcpServers.filter(s => s.status === 'connected')) {
+      try {
+        const { tools } = await listTools({ serverId: server.id });
+        allTools.push(...tools);
+      } catch (error) {
+        console.error(`Failed to list tools for ${server.name}:`, error);
+      }
+    }
+    setTools(allTools);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to sync MCP data';
+    setError(errorMessage);
+    console.error('MCP sync error:', error);
+  } finally {
+    setLoading(false);
+  }
+}
+
+/**
+ * Invoke a tool and add the result to invocations
+ */
+async function invokeToolById(toolId: string, args: Record<string, unknown> = {}) {
+  const tool = getToolById(toolId);
+  if (!tool) {
+    throw new Error(`Tool not found: ${toolId}`);
+  }
+
+  try {
+    const { invocation } = await invokeTool({
+      serverId: tool.serverId,
+      toolName: tool.name,
+      args
+    });
+
+    addInvocation(invocation);
+    return invocation;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Tool invocation failed';
+    throw new Error(errorMessage);
+  }
+}
+
+/**
+ * Subscribe to MCP manager changes and auto-sync
+ * Call this once during app initialization
+ */
+function subscribeToMcpChanges() {
+  mcpManager.onChange(() => {
+    // Auto-sync when MCP state changes (connections, tools, etc.)
+    syncFromMcpManager();
+  });
+}
+
+/**
+ * Manually refresh tools for a specific server
+ */
+async function refreshServerTools(serverId: string) {
+  try {
+    const { tools } = await listTools({ serverId });
+
+    // Remove old tools from this server
+    state.tools = state.tools.filter(t => t.serverId !== serverId);
+
+    // Add new tools
+    state.tools = [...state.tools, ...tools];
+  } catch (error) {
+    console.error(`Failed to refresh tools for ${serverId}:`, error);
+    throw error;
+  }
+}
+
+// ============================================================================
 // EXPORTS
 // ============================================================================
 
@@ -290,4 +384,9 @@ export const toolsStore = {
   // General Actions
   setLoading,
   setError,
+  // MCP Integration Actions
+  syncFromMcpManager,
+  invokeToolById,
+  subscribeToMcpChanges,
+  refreshServerTools,
 };

@@ -14,8 +14,12 @@
 	const connectedServers = $derived(toolsStore.connectedServers);
 	const toolsByServer = $derived(toolsStore.toolsByServer);
 	const favoriteTools = $derived(toolsStore.favoriteTools);
+	const recentInvocations = $derived(toolsStore.recentInvocations);
+	const isLoading = $derived(toolsStore.isLoading);
 
 	let expandedServerId = $state<string | null>(null);
+	let invokingToolId = $state<string | null>(null);
+	let showInvocationResult = $state<string | null>(null); // toolId of last invoked tool
 
 	function toggleServer(serverId: string) {
 		expandedServerId = expandedServerId === serverId ? null : serverId;
@@ -25,11 +29,33 @@
 		toolsStore.toggleFavorite(toolId);
 	}
 
-	function handleInvokeTool(serverId: string, toolName: string) {
-		// Phase 2: Implement actual tool invocation
-		console.log('Invoke tool:', { serverId, toolName });
-		// For now, just show a placeholder
-		alert(`Tool invocation placeholder: ${toolName}`);
+	async function handleInvokeTool(toolId: string) {
+		try {
+			invokingToolId = toolId;
+
+			// For now, invoke with empty args - Phase 2.1 will add parameter dialog
+			const invocation = await toolsStore.invokeToolById(toolId, {});
+
+			console.log('Tool invoked successfully:', invocation);
+			showInvocationResult = toolId;
+
+			// Auto-hide result after 5 seconds
+			setTimeout(() => {
+				if (showInvocationResult === toolId) {
+					showInvocationResult = null;
+				}
+			}, 5000);
+		} catch (error) {
+			console.error('Tool invocation failed:', error);
+			alert(`Tool invocation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+		} finally {
+			invokingToolId = null;
+		}
+	}
+
+	function getLatestInvocationForTool(toolId: string) {
+		// Find the most recent invocation for this tool
+		return recentInvocations.find(inv => inv.toolId === toolId);
 	}
 </script>
 
@@ -125,17 +151,70 @@
 											</button>
 
 											<button
-												onclick={() => handleInvokeTool(server.id, tool.name)}
-												class="p-1 rounded hover:bg-forge-steel transition-colors text-slate-400 hover:text-forge-ember"
+												onclick={() => handleInvokeTool(tool.id)}
+												disabled={invokingToolId === tool.id}
+												class="p-1 rounded hover:bg-forge-steel transition-colors {invokingToolId === tool.id ? 'text-forge-ember' : 'text-slate-400 hover:text-forge-ember'} disabled:opacity-50"
 												aria-label="Invoke tool"
 											>
-												<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-												</svg>
+												{#if invokingToolId === tool.id}
+													<svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+													</svg>
+												{:else}
+													<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+													</svg>
+												{/if}
 											</button>
 										</div>
 									</div>
+
+									<!-- Tool Invocation Result -->
+									{#if showInvocationResult === tool.id}
+										{@const latestInvocation = getLatestInvocationForTool(tool.id)}
+										{#if latestInvocation}
+											<div class="mt-2 p-2 rounded {latestInvocation.status === 'success' ? 'bg-emerald-900/20 border border-emerald-700/30' : 'bg-red-900/20 border border-red-700/30'}">
+												<div class="flex items-start gap-2">
+													{#if latestInvocation.status === 'success'}
+														<svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+															<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+														</svg>
+													{:else}
+														<svg class="w-4 h-4 text-red-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+															<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+														</svg>
+													{/if}
+													<div class="flex-1 min-w-0">
+														<div class="text-xs font-medium {latestInvocation.status === 'success' ? 'text-emerald-300' : 'text-red-300'}">
+															{latestInvocation.status === 'success' ? 'Success' : 'Error'}
+															<span class="text-slate-400 font-normal ml-1">
+																({latestInvocation.durationMs}ms)
+															</span>
+														</div>
+														{#if latestInvocation.status === 'success' && latestInvocation.result}
+															<div class="mt-1 text-xs text-slate-300 font-mono bg-forge-blacksteel/50 p-1.5 rounded overflow-auto max-h-20">
+																{JSON.stringify(latestInvocation.result.data, null, 2)}
+															</div>
+														{:else if latestInvocation.error}
+															<div class="mt-1 text-xs text-red-300">
+																{latestInvocation.error}
+															</div>
+														{/if}
+													</div>
+													<button
+														onclick={() => showInvocationResult = null}
+														class="p-0.5 rounded hover:bg-forge-steel transition-colors shrink-0"
+														aria-label="Close"
+													>
+														<svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+														</svg>
+													</button>
+												</div>
+											</div>
+										{/if}
+									{/if}
 								</div>
 							{/each}
 						</div>

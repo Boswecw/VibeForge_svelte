@@ -2,9 +2,7 @@
  * VibeForge V2 - MCP Client
  *
  * This client implements the Model Context Protocol for discovering and invoking tools.
- * For Phase 1, all methods return mock data to demonstrate the architecture.
- *
- * Later phases will implement real MCP protocol communication.
+ * Phase 2: Real MCP protocol implementation with fallback to mock data.
  *
  * MCP Flow:
  * 1. listServers() - Discover available MCP servers
@@ -23,6 +21,11 @@ import type {
   InvokeToolRequest,
   InvokeToolResponse,
 } from '$lib/core/types';
+import { mcpManager } from '$lib/core/mcp/manager';
+import type { McpTool as McpProtocolTool } from '$lib/core/mcp/types';
+
+// Flag to enable real MCP or use mock data
+const USE_REAL_MCP = true;
 
 // ============================================================================
 // SERVER DISCOVERY
@@ -31,6 +34,35 @@ import type {
 export async function listServers(
   request: ListServersRequest = {}
 ): Promise<ListServersResponse> {
+  if (USE_REAL_MCP) {
+    // Get managed servers from MCP manager
+    const managedServers = mcpManager.listServers({
+      includeDisconnected: request.includeDisconnected
+    });
+
+    // Convert to VibeForge McpServer format
+    const servers: McpServer[] = managedServers.map(server => {
+      const serverInfo = mcpManager.getServerInfo(server.id);
+
+      return {
+        id: server.id,
+        name: server.name,
+        description: server.description,
+        version: serverInfo?.version || '1.0.0',
+        status: server.status,
+        endpoint: server.config.url || '',
+        capabilities: {
+          supportsToolDiscovery: serverInfo?.capabilities?.tools?.list ?? true,
+          supportsStreaming: false, // WebSocket streaming not yet implemented
+          supportsAuth: true,
+        },
+      };
+    });
+
+    return { servers };
+  }
+
+  // Fallback to mock data
   await delay(300);
 
   const servers: McpServer[] = [
@@ -53,24 +85,11 @@ export async function listServers(
       description: 'Model routing and execution',
       version: '1.0.0',
       status: 'connected',
-      endpoint: 'http://localhost:8002/mcp',
+      endpoint: 'http://localhost:8000/mcp',
       capabilities: {
         supportsToolDiscovery: true,
         supportsStreaming: true,
         supportsAuth: true,
-      },
-    },
-    {
-      id: 'mcp_web',
-      name: 'Web Tools MCP',
-      description: 'Web search, scraping, and content extraction',
-      version: '0.9.0',
-      status: 'disconnected',
-      endpoint: 'http://localhost:8003/mcp',
-      capabilities: {
-        supportsToolDiscovery: true,
-        supportsStreaming: false,
-        supportsAuth: false,
       },
     },
   ];
@@ -88,7 +107,53 @@ export async function listServers(
 // TOOL DISCOVERY
 // ============================================================================
 
+// Helper function to convert MCP protocol tool to VibeForge McpTool
+function convertProtocolTool(protocolTool: McpProtocolTool, serverId: string): McpTool {
+  return {
+    id: `${serverId}_${protocolTool.name}`,
+    serverId,
+    name: protocolTool.name,
+    description: protocolTool.description,
+    category: inferToolCategory(protocolTool.name),
+    inputSchema: protocolTool.inputSchema,
+    isFavorite: false,
+  };
+}
+
+// Infer tool category from name
+function inferToolCategory(toolName: string): 'query' | 'generate' | 'transform' | 'analyze' {
+  const lower = toolName.toLowerCase();
+  if (lower.includes('query') || lower.includes('search') || lower.includes('get')) {
+    return 'query';
+  }
+  if (lower.includes('generate') || lower.includes('create') || lower.includes('execute')) {
+    return 'generate';
+  }
+  if (lower.includes('analyze') || lower.includes('route')) {
+    return 'analyze';
+  }
+  return 'transform';
+}
+
 export async function listTools(request: ListToolsRequest): Promise<ListToolsResponse> {
+  if (USE_REAL_MCP) {
+    // Get tools from MCP manager
+    const protocolTools = mcpManager.listTools(request.serverId);
+
+    // Convert to VibeForge format
+    const tools = protocolTools.map(tool =>
+      convertProtocolTool(tool, request.serverId)
+    );
+
+    // Filter by category if requested
+    const filtered = request.category
+      ? tools.filter((t) => t.category === request.category)
+      : tools;
+
+    return { tools: filtered };
+  }
+
+  // Fallback to mock data
   await delay(300);
 
   const toolsByServer: Record<string, McpTool[]> = {
@@ -269,6 +334,62 @@ export async function invokeTool(
   request: InvokeToolRequest
 ): Promise<InvokeToolResponse> {
   const startedAt = new Date().toISOString();
+
+  if (USE_REAL_MCP) {
+    try {
+      const startTime = Date.now();
+
+      // Call the real MCP tool
+      const result = await mcpManager.callTool(
+        request.serverId,
+        request.toolName,
+        request.args
+      );
+
+      const completedAt = new Date().toISOString();
+      const durationMs = Date.now() - startTime;
+
+      const invocation: McpToolInvocation = {
+        id: `inv_${Date.now()}`,
+        toolId: `${request.serverId}_${request.toolName}`,
+        serverId: request.serverId,
+        args: request.args,
+        status: 'success',
+        startedAt,
+        completedAt,
+        durationMs,
+        result: {
+          data: result,
+          metadata: {
+            source: 'mcp',
+            phase: 2,
+          },
+        },
+      };
+
+      return { invocation };
+    } catch (error) {
+      // Handle tool invocation error
+      const completedAt = new Date().toISOString();
+      const durationMs = Date.now() - new Date(startedAt).getTime();
+
+      const invocation: McpToolInvocation = {
+        id: `inv_${Date.now()}`,
+        toolId: `${request.serverId}_${request.toolName}`,
+        serverId: request.serverId,
+        args: request.args,
+        status: 'error',
+        startedAt,
+        completedAt,
+        durationMs,
+        error: error instanceof Error ? error.message : String(error),
+      };
+
+      return { invocation };
+    }
+  }
+
+  // Fallback to mock data
   await delay(1000 + Math.random() * 500);
 
   const invocation: McpToolInvocation = {
@@ -292,6 +413,56 @@ export async function invokeTool(
   return {
     invocation,
   };
+}
+
+// ============================================================================
+// CONNECTION MANAGEMENT
+// ============================================================================
+
+/**
+ * Initialize MCP connections to all registered servers
+ * Call this when the app starts to establish connections
+ */
+export async function initializeMcpConnections(): Promise<void> {
+  if (!USE_REAL_MCP) {
+    return;
+  }
+
+  try {
+    await mcpManager.connectAll();
+  } catch (error) {
+    console.error('Failed to initialize MCP connections:', error);
+    // Don't throw - we'll fall back to mock data
+  }
+}
+
+/**
+ * Connect to a specific MCP server
+ */
+export async function connectToServer(serverId: string): Promise<void> {
+  if (!USE_REAL_MCP) {
+    return;
+  }
+
+  await mcpManager.connectServer(serverId);
+}
+
+/**
+ * Disconnect from a specific MCP server
+ */
+export async function disconnectFromServer(serverId: string): Promise<void> {
+  if (!USE_REAL_MCP) {
+    return;
+  }
+
+  await mcpManager.disconnectServer(serverId);
+}
+
+/**
+ * Get the MCP manager instance for advanced usage
+ */
+export function getMcpManager() {
+  return mcpManager;
 }
 
 // ============================================================================

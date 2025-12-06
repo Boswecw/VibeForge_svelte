@@ -10,7 +10,6 @@
     contextBlocksStore,
     runsStore,
   } from "$lib/core/stores";
-  import { neuroforgeClient, dataforgeClient } from "$lib/core/api";
   import SectionHeader from "$lib/ui/primitives/SectionHeader.svelte";
   import PromptEditor from "./PromptEditor.svelte";
   import ModelSelector from "./ModelSelector.svelte";
@@ -27,54 +26,29 @@
       return;
     }
 
-    // Start execution
-    runsStore.startExecution();
-
     try {
-      // Execute prompt with selected models
-      const response = await neuroforgeClient.executePrompt({
-        workspaceId: "vibeforge_workspace", // TODO: Get from workspace context
-        prompt: promptStore.resolvedPrompt,
-        contextBlocks: contextBlocksStore.activeBlocks.map((b) => b.id),
-        modelIds: modelsStore.selectedModels.map((m) => m.id),
-      });
+      // Execute with the new execution engine
+      const results = await runsStore.executeFromStores(
+        promptStore.resolvedPrompt,
+        modelsStore.selectedModels,
+        contextBlocksStore.activeBlocks,
+        promptStore.variables,
+        {
+          stream: true,
+          parallel: true,
+          maxTokens: 4096,
+          temperature: 0.7,
+        }
+      );
 
-      // Extract runs from API response
-      const runs = response.data || [];
+      console.log(`✅ Executed ${results.length} model(s) successfully`);
 
-      // Add runs to store
-      for (const run of runs) {
-        runsStore.addRun(run);
-      }
-
-      // Set the first run as active
-      if (runs.length > 0) {
-        runsStore.setActiveRun(runs[0].id);
-      }
-
-      // Log to DataForge asynchronously (don't block UI)
-      dataforgeClient
-        .logRun({
-          userId: "default_user", // TODO: Get from auth context
-          workspaceId: "vibeforge_workspace", // TODO: Get from workspace context
-          promptText: promptStore.resolvedPrompt,
-          contextBlocks: contextBlocksStore.activeBlocks.map((b) => b.id),
-          models: runs.map((run) => ({
-            modelId: run.modelId,
-            responseText: run.output || '',
-            tokensUsed: run.totalTokens || run.metrics?.totalTokens || 0,
-            latencyMs: run.durationMs || run.metrics?.duration || 0,
-            error: run.error,
-          })),
-        })
-        .catch((err) => {
-          console.warn("Failed to log run to DataForge:", err);
-        });
-
-      runsStore.completeExecution();
+      // TODO: Log to DataForge asynchronously when API client is ready
     } catch (error) {
       console.error("Run failed:", error);
-      runsStore.completeExecution();
+      runsStore.setError(
+        error instanceof Error ? error.message : "Unknown error"
+      );
       alert(
         `Run failed: ${
           error instanceof Error ? error.message : "Unknown error"

@@ -24,6 +24,8 @@
   import type { Command } from "$lib/stores/palette";
   import { initAuth, isAuthenticated, currentUser } from "$lib/auth";
   import { writable } from "svelte/store";
+  import { initializeMcpConnections } from "$lib/core/api/mcpClient";
+  import { toolsStore } from "$lib/core/stores";
 
   let showShortcuts = $state(false);
   let sidebarVisible = $state(true);
@@ -66,6 +68,27 @@
     presets.load().catch((err) => {
       console.error("Failed to load prompts:", err);
     });
+
+    // Initialize MCP connections (Phase 2)
+    console.log('[VibeForge] Initializing MCP connections...');
+    initializeMcpConnections()
+      .then(() => {
+        console.log('[VibeForge] MCP connections initialized');
+        // Subscribe to MCP changes for auto-sync
+        toolsStore.subscribeToMcpChanges();
+        // Initial sync of servers and tools
+        return toolsStore.syncFromMcpManager();
+      })
+      .then(() => {
+        console.log('[VibeForge] MCP data synced:', {
+          servers: toolsStore.servers.length,
+          tools: toolsStore.tools.length
+        });
+      })
+      .catch((err) => {
+        console.error('[VibeForge] MCP initialization failed:', err);
+        // Fallback to mock data - don't block app startup
+      });
 
     // Register global commands
     console.log('[VibeForge] Registering commands...');

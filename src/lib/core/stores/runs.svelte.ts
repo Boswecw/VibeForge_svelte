@@ -4,8 +4,16 @@
  * Manages prompt execution runs and history using Svelte 5 runes.
  */
 
-import type { PromptRun, RunStatus } from '$lib/core/types';
+import type { PromptRun, RunStatus, Model, ContextBlock } from '$lib/core/types';
 import { executePromptSimplified, type SimplifiedExecuteResponse } from '$lib/core/api/neuroforgeClient';
+import {
+  ExecutionOrchestrator,
+  type ExecutionRequest,
+  type ExecutionOptions,
+  type ExecutionResult,
+  type ExecutionProgress,
+  type StreamEvent,
+} from '$lib/core/execution';
 
 // ============================================================================
 // RUNS STATE
@@ -180,6 +188,114 @@ async function execute(prompt: string, modelId: string, contextBlocks?: string[]
 }
 
 // ============================================================================
+// NEW EXECUTION ENGINE INTEGRATION
+// ============================================================================
+
+/**
+ * Execute prompt with full execution engine (streaming, parallel, context)
+ */
+async function executeWithEngine(
+  request: ExecutionRequest,
+  options: ExecutionOptions = {}
+): Promise<ExecutionResult[]> {
+  state.isExecuting = true;
+  state.error = null;
+  state.executionProgress = 0;
+
+  try {
+    // Set up stream event handler
+    const streamEvents: StreamEvent[] = [];
+    const onStreamEvent = (event: StreamEvent) => {
+      streamEvents.push(event);
+      // Update active run if it's a token event
+      if (event.type === 'token' && state.activeRunId === event.runId) {
+        const run = state.runs.find((r) => r.id === event.runId);
+        if (run && 'data' in event && 'token' in event.data) {
+          run.output = (run.output || '') + event.data.token;
+        }
+      }
+    };
+
+    // Set up progress handler
+    const onProgress = (progress: ExecutionProgress) => {
+      state.executionProgress = progress.percentage;
+    };
+
+    // Execute with orchestrator
+    const results = await ExecutionOrchestrator.execute(request, {
+      ...options,
+      onStreamEvent,
+      onProgress,
+    });
+
+    // Convert execution results to prompt runs and add to store
+    for (const result of results) {
+      const run: PromptRun = {
+        id: result.runId,
+        workspaceId: 'default',
+        promptSnapshot: request.prompt,
+        contextBlockIds: request.contextBlocks.map((b) => b.id),
+        modelId: result.model.id,
+        output: result.output,
+        status: result.status,
+        totalTokens: result.usage.totalTokens,
+        inputTokens: result.usage.promptTokens,
+        outputTokens: result.usage.completionTokens,
+        durationMs: result.durationMs,
+        cost: result.usage.estimatedCost,
+        startedAt: result.startedAt,
+        completedAt: result.completedAt,
+        error: result.error,
+      };
+
+      addRun(run);
+
+      // Set first successful run as active
+      if (result.status === 'success' && !state.activeRunId) {
+        state.activeRunId = result.runId;
+      }
+    }
+
+    state.executionProgress = 100;
+    return results;
+  } catch (err) {
+    state.error = err instanceof Error ? err.message : 'Execution failed';
+    throw err;
+  } finally {
+    state.isExecuting = false;
+  }
+}
+
+/**
+ * Execute with current prompt and context blocks from stores
+ */
+async function executeFromStores(
+  prompt: string,
+  models: Model[],
+  contextBlocks: ContextBlock[],
+  variables?: Record<string, string>,
+  options?: ExecutionOptions
+): Promise<ExecutionResult[]> {
+  const request: ExecutionRequest = {
+    prompt,
+    models,
+    contextBlocks,
+    variables,
+  };
+
+  return executeWithEngine(request, options);
+}
+
+/**
+ * Stream a single run update
+ */
+function streamRunUpdate(runId: string, output: string) {
+  state.runs = state.runs.map((run) =>
+    run.id === runId ? { ...run, output } : run
+  );
+}
+
+// ============================================================================
 // EXPORTS
 // ============================================================================
 
@@ -240,4 +356,7 @@ export const runsStore = {
   getRunById,
   getRunsByModel,
   execute,
+  executeWithEngine,
+  executeFromStores,
+  streamRunUpdate,
 };
