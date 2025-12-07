@@ -186,7 +186,7 @@ VibeForge is an intelligent project creation platform with AI-powered recommenda
 - **Time:** 1.5 hours
 - **Documentation:** [VF-301 Implementation Summary](docs/VF-301_IMPLEMENTATION_SUMMARY.md)
 
-**VF-302: Runs History Persistence** ✅ **COMPLETE** (Store Enhanced)
+**VF-302: Runs History Persistence** ✅ **COMPLETE**
 - Enhanced runs store with offline-first sync (+333 lines, 431→764 total)
 - Integrated with DataForge sync manager (VF-300)
 - Real-time WebSocket updates from other devices/tabs
@@ -194,10 +194,13 @@ VibeForge is an intelligent project creation platform with AI-powered recommenda
 - Online/offline detection with auto-sync on reconnection
 - Enhanced CRUD: loadHistory(), deleteRun(), forceSyncAll()
 - Streaming execution with local caching + final sync
-- **Total:** 333 lines (store enhancement)
-- **Time:** 1 hour implementation + 0.75 hours documentation
-- **Documentation:** [VF-302 Implementation Summary](docs/VF-302_IMPLEMENTATION_SUMMARY.md)
-- **Status:** Store complete, UI components pending
+- **UI Components (900 lines):**
+  - RunsHistoryPanel: Complete history with search, filter, sync status (410 lines)
+  - RunSyncStatusIndicator: Per-run sync badges with tooltips (155 lines)
+  - RunConflictResolution: Side-by-side diff with manual resolution (280 lines)
+- **Total:** 1,233 lines (store + UI components)
+- **Time:** 4 hours total (1h store + 0.75h docs + 1.75h UI + 0.5h docs)
+- **Documentation:** [VF-302 Implementation Summary](docs/VF-302_IMPLEMENTATION_SUMMARY.md) (1,044 lines)
 
 ### 🔑 Key Features Delivered
 
@@ -255,15 +258,14 @@ console.log(workspaceStore.hasPendingChanges); // true/false
 |---------|------|--------|------|-------|
 | VF-300 | DataForge API Client & Sync | ✅ Complete | 4.5h | 1,942 |
 | VF-301 | Workspace Persistence & Sync | ✅ Complete | 1.5h | 780 |
-| VF-302 | Runs History Persistence (Store) | ✅ Complete | 1.75h | 333 |
-| VF-302 | Runs History Persistence (UI) | 🔄 Next | ~2h | Est. 400 |
-| VF-303 | Context Library Persistence | ⏸️ Pending | ~3h | Est. 600 |
+| VF-302 | Runs History Persistence | ✅ Complete | 4h | 1,233 |
+| VF-303 | Context Library Persistence | 🔄 Next | ~4h | Est. 700 |
 
-**Progress:** 3/4 tasks complete (75% - Store implementations done)
-**Time Invested:** 7.75 hours
-**Code Delivered:** 3,055 lines + 2,411 lines docs/tests
+**Progress:** 3/4 tasks complete (75%)
+**Time Invested:** 10 hours
+**Code Delivered:** 3,955 lines + 3,455 lines docs/tests
 
-**Next Up:** VF-302 UI Components (RunsHistoryPanel, RunSyncStatusIndicator, RunConflictResolution)
+**Next Up:** VF-303 Context Library Persistence (Apply same offline-first pattern to context blocks)
 
 ---
 
