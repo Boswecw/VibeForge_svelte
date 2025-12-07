@@ -12,3 +12,4 @@ export { runsStore } from './runs.svelte';
 export { toolsStore } from './tools.svelte';
 export { themeStore } from './theme.svelte';
 export { licenseStore } from './license.svelte';
+export { patternsStore } from './patterns.svelte';

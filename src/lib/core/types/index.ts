@@ -110,3 +110,21 @@ export type {
 } from "./license";
 
 export { FeatureFlag, TIER_CONFIGS } from "./license";
+
+// Pattern types (VF-310)
+export type {
+  PatternCategory,
+  TemplateVariable,
+  PromptPattern,
+  PatternFilters,
+  PatternRating,
+  PatternExport,
+  PatternCollection
+} from "./patterns";
+
+export {
+  extractVariables,
+  substituteVariables,
+  validatePattern,
+  createBlankPattern
+} from "./patterns";
