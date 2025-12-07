@@ -8,12 +8,13 @@
 	import ProgressTracker from './ProgressTracker.svelte';
 	import StageCard from './StageCard.svelte';
 	import OutputDisplay from './OutputDisplay.svelte';
+	import SettingsPanel from './SettingsPanel.svelte';
 
 	// ========================================================================
 	// STATE
 	// ========================================================================
 
-	let activeTab = $state<'request' | 'stages' | 'output'>('request');
+	let activeTab = $state<'request' | 'stages' | 'output' | 'settings'>('request');
 
 	// ========================================================================
 	// DERIVED STATE
@@ -116,6 +117,13 @@
 		>
 			Output
 		</button>
+		<button
+			class="tab"
+			class:active={activeTab === 'settings'}
+			onclick={() => (activeTab = 'settings')}
+		>
+			Settings
+		</button>
 	</div>
 
 	<!-- Tab Content -->
@@ -164,6 +172,9 @@
 		{:else if activeTab === 'output'}
 			<!-- Output Display -->
 			<OutputDisplay session={currentSession} {streamingOutput} />
+		{:else if activeTab === 'settings'}
+			<!-- Settings Panel -->
+			<SettingsPanel />
 		{/if}
 	</div>
 

@@ -6,7 +6,7 @@
 	import { planningStore } from '$lib/workbench/planning/stores/planning.svelte';
 	import { licenseStore } from '$lib/core/stores/license.svelte';
 	import type { RequestType, PipelineType } from '$lib/workbench/planning/types';
-	import { PIPELINES } from '$lib/workbench/planning/types';
+	import { PIPELINES, estimatePipelineCost } from '$lib/workbench/planning/types';
 
 	// ========================================================================
 	// STATE
@@ -31,6 +31,7 @@
 
 	const quotaRemaining = $derived(licenseStore.orchestratorQuotaRemaining);
 	const selectedPipeline = $derived(PIPELINES[pipelineType]);
+	const estimatedCost = $derived(selectedPipeline ? estimatePipelineCost(selectedPipeline) : 0);
 
 	// ========================================================================
 	// HANDLERS
@@ -148,7 +149,7 @@
 			</select>
 			{#if selectedPipeline}
 				<small class="pipeline-info">
-					{selectedPipeline.stages.length} stages • ~${selectedPipeline.estimatedCost.toFixed(2)} cost
+					{selectedPipeline.stages.length} stages • ~${estimatedCost.toFixed(2)} cost
 				</small>
 			{/if}
 		</div>

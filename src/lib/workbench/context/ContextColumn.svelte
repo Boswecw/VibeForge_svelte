@@ -14,10 +14,12 @@
 	import McpToolsSection from './McpToolsSection.svelte';
 	import PromptSelector from '../prompts/PromptSelector.svelte';
 	import { SourcePanel } from '../source';
+	import { PlanningPanel } from '../planning/components';
+	import ErrorBoundary from '../components/ErrorBoundary.svelte';
 
 	let showEditor = $state(false);
 	let showInactive = $state(false);
-	let activeTab = $state<'context' | 'prompts'>('prompts');
+	let activeTab = $state<'context' | 'prompts' | 'planning'>('prompts');
 	let draggedBlockId = $state<string | null>(null);
 	let dropTargetId = $state<string | null>(null);
 
@@ -99,7 +101,7 @@
 	<!-- Column Header with Tabs -->
 	<div class="shrink-0 border-b border-slate-800">
 		<div class="p-4 pb-0">
-			<SectionHeader title={activeTab === 'context' ? 'Context' : 'Prompts'} description={activeTab === 'context' ? 'Manage context blocks and tools' : 'Browse and load saved prompts'} level={2}>
+			<SectionHeader title={activeTab === 'context' ? 'Context' : activeTab === 'prompts' ? 'Prompts' : 'Planning'} description={activeTab === 'context' ? 'Manage context blocks and tools' : activeTab === 'prompts' ? 'Browse and load saved prompts' : 'Multi-AI collaborative planning'} level={2}>
 				<svelte:fragment slot="actions">
 					{#if activeTab === 'context'}
 						<Button variant="primary" size="sm" onclick={handleNewBlock}>
@@ -136,6 +138,17 @@
 			>
 				Context
 				{#if activeTab === 'context'}
+					<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-forge-ember"></div>
+				{/if}
+			</button>
+			<button
+				onclick={() => (activeTab = 'planning')}
+				class="flex-1 px-4 py-3 text-sm font-medium transition-colors relative {activeTab === 'planning'
+					? 'text-forge-ember'
+					: 'text-slate-400 hover:text-slate-300'}"
+			>
+				Planning
+				{#if activeTab === 'planning'}
 					<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-forge-ember"></div>
 				{/if}
 			</button>
@@ -214,6 +227,13 @@
 		{#if activeTab === 'prompts'}
 			<!-- Prompts Tab -->
 			<PromptSelector />
+		{:else if activeTab === 'planning'}
+			<!-- Planning Tab -->
+			<ErrorBoundary fallback="Failed to load Planning Orchestrator. Please refresh the page.">
+				{#snippet children()}
+					<PlanningPanel />
+				{/snippet}
+			</ErrorBoundary>
 		{:else}
 			<!-- Context Tab -->
 			<!-- Editor (when open) -->
