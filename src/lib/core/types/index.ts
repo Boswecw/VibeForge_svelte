@@ -146,3 +146,27 @@ export {
   validateTemplate,
   extractTemplateVariables
 } from "../templates";
+
+// Marketplace types (VF-312)
+export type {
+  SubmissionStatus,
+  ReportReason,
+  AuthorProfile,
+  PatternReview,
+  PatternVersion,
+  MarketplacePattern,
+  PatternSubmission,
+  ContentReport,
+  MarketplaceFilters,
+  MarketplaceAnalytics,
+  UserMarketplaceProfile,
+  FeaturedPattern,
+  ChangelogEntry,
+  MarketplaceNotification,
+  ListMarketplacePatternsResponse,
+  GetMarketplacePatternResponse,
+  SubmitPatternResponse,
+  InstallPatternResponse,
+  RatePatternResponse,
+  ReportPatternResponse
+} from "./marketplace";
