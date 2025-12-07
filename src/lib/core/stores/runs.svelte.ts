@@ -1,7 +1,16 @@
 /**
- * VibeForge V2 - Runs Store
+ * VibeForge V2 - Runs Store (VF-302: Enhanced with Offline-First Sync)
  *
- * Manages prompt execution runs and history using Svelte 5 runes.
+ * Manages prompt execution runs and history using Svelte 5 runes with offline-first sync.
+ *
+ * Features:
+ * - Offline-first: All runs saved to IndexedDB immediately
+ * - Auto-sync: Background sync to DataForge when online
+ * - Real-time sync: WebSocket updates from other devices/tabs
+ * - Streaming execution: Token-by-token updates with local caching
+ * - Run history: Complete execution history with search and filtering
+ *
+ * Phase 3 - Track A: Backend Persistence (VF-302)
  */
 
 import type { PromptRun, RunStatus, Model, ContextBlock } from '$lib/core/types';
@@ -14,6 +23,23 @@ import {
   type ExecutionProgress,
   type StreamEvent,
 } from '$lib/core/execution';
+import * as sync from '$lib/core/sync';
+import { initWebSocketSync } from '$lib/core/sync';
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+type SyncStatus = 'idle' | 'syncing' | 'synced' | 'error' | 'conflict' | 'offline';
+
+interface RunSyncMetadata {
+  runId: string;
+  status: SyncStatus;
+  lastSynced: Date | null;
+  pendingChanges: boolean;
+  hasConflict: boolean;
+  errorMessage: string | null;
+}
 
 // ============================================================================
 // RUNS STATE
@@ -25,6 +51,11 @@ interface RunsState {
   isExecuting: boolean;
   executionProgress: number; // 0-100
   error: string | null;
+  // NEW: Sync tracking
+  syncStatus: SyncStatus;
+  syncMetadata: Map<string, RunSyncMetadata>;
+  isOnline: boolean;
+  isLoadingHistory: boolean;
 }
 
 const state = $state<RunsState>({
@@ -33,6 +64,11 @@ const state = $state<RunsState>({
   isExecuting: false,
   executionProgress: 0,
   error: null,
+  // NEW: Sync state
+  syncStatus: 'idle',
+  syncMetadata: new Map(),
+  isOnline: true,
+  isLoadingHistory: false,
 });
 
 // ============================================================================
@@ -72,15 +108,122 @@ const totalTokensUsed = $derived(
 
 const totalCost = $derived(state.runs.reduce((sum, run) => sum + (run.cost || 0), 0));
 
-const averageDuration = $derived(() => {
+const averageDuration = $derived.by(() => {
   const completed = state.runs.filter((r) => r.durationMs !== undefined);
   if (completed.length === 0) return 0;
   const total = completed.reduce((sum, run) => sum + (run.durationMs || 0), 0);
   return Math.round(total / completed.length);
 });
 
+// NEW: Sync derived state
+const hasPendingChanges = $derived(
+  Array.from(state.syncMetadata.values()).some(m => m.pendingChanges)
+);
+
+const hasConflicts = $derived(
+  Array.from(state.syncMetadata.values()).some(m => m.hasConflict)
+);
+
 // ============================================================================
-// ACTIONS
+// INITIALIZATION
+// ============================================================================
+
+// Initialize WebSocket sync on store creation
+let wsSync: ReturnType<typeof initWebSocketSync> | null = null;
+
+if (typeof window !== 'undefined') {
+  // Initialize WebSocket for real-time updates
+  wsSync = initWebSocketSync();
+
+  // Subscribe to run updates from other tabs/devices
+  wsSync.subscribe((update) => {
+    if (update.resourceType === 'run') {
+      handleRemoteRunUpdate(update);
+    }
+  });
+
+  // Update online status
+  state.isOnline = sync.getOnlineStatus();
+
+  // Listen for online/offline events
+  window.addEventListener('online', () => {
+    state.isOnline = true;
+    state.syncStatus = 'syncing';
+    // Trigger sync of pending changes
+    syncPendingChanges().catch(console.error);
+  });
+
+  window.addEventListener('offline', () => {
+    state.isOnline = false;
+    state.syncStatus = 'offline';
+  });
+}
+
+// ============================================================================
+// SYNC HELPERS
+// ============================================================================
+
+function updateSyncMetadata(runId: string, updates: Partial<RunSyncMetadata>) {
+  const existing = state.syncMetadata.get(runId);
+  const updated: RunSyncMetadata = {
+    runId,
+    status: updates.status ?? existing?.status ?? 'idle',
+    lastSynced: updates.lastSynced ?? existing?.lastSynced ?? null,
+    pendingChanges: updates.pendingChanges ?? existing?.pendingChanges ?? false,
+    hasConflict: updates.hasConflict ?? existing?.hasConflict ?? false,
+    errorMessage: updates.errorMessage ?? existing?.errorMessage ?? null,
+  };
+  state.syncMetadata.set(runId, updated);
+}
+
+function handleRemoteRunUpdate(update: any) {
+  const { type, resourceId, data } = update;
+
+  if (type === 'created' && data) {
+    // Add new run from remote
+    const exists = state.runs.find(r => r.id === resourceId);
+    if (!exists) {
+      state.runs = [data as PromptRun, ...state.runs];
+    }
+  } else if (type === 'updated' && data) {
+    // Update run from remote
+    state.runs = state.runs.map(r =>
+      r.id === resourceId ? data as PromptRun : r
+    );
+    if (state.activeRunId === resourceId) {
+      // Active run updated remotely - could show notification
+    }
+  } else if (type === 'deleted') {
+    // Remove run deleted remotely
+    state.runs = state.runs.filter(r => r.id !== resourceId);
+    if (state.activeRunId === resourceId) {
+      state.activeRunId = null;
+    }
+  }
+}
+
+async function syncPendingChanges() {
+  if (!state.isOnline) return;
+
+  try {
+    state.syncStatus = 'syncing';
+    const result = await sync.syncAll({ forceSync: true });
+
+    if (result.conflicts > 0) {
+      state.syncStatus = 'conflict';
+    } else if (result.errors.length > 0) {
+      state.syncStatus = 'error';
+    } else {
+      state.syncStatus = 'synced';
+    }
+  } catch (err) {
+    state.syncStatus = 'error';
+    console.error('[RunsStore] Sync failed:', err);
+  }
+}
+
+// ============================================================================
+// BASIC ACTIONS
 // ============================================================================
 
 function setRuns(runs: PromptRun[]) {
@@ -88,21 +231,83 @@ function setRuns(runs: PromptRun[]) {
   state.error = null;
 }
 
-function addRun(run: PromptRun) {
+async function addRun(run: PromptRun) {
+  // Optimistically add to UI
   state.runs = [run, ...state.runs];
+
+  // Mark as pending sync
+  updateSyncMetadata(run.id, {
+    status: state.isOnline ? 'syncing' : 'offline',
+    pendingChanges: !state.isOnline,
+  });
+
+  // Save using sync manager (saves to IndexedDB + syncs to server)
+  try {
+    await sync.saveRun(run);
+
+    // Update sync metadata on success
+    updateSyncMetadata(run.id, {
+      status: 'synced',
+      lastSynced: new Date(),
+      pendingChanges: false,
+    });
+  } catch (err) {
+    console.error('[RunsStore] Failed to sync run:', err);
+    updateSyncMetadata(run.id, {
+      status: 'error',
+      errorMessage: err instanceof Error ? err.message : 'Sync failed',
+    });
+  }
 }
 
-function updateRun(id: string, updates: Partial<PromptRun>) {
-  state.runs = state.runs.map((run) => (run.id === id ? { ...run, ...updates } : run));
+async function updateRun(id: string, updates: Partial<PromptRun>) {
+  // Find existing run
+  const existing = state.runs.find(r => r.id === id);
+  if (!existing) return;
+
+  // Create updated run
+  const updatedRun: PromptRun = {
+    ...existing,
+    ...updates,
+  };
+
+  // Optimistically update UI
+  state.runs = state.runs.map((run) => (run.id === id ? updatedRun : run));
+
+  // Mark as pending sync
+  updateSyncMetadata(id, {
+    status: state.isOnline ? 'syncing' : 'offline',
+    pendingChanges: !state.isOnline,
+  });
+
+  // Save using sync manager
+  try {
+    await sync.saveRun(updatedRun);
+
+    // Update sync metadata on success
+    updateSyncMetadata(id, {
+      status: 'synced',
+      lastSynced: new Date(),
+      pendingChanges: false,
+    });
+  } catch (err) {
+    console.error('[RunsStore] Failed to sync run update:', err);
+    updateSyncMetadata(id, {
+      status: 'error',
+      errorMessage: err instanceof Error ? err.message : 'Sync failed',
+    });
+  }
 }
 
 function removeRun(id: string) {
   state.runs = state.runs.filter((run) => run.id !== id);
+  state.syncMetadata.delete(id);
 }
 
 function clearRuns() {
   state.runs = [];
   state.activeRunId = null;
+  state.syncMetadata.clear();
 }
 
 function setActiveRun(id: string | null) {
@@ -148,6 +353,111 @@ function getRunsByModel(modelId: string): PromptRun[] {
   return state.runs.filter((run) => run.modelId === modelId);
 }
 
+// ============================================================================
+// CRUD WITH OFFLINE-FIRST SYNC
+// ============================================================================
+
+/**
+ * Load run history (from server if online, from cache if offline)
+ */
+async function loadHistory(workspaceId?: string, limit?: number) {
+  state.isLoadingHistory = true;
+  state.error = null;
+
+  try {
+    // Use sync manager to get runs (handles offline fallback)
+    const runs = await sync.listRuns(workspaceId);
+
+    // Apply limit if specified
+    const limitedRuns = limit ? runs.slice(0, limit) : runs;
+
+    state.runs = limitedRuns;
+
+    // Initialize sync metadata for each run
+    for (const run of limitedRuns) {
+      if (!state.syncMetadata.has(run.id)) {
+        updateSyncMetadata(run.id, {
+          status: 'synced',
+          lastSynced: new Date(),
+          pendingChanges: false,
+        });
+      }
+    }
+  } catch (err) {
+    state.error = err instanceof Error ? err.message : 'Failed to load run history';
+    console.error('[RunsStore] Load history failed:', err);
+  } finally {
+    state.isLoadingHistory = false;
+  }
+}
+
+/**
+ * Delete run (optimistic update)
+ */
+async function deleteRun(id: string) {
+  try {
+    // Optimistically remove from UI
+    const runToDelete = state.runs.find(r => r.id === id);
+    state.runs = state.runs.filter(r => r.id !== id);
+
+    if (state.activeRunId === id) {
+      state.activeRunId = null;
+    }
+
+    // Delete using sync manager
+    await sync.deleteRun(id);
+
+    // Remove sync metadata
+    state.syncMetadata.delete(id);
+  } catch (err) {
+    // Rollback on error
+    if (runToDelete) {
+      state.runs = [runToDelete, ...state.runs];
+    }
+    state.error = err instanceof Error ? err.message : 'Failed to delete run';
+    throw err;
+  }
+}
+
+/**
+ * Force sync all pending changes (manual trigger)
+ */
+async function forceSyncAll() {
+  if (!state.isOnline) {
+    state.error = 'Cannot sync while offline';
+    return;
+  }
+
+  state.syncStatus = 'syncing';
+
+  try {
+    const result = await sync.syncAll({ forceSync: true, resolveConflicts: true });
+
+    if (result.conflicts > 0) {
+      state.syncStatus = 'conflict';
+      // Reload runs to get conflict data
+      await loadHistory();
+    } else if (result.errors.length > 0) {
+      state.syncStatus = 'error';
+      state.error = `Sync errors: ${result.errors.join(', ')}`;
+    } else {
+      state.syncStatus = 'synced';
+      // Reload runs to get latest data
+      await loadHistory();
+    }
+
+    return result;
+  } catch (err) {
+    state.syncStatus = 'error';
+    state.error = err instanceof Error ? err.message : 'Sync failed';
+    throw err;
+  }
+}
+
+// ============================================================================
+// EXECUTION (Enhanced with offline-first sync)
+// ============================================================================
+
 // Execute a prompt with a single model (Refactoring Plan Compatible)
 async function execute(prompt: string, modelId: string, contextBlocks?: string[]): Promise<SimplifiedExecuteResponse> {
   state.isExecuting = true;
@@ -176,7 +486,7 @@ async function execute(prompt: string, modelId: string, contextBlocks?: string[]
       cost: 0, // Calculate based on model pricing
     };
 
-    addRun(run);
+    await addRun(run); // Now uses offline-first sync
     state.activeRunId = run.id;
     return result;
   } catch (err) {
@@ -186,10 +496,6 @@ async function execute(prompt: string, modelId: string, contextBlocks?: string[]
     state.isExecuting = false;
   }
 }
-
-// ============================================================================
-// NEW EXECUTION ENGINE INTEGRATION
-// ============================================================================
 
 /**
  * Execute prompt with full execution engine (streaming, parallel, context)
@@ -218,7 +524,7 @@ async function executeWithEngine(
         startedAt: new Date().toISOString(),
       };
       placeholderRuns.set(model.id, placeholderRun);
-      addRun(placeholderRun);
+      await addRun(placeholderRun); // Now uses offline-first sync
     }
 
     // Set first run as active
@@ -278,7 +584,7 @@ async function executeWithEngine(
 
       if (placeholder) {
         // Update the existing placeholder with final results
-        updateRun(placeholder.id, {
+        await updateRun(placeholder.id, {
           id: result.runId,
           output: result.output,
           status: result.status,
@@ -320,7 +626,7 @@ async function executeWithEngine(
           completedAt: result.completedAt,
           error: result.error,
         };
-        addRun(run);
+        await addRun(run); // Now uses offline-first sync
       }
     }
 
@@ -355,7 +661,7 @@ async function executeFromStores(
 }
 
 /**
- * Stream a single run update
+ * Stream a single run update (local only, not synced)
  */
 function streamRunUpdate(runId: string, output: string) {
   state.runs = state.runs.map((run) =>
@@ -384,6 +690,24 @@ export const runsStore = {
   get error() {
     return state.error;
   },
+
+  // NEW: Sync state
+  get syncStatus() {
+    return state.syncStatus;
+  },
+  get isOnline() {
+    return state.isOnline;
+  },
+  get hasPendingChanges() {
+    return hasPendingChanges;
+  },
+  get hasConflicts() {
+    return hasConflicts;
+  },
+  get isLoadingHistory() {
+    return state.isLoadingHistory;
+  },
+
   // Derived
   get activeRun() {
     return activeRun;
@@ -407,8 +731,9 @@ export const runsStore = {
     return totalCost;
   },
   get averageDuration() {
-    return averageDuration();
+    return averageDuration;
   },
+
   // Actions
   setRuns,
   addRun,
@@ -423,6 +748,14 @@ export const runsStore = {
   setError,
   getRunById,
   getRunsByModel,
+
+  // CRUD with offline-first sync
+  loadHistory,
+  deleteRun,
+  forceSyncAll,
+  syncPendingChanges,
+
+  // Execution (enhanced with offline-first sync)
   execute,
   executeWithEngine,
   executeFromStores,
