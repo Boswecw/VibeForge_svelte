@@ -128,3 +128,21 @@ export {
   validatePattern,
   createBlankPattern
 } from "./patterns";
+
+// Template types (VF-311)
+export type {
+  FilterFunction,
+  TemplateContext,
+  TemplateOptions
+} from "../templates";
+
+export {
+  BUILTIN_FILTERS,
+  applyFilter,
+  parseFilter,
+  applyFilters,
+  EnhancedTemplateProcessor,
+  renderTemplate,
+  validateTemplate,
+  extractTemplateVariables
+} from "../templates";
