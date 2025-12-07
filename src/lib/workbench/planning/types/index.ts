@@ -501,3 +501,225 @@ export function getSessionProgress(session: PlanningSession): number {
 	const completedStages = session.stages.filter((s) => s.status === 'completed').length;
 	return Math.round((completedStages / session.stages.length) * 100);
 }
+
+// ==============================================================================
+// MODEL COMPARISON TYPES
+// ==============================================================================
+
+/**
+ * Comparison run configuration
+ */
+export interface ComparisonConfig {
+	/** Pipeline configurations to compare */
+	pipelines: PipelineType[];
+	/** Whether to run in parallel */
+	parallel: boolean;
+}
+
+/**
+ * Comparison run state
+ */
+export type ComparisonStatus = 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+
+/**
+ * Model comparison run
+ * Runs the same request through multiple pipelines
+ */
+export interface ComparisonRun {
+	/** Unique ID */
+	id: string;
+	/** Request title */
+	title: string;
+	/** Request description */
+	description: string;
+	/** Request type */
+	requestType: RequestType;
+	/** Comparison configuration */
+	config: ComparisonConfig;
+	/** Status */
+	status: ComparisonStatus;
+	/** Individual planning sessions (one per pipeline) */
+	sessions: Map<PipelineType, PlanningSession>;
+	/** Created timestamp */
+	createdAt: Date;
+	/** Started timestamp */
+	startedAt: Date | null;
+	/** Completed timestamp */
+	completedAt: Date | null;
+	/** Error message if failed */
+	error: string | null;
+	/** User ID */
+	userId?: string;
+	/** Workspace ID */
+	workspaceId?: string;
+}
+
+/**
+ * Comparison metrics for analysis
+ */
+export interface ComparisonMetrics {
+	/** Pipeline type */
+	pipeline: PipelineType;
+	/** Total tokens used */
+	totalTokens: number;
+	/** Total cost */
+	totalCost: number;
+	/** Total duration in milliseconds */
+	durationMs: number;
+	/** Success rate (completed stages / total stages) */
+	successRate: number;
+	/** Average tokens per stage */
+	avgTokensPerStage: number;
+	/** Status */
+	status: SessionStatus;
+}
+
+/**
+ * Comparison result summary
+ */
+export interface ComparisonResult {
+	/** Comparison run ID */
+	runId: string;
+	/** Title */
+	title: string;
+	/** Metrics for each pipeline */
+	metrics: Map<PipelineType, ComparisonMetrics>;
+	/** Winner (lowest cost) */
+	winner: {
+		pipeline: PipelineType;
+		reason: 'cost' | 'quality' | 'speed';
+	} | null;
+	/** Created timestamp */
+	createdAt: Date;
+}
+
+// ==============================================================================
+// COMPARISON HELPER FUNCTIONS
+// ==============================================================================
+
+/**
+ * Create a new comparison run
+ */
+export function createComparisonRun(
+	title: string,
+	description: string,
+	requestType: RequestType,
+	pipelines: PipelineType[],
+	parallel: boolean = true,
+	userId?: string,
+	workspaceId?: string
+): ComparisonRun {
+	const timestamp = Date.now();
+	const randomStr = Math.random().toString(36).substr(2, 9);
+	const runId = `comp_${timestamp}_${randomStr}`;
+
+	// Create a session for each pipeline
+	const sessions = new Map<PipelineType, PlanningSession>();
+	for (const pipelineType of pipelines) {
+		const session = createPlanningSession(
+			`${title} (${pipelineType})`,
+			description,
+			requestType,
+			pipelineType,
+			userId,
+			workspaceId
+		);
+		sessions.set(pipelineType, session);
+	}
+
+	return {
+		id: runId,
+		title,
+		description,
+		requestType,
+		config: {
+			pipelines,
+			parallel
+		},
+		status: 'pending',
+		sessions,
+		createdAt: new Date(),
+		startedAt: null,
+		completedAt: null,
+		error: null,
+		userId,
+		workspaceId
+	};
+}
+
+/**
+ * Calculate metrics for a session
+ */
+export function calculateSessionMetrics(
+	session: PlanningSession,
+	pipelineType: PipelineType
+): ComparisonMetrics {
+	const completedStages = session.stages.filter((s) => s.status === 'completed').length;
+	const successRate =
+		session.stages.length > 0 ? (completedStages / session.stages.length) * 100 : 0;
+
+	const durationMs =
+		session.completedAt && session.startedAt
+			? session.completedAt.getTime() - session.startedAt.getTime()
+			: 0;
+
+	const avgTokensPerStage = completedStages > 0 ? session.totalTokens / completedStages : 0;
+
+	return {
+		pipeline: pipelineType,
+		totalTokens: session.totalTokens,
+		totalCost: session.totalCost,
+		durationMs,
+		successRate,
+		avgTokensPerStage,
+		status: session.status
+	};
+}
+
+/**
+ * Generate comparison result from run
+ */
+export function generateComparisonResult(run: ComparisonRun): ComparisonResult {
+	const metrics = new Map<PipelineType, ComparisonMetrics>();
+
+	// Calculate metrics for each session
+	run.sessions.forEach((session, pipelineType) => {
+		const sessionMetrics = calculateSessionMetrics(session, pipelineType);
+		metrics.set(pipelineType, sessionMetrics);
+	});
+
+	// Determine winner (lowest cost among completed sessions)
+	let winner: ComparisonResult['winner'] = null;
+	let lowestCost = Infinity;
+
+	metrics.forEach((metric, pipeline) => {
+		if (metric.status === 'completed' && metric.totalCost < lowestCost) {
+			lowestCost = metric.totalCost;
+			winner = { pipeline, reason: 'cost' };
+		}
+	});
+
+	return {
+		runId: run.id,
+		title: run.title,
+		metrics,
+		winner,
+		createdAt: run.createdAt
+	};
+}
+
+/**
+ * Check if comparison run is complete
+ */
+export function isComparisonComplete(run: ComparisonRun): boolean {
+	if (run.status === 'completed' || run.status === 'failed' || run.status === 'cancelled') {
+		return true;
+	}
+
+	// Check if all sessions are complete
+	const allComplete = Array.from(run.sessions.values()).every((session) =>
+		isSessionComplete(session)
+	);
+
+	return allComplete;
+}
