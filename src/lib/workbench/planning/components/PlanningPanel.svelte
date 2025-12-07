@@ -9,6 +9,7 @@
 	import StageCard from './StageCard.svelte';
 	import OutputDisplay from './OutputDisplay.svelte';
 	import SettingsPanel from './SettingsPanel.svelte';
+	import OfflineBanner from './OfflineBanner.svelte';
 
 	// ========================================================================
 	// STATE
@@ -85,6 +86,9 @@
 			</div>
 		{/if}
 	</div>
+
+	<!-- Offline Banner -->
+	<OfflineBanner />
 
 	<!-- Progress Tracker (always visible when session exists) -->
 	{#if currentSession}

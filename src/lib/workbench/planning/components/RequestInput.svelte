@@ -168,7 +168,15 @@
 				Reset
 			</button>
 			<button type="submit" class="btn-primary" disabled={!canSubmit}>
-				{planningStore.isRunning ? 'Running...' : 'Start Planning'}
+				{#if planningStore.isRunning}
+					<svg class="spinner" viewBox="0 0 24 24">
+						<circle class="spinner-track" cx="12" cy="12" r="10" fill="none" stroke-width="3"></circle>
+						<circle class="spinner-fill" cx="12" cy="12" r="10" fill="none" stroke-width="3"></circle>
+					</svg>
+					Running...
+				{:else}
+					Start Planning
+				{/if}
 			</button>
 		</div>
 	</form>
@@ -315,6 +323,32 @@
 	button:disabled {
 		opacity: 0.6;
 		cursor: not-allowed;
+	}
+
+	.spinner {
+		width: 1rem;
+		height: 1rem;
+		margin-right: 0.5rem;
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	.spinner-track {
+		stroke: rgba(255, 255, 255, 0.3);
+	}
+
+	.spinner-fill {
+		stroke: currentColor;
+		stroke-dasharray: 50;
+		stroke-dashoffset: 50;
+		animation: spin 1s linear infinite;
+		transform-origin: center;
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
 	}
 
 	.btn-primary {
