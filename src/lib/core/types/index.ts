@@ -100,3 +100,13 @@ export type {
   InvokeToolRequest,
   InvokeToolResponse,
 } from "./mcp";
+
+// License types
+export type {
+  LicenseTier,
+  License,
+  LicenseLimits,
+  LicenseValidationResponse
+} from "./license";
+
+export { FeatureFlag, TIER_CONFIGS } from "./license";

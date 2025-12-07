@@ -49,6 +49,39 @@ VibeForge is an intelligent project creation platform with AI-powered recommenda
 
 ---
 
+## 🎉 What's New - Cortex Multi-AI Planning Orchestrator
+
+**December 6, 2025 - Phase 2 Progress: 5/14 tasks complete (36%)**
+
+**Latest Update:** Pivoting to Cortex - an advanced Multi-AI Planning Orchestrator with freemium licensing!
+
+**Recently Completed - V2 Workbench Foundation:**
+
+**VF-203: Prompt Execution Engine** ✅
+- Context assembly from active blocks + MCP tool results
+- Template variable substitution ({{variableName}})
+- Parallel execution across multiple LLM models
+- Real-time streaming with progress tracking
+- Token counting and cost estimation
+
+**VF-204: Real-time Streaming UI** ✅
+- Token-by-token markdown rendering with marked.js
+- Syntax highlighting for 30+ languages with highlight.js
+- Animated progress bar (0-100%)
+- Stop generation button
+- Beautiful dark mode prose styling
+
+**Next Up - Cortex Multi-AI Orchestration (9 steps):**
+- Freemium licensing system (free/trial/pro tiers)
+- 4-stage ChatGPT ↔ Claude planning workflow
+- Advanced model comparison and evaluation
+- Two-file deliverable system (Implementation Plan + Claude Code Prompt)
+- Support for 4 LLM providers (Anthropic, OpenAI, xAI, Google)
+
+See [Phase 2 Status](#-project-status) for full implementation roadmap.
+
+---
+
 ## 🚀 Quick Start
 
 ```bash
@@ -67,8 +100,16 @@ pnpm dev
 
 ## 📋 What is VibeForge?
 
-VibeForge is a **freeware entry product** to the Forge Ecosystem—an intelligent project creation wizard that helps developers:
+VibeForge is a **freeware entry product** to the Forge Ecosystem—combining an AI-powered workbench with an intelligent project creation wizard.
 
+**V2 AI Workbench (Active Development):**
+- **Execute LLM prompts** with real-time streaming from Claude & GPT-4
+- **Manage context blocks** for reusable prompt components
+- **Integrate MCP tools** from DataForge, NeuroForge, and custom servers
+- **Compare model outputs** side-by-side with cost/latency metrics
+- **Track run history** with full execution metadata
+
+**Intelligent Project Wizard (Production):**
 - **Create AI-optimized projects** with adaptive stack recommendations
 - **Select from 15 languages** across 4 categories (Frontend, Backend, Mobile, Systems)
 - **Choose production-ready stacks** from 10 professionally configured profiles
@@ -77,6 +118,19 @@ VibeForge is a **freeware entry product** to the Forge Ecosystem—an intelligen
 - **Predict project success** with ML-powered forecasting
 
 ### 🌟 Key Features
+
+#### 🎨 V2 AI Workbench (NEW - Phase 2 Active Development)
+
+- **3-Column Layout** - Context, Prompt, Output for optimal workflow
+- **Real-Time LLM Execution** - Stream responses from Claude & GPT-4 with token-by-token rendering
+- **MCP Tool Integration** - Connect to DataForge, NeuroForge, and custom MCP servers
+- **Context Block System** - Reusable prompt components for system prompts, specs, code snippets
+- **Parallel Model Execution** - Run prompts across multiple models simultaneously
+- **Streaming UI** - Beautiful markdown rendering with syntax highlighting (30+ languages)
+- **Template Variables** - {{variableName}} substitution in prompts
+- **Progress Tracking** - Real-time execution progress with stop button
+- **Cost & Token Tracking** - Monitor usage and costs per run
+- **Run History** - Compare outputs, view metrics, replay prompts
 
 #### 🧙 Intelligent Wizard System
 
@@ -218,6 +272,13 @@ VibeForge connects to commercial Forge backend services:
 - **Vite 7.x** - Lightning-fast build tool
 - **pnpm** - Fast package manager
 
+**LLM & AI:**
+- **Anthropic Claude API** - Claude 3.5 Sonnet, Opus, Haiku with streaming
+- **OpenAI API** - GPT-4 Turbo, GPT-4, GPT-3.5 Turbo with streaming
+- **MCP (Model Context Protocol)** - JSON-RPC 2.0 for tool integration
+- **marked 17.0.1** - GitHub-flavored markdown parser
+- **highlight.js 11.11.1** - Syntax highlighting for 30+ languages
+
 **Testing:**
 - **Vitest 4.x** - Fast unit testing with native Vite support
 - **@testing-library/svelte** - Component testing utilities
@@ -228,11 +289,58 @@ VibeForge connects to commercial Forge backend services:
 
 ## 🎯 Project Status
 
-**Version:** 5.6.0 (Production)
-**Status:** 🟢 Production Ready - Pattern Scaffolding Complete
+**Version:** 5.7.0 (Active Development)
+**Status:** 🟡 Phase 2 - Cortex Multi-AI Planning Orchestrator (36% Complete)
 **License:** Freeware with Restrictions
 
 ### Completed Features
+
+**Phase 2 - V2 Workbench Backend Integration (5/14 tasks - 35.7% Complete):**
+
+**VF-200: MCP Protocol Implementation** ✅ (Dec 6, 2025)
+- [x] Full MCP JSON-RPC 2.0 client implementation (468 lines)
+- [x] Multi-server connection manager (207 lines)
+- [x] Support for HTTP, WebSocket, and SSE transports
+- [x] Auto-reconnection, timeout handling, event system
+- [x] Default servers: DataForge (8001), NeuroForge (8000)
+
+**VF-201: MCP Server Integration** ✅ (Dec 6, 2025)
+- [x] Real-time server connection and tool discovery
+- [x] Live tool invocation with DataForge and NeuroForge
+- [x] Reactive UI updates on server/tool changes
+- [x] Connection status indicators with tooltips
+- [x] Tool result display with JSON formatting
+- [x] Success/error states with auto-hide
+
+**VF-202: LLM Provider Integration** ✅ (Dec 6, 2025)
+- [x] Anthropic Claude API client with streaming (400 lines)
+- [x] OpenAI API client with streaming (346 lines)
+- [x] Abstract base provider with retry & rate limiting (298 lines)
+- [x] Token counting and cost estimation utilities (295 lines)
+- [x] Provider factory and manager (130 lines)
+- [x] Support for Claude 3.5 Sonnet, Opus, GPT-4 Turbo, GPT-3.5
+- [x] Automatic retry with exponential backoff
+- [x] Rate limiting (requests/min, tokens/min, tokens/day)
+
+**VF-203: Prompt Execution Engine** ✅ (Dec 6, 2025)
+- [x] Context assembly from active ContextBlocks + MCP tools (296 lines)
+- [x] Template variable substitution with {{variableName}} (131 lines)
+- [x] Parallel execution orchestrator with streaming (400 lines)
+- [x] Real-time streaming support with event callbacks
+- [x] Progress tracking (percentage, completed, failed)
+- [x] Token counting and cost estimation per run
+- [x] Error handling and retry logic
+- [x] Execution cancellation support (AbortSignal)
+
+**VF-204: Real-time Streaming UI** ✅ (Dec 6, 2025)
+- [x] Token-by-token markdown renderer (152 lines) with marked.js
+- [x] Syntax highlighting for 30+ languages with highlight.js
+- [x] Streaming progress bar (0-100%) with animated gradient
+- [x] Stop generation button with confirmation
+- [x] Streaming cursor indicator (pulsing ember block)
+- [x] Error state handling and recovery
+- [x] Dark mode optimized prose styling
+- [x] Smooth visual transitions
 
 **Phase 3.3 (Pattern Scaffolding Engine) - ✅ 100% Complete (Nov 30, 2025):**
 - [x] **Full-Stack Scaffolding System** - 1,715 lines of code (482 Rust + 1,233 TypeScript/Svelte)
@@ -259,7 +367,7 @@ VibeForge connects to commercial Forge backend services:
 - [x] Dark/Light theme system
 - [x] Full backend API integration ✅
 
-**Phase 2 (Code Quality & Architecture):**
+**Phase 2 (Code Quality & Architecture) - ✅ Complete:**
 - [x] Svelte 5 runes migration (theme store)
 - [x] TypeScript 'any' type removal (95% coverage - 37/39 fixed)
 - [x] Centralized store architecture (`src/lib/core/stores/`)
@@ -281,22 +389,81 @@ VibeForge connects to commercial Forge backend services:
   - Context block toggling
   - Error handling
 
-### In Progress
+### Phase 2 Remaining Tasks - Cortex Multi-AI Planning Orchestrator (9 steps)
 
-- [x] Manual testing of scaffolding system (Phase 3.3.5) - **Browser mock mode validated** ✅
-  - ✅ Progress event system (10 stages) validated
-  - ✅ Mock scaffolding functionality working
-  - ⏳ UI visual validation pending
-  - ⏳ Tauri desktop mode testing pending
-  - ⏳ 9 of 10 patterns untested (only Static Site validated)
-  - See [PHASE_3.3.5_TESTING_SUMMARY.md](docs/PHASE_3.3.5_TESTING_SUMMARY.md)
-- [ ] Comprehensive pattern testing (all 10 patterns)
-- [ ] Runtime environment detection (Phase 2.7)
-- [ ] Dev-Container auto-generation
-- [ ] User authentication
-- [ ] Project outcome tracking (Phase 3.4)
-- [ ] Feedback collection system
-- [ ] Cloud deployment
+**Step 1: License Store & Feature Gates (VF-205) - 2-3 hours**
+- [ ] Create license types (free, trial, pro, enterprise)
+- [ ] Implement license store with Svelte 5 runes
+- [ ] Add feature flags (WORKBENCH_BASIC, ORCHESTRATOR_MULTI_AI, EXECUTION_CLOUD)
+- [ ] Create FeatureGate, UpgradePrompt, TrialBanner components
+- [ ] Backend validation at api.vibeforge.dev/license/validate
+- [ ] 100% test coverage
+
+**Step 2: Planning Types (VF-206) - 1-2 hours**
+- [ ] Create complete type system for planning sessions
+- [ ] StageType, SessionStatus, Provider, RequestType enums
+- [ ] PlanningSession, PlanningStage, ModelCallOptions types
+- [ ] DEFAULT_PLANNING_CONFIG with sensible defaults
+
+**Step 3: Model Router Service (VF-207) - 2-3 hours**
+- [ ] Create ModelRouter class with call() and abort() methods
+- [ ] Support Anthropic, OpenAI, xAI, Google providers
+- [ ] Implement SSE streaming with onProgress callback
+- [ ] Provider-specific cost calculation
+- [ ] AbortController for cancellation
+
+**Step 4: Planning Orchestrator (VF-208) - 3-4 hours**
+- [ ] Implement 4-stage workflow: initial → review → refinement → final
+- [ ] ChatGPT → Claude → ChatGPT → Claude sequence
+- [ ] Context assembly from previous stages + user injections
+- [ ] Pause/Resume/Abort functionality
+- [ ] Stage-specific prompts and parsing
+
+**Step 5: Planning Store (VF-209) - 2-3 hours**
+- [ ] Create planning.svelte.ts with Svelte 5 runes
+- [ ] State: sessions, currentSession, isRunning, streamingOutput
+- [ ] Derived: currentStage, progress, canStartSession
+- [ ] Methods: startSession(), pauseSession(), resumeSession(), abortSession()
+- [ ] localStorage persistence
+
+**Step 6: Planning UI Components (VF-210) - 3-4 hours**
+- [ ] PlanningPanel.svelte - Main container
+- [ ] RequestInput.svelte - Session creation form
+- [ ] PlanningStages.svelte - Progress display
+- [ ] StageCard.svelte - Individual stage visualization
+- [ ] PlanningControls.svelte - Pause/Resume/Abort buttons
+- [ ] FinalPlanViewer.svelte - Two-file deliverable display
+
+**Step 7: Model Comparison (VF-211) - 2-3 hours**
+- [ ] Create comparison types (ComparisonRun, ComparisonSession)
+- [ ] Side-by-side output display
+- [ ] Cost/latency/token metrics comparison
+- [ ] Rating system (1-5 stars) with notes
+- [ ] Winner selection and analysis export
+
+**Step 8: Integration & Polish (VF-212) - 2-3 hours**
+- [ ] ErrorBoundary.svelte for global error handling
+- [ ] OfflineBanner.svelte with navigator.onLine detection
+- [ ] Settings page for API keys (all 4 providers)
+- [ ] Toast notifications for user feedback
+- [ ] Loading states and skeleton screens
+
+**Step 9: Testing & Documentation (VF-213) - 3-4 hours**
+- [ ] Unit tests for all stores (100% coverage)
+- [ ] Integration tests for planning workflow
+- [ ] E2E tests for complete user journey
+- [ ] API documentation and usage examples
+- [ ] Success criteria verification
+
+**Total Estimated Time:** 22-29 hours for complete Cortex implementation
+
+**Key Features:**
+- Freemium licensing (free/trial/pro tiers)
+- Multi-AI orchestration (ChatGPT ↔ Claude workflow)
+- 4-stage planning: initial → review → refinement → final
+- Two-file deliverable: Implementation Plan + Claude Code Prompt
+- Model comparison for side-by-side evaluation
+- Support for 4 providers: Anthropic, OpenAI, xAI, Google
 
 ---
 
@@ -334,6 +501,51 @@ VibeForge connects to commercial Forge backend services:
   - `languagesStore.ts` - Language selection state
   - `stacksStore.ts` - Stack profile state
   - `insightsStore.ts` - Learning layer state
+
+### V2 Workbench Architecture
+
+**Execution Flow:**
+
+```
+1. User Input (Prompt + Context Blocks)
+   ↓
+2. Template Processing ({{variable}} substitution)
+   ↓
+3. Context Assembly (Blocks + MCP tool results → System message)
+   ↓
+4. Parallel LLM Execution (Claude + GPT-4 simultaneously)
+   ↓
+5. Streaming Response (Token-by-token rendering)
+   ↓
+6. Run Storage (Metrics, tokens, cost tracking)
+```
+
+**Key Modules:**
+
+**MCP Integration (`lib/core/mcp/`):**
+- `types.ts` (217 lines) - JSON-RPC 2.0 protocol types
+- `client.ts` (468 lines) - Multi-transport MCP client (HTTP, WebSocket, SSE)
+- `manager.ts` (207 lines) - Multi-server connection manager
+
+**LLM Providers (`lib/core/llm/`):**
+- `base.ts` (298 lines) - Abstract provider with retry & rate limiting
+- `anthropic.ts` (400 lines) - Claude API client with streaming
+- `openai.ts` (346 lines) - OpenAI API client with streaming
+- `utils.ts` (295 lines) - Token counting, cost estimation
+- `manager.ts` (130 lines) - Provider factory
+
+**Execution Engine (`lib/core/execution/`):**
+- `types.ts` (318 lines) - Complete execution type system
+- `contextBuilder.ts` (296 lines) - Context assembly from blocks & tools
+- `templateProcessor.ts` (131 lines) - Variable substitution
+- `executor.ts` (400 lines) - Parallel orchestrator with streaming
+
+**Workbench UI (`lib/workbench/`):**
+- **Context Column** - Context blocks, MCP tools, tool invocation
+- **Prompt Column** - Editor, model selector, template variables
+- **Output Column** - Streaming text, run metadata, actions
+- **StreamingText.svelte** (152 lines) - Markdown + syntax highlighting
+- **StreamingControls.svelte** (67 lines) - Progress bar + stop button
 
 ### Backend Integration
 
@@ -1161,15 +1373,39 @@ vibeforge/
 │   │   │   ├── quickrun/    # Quick-run components
 │   │   │   └── settings/    # Settings sections
 │   │   │
-│   │   ├── core/            # Core architecture (Svelte 5)
+│   │   ├── core/            # Core architecture (Svelte 5) ✅
 │   │   │   ├── stores/      # Rune-based stores
 │   │   │   │   ├── theme.svelte.ts
 │   │   │   │   ├── workspace.svelte.ts
 │   │   │   │   ├── contextBlocks.svelte.ts
 │   │   │   │   ├── prompt.svelte.ts
 │   │   │   │   ├── models.svelte.ts
-│   │   │   │   ├── runs.svelte.ts
-│   │   │   │   └── tools.svelte.ts
+│   │   │   │   ├── runs.svelte.ts (with execution engine)
+│   │   │   │   └── tools.svelte.ts (with MCP integration)
+│   │   │   │
+│   │   │   ├── mcp/         # MCP Protocol (892 lines) ✅
+│   │   │   │   ├── types.ts         # JSON-RPC 2.0 types
+│   │   │   │   ├── client.ts        # Multi-transport client
+│   │   │   │   └── manager.ts       # Connection manager
+│   │   │   │
+│   │   │   ├── llm/         # LLM Providers (1,699 lines) ✅
+│   │   │   │   ├── types.ts         # Provider types
+│   │   │   │   ├── base.ts          # Abstract provider
+│   │   │   │   ├── anthropic.ts     # Claude client
+│   │   │   │   ├── openai.ts        # OpenAI client
+│   │   │   │   ├── utils.ts         # Token/cost utils
+│   │   │   │   └── manager.ts       # Provider factory
+│   │   │   │
+│   │   │   ├── execution/   # Execution Engine (1,189 lines) ✅
+│   │   │   │   ├── types.ts         # Execution types
+│   │   │   │   ├── contextBuilder.ts # Context assembly
+│   │   │   │   ├── templateProcessor.ts # Variable substitution
+│   │   │   │   └── executor.ts      # Parallel orchestrator
+│   │   │   │
+│   │   │   ├── types/       # Domain types (2,500+ lines)
+│   │   │   │   ├── domain.ts        # Core domain types
+│   │   │   │   └── mcp.ts           # MCP types
+│   │   │   │
 │   │   │   └── api/         # Core API clients
 │   │   │
 │   │   ├── stores/          # Legacy stores (being migrated)
@@ -1190,9 +1426,29 @@ vibeforge/
 │   │   │   │   └── analysis.svelte.ts        # Analysis store
 │   │   │   └── types/       # Analysis type definitions
 │   │   │
-│   │   ├── workbench/       # Workbench state management ✅
+│   │   ├── workbench/       # V2 Workbench Components ✅
+│   │   │   ├── context/     # Context column
+│   │   │   │   ├── ContextColumn.svelte
+│   │   │   │   ├── ContextBlockCard.svelte
+│   │   │   │   ├── ContextBlockEditor.svelte
+│   │   │   │   └── McpToolsSection.svelte   # MCP integration UI
+│   │   │   │
+│   │   │   ├── prompt/      # Prompt column
+│   │   │   │   ├── PromptColumn.svelte
+│   │   │   │   ├── PromptEditor.svelte
+│   │   │   │   ├── ModelSelector.svelte
+│   │   │   │   └── PromptActions.svelte     # Run execution
+│   │   │   │
+│   │   │   ├── output/      # Output column (with streaming) ✅
+│   │   │   │   ├── OutputColumn.svelte
+│   │   │   │   ├── OutputViewer.svelte
+│   │   │   │   ├── RunMetadata.svelte
+│   │   │   │   ├── OutputActions.svelte
+│   │   │   │   ├── StreamingText.svelte     # Markdown renderer (152 lines)
+│   │   │   │   └── StreamingControls.svelte # Progress bar (67 lines)
+│   │   │   │
 │   │   │   └── stores/
-│   │   │       └── source.svelte.ts          # GitHub integration
+│   │   │       └── source.svelte.ts         # GitHub integration
 │   │   │
 │   │   ├── api/             # API integrations
 │   │   ├── types/           # TypeScript interfaces

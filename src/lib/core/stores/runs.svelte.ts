@@ -203,15 +203,56 @@ async function executeWithEngine(
   state.executionProgress = 0;
 
   try {
+    // Create placeholder runs immediately for each model (so they show in UI)
+    const placeholderRuns: Map<string, PromptRun> = new Map();
+    for (const model of request.models) {
+      const runId = `run_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const placeholderRun: PromptRun = {
+        id: runId,
+        workspaceId: 'default',
+        promptSnapshot: request.prompt,
+        contextBlockIds: request.contextBlocks.map((b) => b.id),
+        modelId: model.id,
+        output: '',
+        status: 'running',
+        startedAt: new Date().toISOString(),
+      };
+      placeholderRuns.set(model.id, placeholderRun);
+      addRun(placeholderRun);
+    }
+
+    // Set first run as active
+    const firstRun = Array.from(placeholderRuns.values())[0];
+    if (firstRun) {
+      state.activeRunId = firstRun.id;
+    }
+
     // Set up stream event handler
     const streamEvents: StreamEvent[] = [];
     const onStreamEvent = (event: StreamEvent) => {
       streamEvents.push(event);
-      // Update active run if it's a token event
-      if (event.type === 'token' && state.activeRunId === event.runId) {
-        const run = state.runs.find((r) => r.id === event.runId);
-        if (run && 'data' in event && 'token' in event.data) {
-          run.output = (run.output || '') + event.data.token;
+
+      // For start events, map the executor's run ID to our placeholder run
+      if (event.type === 'start' && 'data' in event && 'modelId' in event.data) {
+        const modelId = event.data.modelId;
+        const placeholder = placeholderRuns.get(modelId);
+        if (placeholder) {
+          // Update placeholder run ID to match executor's run ID
+          updateRun(placeholder.id, { id: event.runId });
+          placeholderRuns.set(modelId, { ...placeholder, id: event.runId });
+        }
+      }
+
+      // Update run output for token events (reactive update)
+      if (event.type === 'token' && 'data' in event && 'token' in event.data) {
+        const newOutput = event.data.token;
+        // Find run by either the event runId or by model ID
+        let targetRunId = event.runId;
+        let run = state.runs.find((r) => r.id === targetRunId);
+
+        if (run) {
+          const updatedOutput = (run.output || '') + newOutput;
+          streamRunUpdate(targetRunId, updatedOutput);
         }
       }
     };
@@ -228,31 +269,58 @@ async function executeWithEngine(
       onProgress,
     });
 
-    // Convert execution results to prompt runs and add to store
+    // Update placeholder runs with final results
     for (const result of results) {
-      const run: PromptRun = {
-        id: result.runId,
-        workspaceId: 'default',
-        promptSnapshot: request.prompt,
-        contextBlockIds: request.contextBlocks.map((b) => b.id),
-        modelId: result.model.id,
-        output: result.output,
-        status: result.status,
-        totalTokens: result.usage.totalTokens,
-        inputTokens: result.usage.promptTokens,
-        outputTokens: result.usage.completionTokens,
-        durationMs: result.durationMs,
-        cost: result.usage.estimatedCost,
-        startedAt: result.startedAt,
-        completedAt: result.completedAt,
-        error: result.error,
-      };
+      // Find the placeholder run for this model
+      const placeholder = Array.from(placeholderRuns.values()).find(
+        (p) => p.modelId === result.model.id
+      );
 
-      addRun(run);
+      if (placeholder) {
+        // Update the existing placeholder with final results
+        updateRun(placeholder.id, {
+          id: result.runId,
+          output: result.output,
+          status: result.status,
+          totalTokens: result.usage.totalTokens,
+          inputTokens: result.usage.promptTokens,
+          outputTokens: result.usage.completionTokens,
+          durationMs: result.durationMs,
+          cost: result.usage.estimatedCost,
+          completedAt: result.completedAt,
+          error: result.error,
+        });
 
-      // Set first successful run as active
-      if (result.status === 'success' && !state.activeRunId) {
-        state.activeRunId = result.runId;
+        // Update placeholder map with new ID
+        placeholderRuns.set(result.model.id, {
+          ...placeholder,
+          id: result.runId,
+        });
+
+        // Update active run ID if this was the active placeholder
+        if (state.activeRunId === placeholder.id) {
+          state.activeRunId = result.runId;
+        }
+      } else {
+        // Fallback: create new run if no placeholder found
+        const run: PromptRun = {
+          id: result.runId,
+          workspaceId: 'default',
+          promptSnapshot: request.prompt,
+          contextBlockIds: request.contextBlocks.map((b) => b.id),
+          modelId: result.model.id,
+          output: result.output,
+          status: result.status,
+          totalTokens: result.usage.totalTokens,
+          inputTokens: result.usage.promptTokens,
+          outputTokens: result.usage.completionTokens,
+          durationMs: result.durationMs,
+          cost: result.usage.estimatedCost,
+          startedAt: result.startedAt,
+          completedAt: result.completedAt,
+          error: result.error,
+        };
+        addRun(run);
       }
     }
 

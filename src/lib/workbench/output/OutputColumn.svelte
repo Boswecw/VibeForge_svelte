@@ -9,6 +9,7 @@
 	import OutputViewer from './OutputViewer.svelte';
 	import RunMetadata from './RunMetadata.svelte';
 	import OutputActions from './OutputActions.svelte';
+	import StreamingControls from './StreamingControls.svelte';
 
 	const runs = $derived(runsStore.runs);
 	const activeRun = $derived(runsStore.activeRun);
@@ -100,6 +101,11 @@
 			<!-- Run Metadata -->
 			<div class="shrink-0 p-4">
 				<RunMetadata run={displayRun} />
+			</div>
+
+			<!-- Streaming Controls (progress + stop button) -->
+			<div class="shrink-0">
+				<StreamingControls visible={runsStore.isExecuting} />
 			</div>
 
 			<!-- Output Viewer (scrollable) -->

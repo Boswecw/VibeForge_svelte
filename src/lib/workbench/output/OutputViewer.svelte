@@ -1,9 +1,10 @@
 <script lang="ts">
 	/**
-	 * OutputViewer component - Display LLM response with formatting
+	 * OutputViewer component - Display LLM response with markdown rendering and streaming support
 	 */
 
 	import type { PromptRun } from '$lib/core/types';
+	import StreamingText from './StreamingText.svelte';
 
 	interface Props {
 		run: PromptRun;
@@ -11,16 +12,14 @@
 
 	const { run }: Props = $props();
 
-	// Simple markdown-like formatting (Phase 2 can use a full markdown library)
-	function formatOutput(text: string): string {
-		// For now, preserve whitespace and line breaks
-		return text;
-	}
+	// Determine if the run is actively streaming
+	const isStreaming = $derived(run.status === 'running' && !!run.output);
+	const hasOutput = $derived(!!run.output && run.output.trim().length > 0);
 </script>
 
 <div class="output-viewer flex-1 overflow-y-auto p-4 bg-forge-blacksteel">
-	{#if run.status === 'running'}
-		<!-- Loading State -->
+	{#if run.status === 'running' && !hasOutput}
+		<!-- Loading State (waiting for first token) -->
 		<div class="flex items-center justify-center h-full text-slate-500">
 			<div class="text-center">
 				<svg
@@ -40,7 +39,7 @@
 				<p class="text-sm text-slate-600 mt-1">Model: {run.modelId}</p>
 			</div>
 		</div>
-	{:else if run.status === 'failed'}
+	{:else if run.status === 'error' || run.status === 'failed'}
 		<!-- Error State -->
 		<div class="flex items-center justify-center h-full text-red-400">
 			<div class="text-center max-w-md">
@@ -58,12 +57,14 @@
 				{/if}
 			</div>
 		</div>
-	{:else if run.output}
-		<!-- Success State - Display Output -->
-		<div class="prose prose-invert prose-slate max-w-none">
-			<pre
-				class="whitespace-pre-wrap font-sans text-slate-200 text-base leading-relaxed">{formatOutput(run.output)}</pre>
-		</div>
+	{:else if hasOutput}
+		<!-- Streaming or Complete Output -->
+		<StreamingText
+			content={run.output || ''}
+			isStreaming={isStreaming}
+			showCursor={isStreaming}
+			enableMarkdown={true}
+		/>
 	{:else}
 		<!-- Empty State -->
 		<div class="flex items-center justify-center h-full text-slate-500">
