@@ -725,6 +725,244 @@ export function isComparisonComplete(run: ComparisonRun): boolean {
 }
 
 // ==============================================================================
+// VF-321: PLAN VERSIONING & ITERATIVE REFINEMENT
+// ==============================================================================
+
+/**
+ * A snapshot of a plan at a specific version
+ */
+export interface PlanVersion {
+	/** Version number (1, 2, 3, etc.) */
+	version: number;
+	/** Deliverable at this version */
+	deliverable: TwoFileDeliverable;
+	/** Total tokens used up to this version */
+	totalTokens: number;
+	/** Total cost up to this version */
+	totalCost: number;
+	/** Stages executed for this version */
+	stages: PlanningStage[];
+	/** Refinement request that led to this version (null for v1) */
+	refinementRequest: RefinementRequest | null;
+	/** Timestamp when this version was created */
+	createdAt: Date;
+	/** Session status at this version */
+	status: SessionStatus;
+}
+
+/**
+ * A request to refine an existing plan
+ */
+export interface RefinementRequest {
+	/** New requirements to incorporate */
+	requirements: string[];
+	/** Additional context or constraints */
+	additionalContext?: string;
+	/** Specific sections to focus on (optional) */
+	focusSections?: string[];
+	/** Requested by user */
+	requestedBy: string;
+	/** Requested timestamp */
+	requestedAt: Date;
+}
+
+/**
+ * Difference between two plan versions
+ */
+export interface PlanDiff {
+	/** Version A (older) */
+	versionA: number;
+	/** Version B (newer) */
+	versionB: number;
+	/** Section-level diffs (reuse from VF-320) */
+	sectionDiffs: SectionDiff[];
+	/** Added requirements */
+	addedRequirements: string[];
+	/** Metrics comparison */
+	metricsChange: {
+		tokensDiff: number;
+		costDiff: number;
+		durationDiff: number;
+	};
+	/** Summary of changes */
+	summary: string;
+}
+
+/**
+ * Enhanced PlanningSession with version tracking
+ */
+export interface PlanningSessionWithVersions extends PlanningSession {
+	/** Version history (v1, v2, v3, etc.) */
+	versionHistory: PlanVersion[];
+	/** Current version number */
+	currentVersion: number;
+	/** Parent session ID (if this was refined from another session) */
+	parentSessionId: string | null;
+	/** Is this session a refinement of another? */
+	isRefinement: boolean;
+}
+
+// ==============================================================================
+// VERSIONING HELPER FUNCTIONS
+// ==============================================================================
+
+/**
+ * Create a version snapshot from current session
+ */
+export function createPlanVersion(
+	session: PlanningSession,
+	versionNumber: number,
+	refinementRequest: RefinementRequest | null
+): PlanVersion {
+	if (!session.deliverable) {
+		throw new Error('Cannot create version: session has no deliverable');
+	}
+
+	return {
+		version: versionNumber,
+		deliverable: session.deliverable,
+		totalTokens: session.totalTokens,
+		totalCost: session.totalCost,
+		stages: session.stages.map((stage) => ({ ...stage })), // Deep copy
+		refinementRequest,
+		createdAt: new Date(),
+		status: session.status
+	};
+}
+
+/**
+ * Create a refinement request
+ */
+export function createRefinementRequest(
+	requirements: string[],
+	userId: string,
+	additionalContext?: string,
+	focusSections?: string[]
+): RefinementRequest {
+	return {
+		requirements,
+		additionalContext,
+		focusSections,
+		requestedBy: userId,
+		requestedAt: new Date()
+	};
+}
+
+/**
+ * Compare two plan versions
+ */
+export function comparePlanVersions(
+	versionA: PlanVersion,
+	versionB: PlanVersion
+): PlanDiff {
+	const { extractSections, compareSections: compareVersionSections } =
+		require('./planComparison');
+
+	// Extract sections from both plans
+	const sectionsA = extractSections(versionA.deliverable.implementationPlan.content);
+	const sectionsB = extractSections(versionB.deliverable.implementationPlan.content);
+
+	// Generate section diffs
+	const sectionDiffs: SectionDiff[] = [];
+	const sectionMap = new Map<string, PlanSection>();
+
+	// Map sections by title for matching
+	sectionsB.forEach((section) => {
+		sectionMap.set(section.title, section);
+	});
+
+	// Compare sections
+	sectionsA.forEach((sectionA) => {
+		const sectionB = sectionMap.get(sectionA.title);
+		const diff = compareVersionSections(sectionA, sectionB);
+		sectionDiffs.push(diff);
+		if (sectionB) {
+			sectionMap.delete(sectionA.title);
+		}
+	});
+
+	// Add remaining sections from B (newly added)
+	sectionMap.forEach((sectionB) => {
+		const diff = compareVersionSections(undefined, sectionB);
+		sectionDiffs.push(diff);
+	});
+
+	// Extract added requirements
+	const addedRequirements = versionB.refinementRequest?.requirements || [];
+
+	// Calculate metrics change
+	const metricsChange = {
+		tokensDiff: versionB.totalTokens - versionA.totalTokens,
+		costDiff: versionB.totalCost - versionA.totalCost,
+		durationDiff: versionB.stages.length - versionA.stages.length
+	};
+
+	// Generate summary
+	const addedCount = sectionDiffs.filter((d) => d.type === 'added').length;
+	const removedCount = sectionDiffs.filter((d) => d.type === 'removed').length;
+	const changedCount = sectionDiffs.filter((d) => d.type === 'changed').length;
+
+	const summary = `Version ${versionB.version} vs ${versionA.version}: ${addedCount} sections added, ${removedCount} removed, ${changedCount} changed. ${addedRequirements.length} new requirements incorporated.`;
+
+	return {
+		versionA: versionA.version,
+		versionB: versionB.version,
+		sectionDiffs,
+		addedRequirements,
+		metricsChange,
+		summary
+	};
+}
+
+/**
+ * Get a specific version from session history
+ */
+export function getPlanVersion(
+	session: PlanningSessionWithVersions,
+	version: number
+): PlanVersion | null {
+	return session.versionHistory.find((v) => v.version === version) || null;
+}
+
+/**
+ * Get latest version from session
+ */
+export function getLatestVersion(session: PlanningSessionWithVersions): PlanVersion | null {
+	if (session.versionHistory.length === 0) return null;
+	return session.versionHistory[session.versionHistory.length - 1];
+}
+
+/**
+ * Initialize a session with version tracking
+ */
+export function createVersionedPlanningSession(
+	title: string,
+	description: string,
+	requestType: RequestType,
+	pipelineType: PipelineType = 'default',
+	userId: string = 'anonymous',
+	workspaceId: string = 'default',
+	parentSessionId: string | null = null
+): PlanningSessionWithVersions {
+	const baseSession = createPlanningSession(
+		title,
+		description,
+		requestType,
+		pipelineType,
+		userId,
+		workspaceId
+	);
+
+	return {
+		...baseSession,
+		versionHistory: [],
+		currentVersion: 0,
+		parentSessionId,
+		isRefinement: parentSessionId !== null
+	};
+}
+
+// ==============================================================================
 // VF-320: PLAN COMPARISON (re-export from planComparison.ts)
 // ==============================================================================
 
