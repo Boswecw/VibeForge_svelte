@@ -20,3 +20,5 @@ export { default as MetricsComparison } from './MetricsComparison.svelte';
 // VF-321: Plan Refinement Components
 export { default as RefinementRequestForm } from './RefinementRequestForm.svelte';
 export { default as VersionSelector } from './VersionSelector.svelte';
+export { default as PlanVersionHistory } from './PlanVersionHistory.svelte';
+export { default as VersionDiffView } from './VersionDiffView.svelte';

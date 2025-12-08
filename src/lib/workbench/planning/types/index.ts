@@ -987,3 +987,282 @@ export {
 	compareSections,
 	calculateCombinedScore
 } from './planComparison';
+
+// ==============================================================================
+// VF-322: MULTI-PATH PLANNING
+// ==============================================================================
+
+/**
+ * Planning variant types
+ */
+export type VariantType = 'optimistic' | 'conservative' | 'experimental';
+
+/**
+ * Variant configuration
+ */
+export interface VariantConfig {
+	/** Variant type */
+	type: VariantType;
+	/** Variant name */
+	name: string;
+	/** Description of this variant's approach */
+	description: string;
+	/** Model to use for this variant */
+	model: string;
+	/** Provider */
+	provider: Provider;
+	/** Temperature (0-1) */
+	temperature: number;
+	/** System prompt override (optional) */
+	systemPromptOverride?: string;
+	/** User prompt template override (optional) */
+	promptTemplateOverride?: string;
+	/** Max tokens */
+	maxTokens: number;
+	/** Assumptions this variant makes */
+	assumptions: string[];
+	/** Risk level (1-5, 1=low, 5=high) */
+	riskLevel: number;
+}
+
+/**
+ * Multi-path planning execution
+ */
+export interface MultiPathExecution {
+	/** Unique execution ID */
+	id: string;
+	/** User's request */
+	title: string;
+	description: string;
+	requestType: RequestType;
+	/** Variants to execute */
+	variants: VariantConfig[];
+	/** Execute in parallel or sequential */
+	parallel: boolean;
+	/** Budget constraint (optional) */
+	maxCostUSD?: number;
+	/** Current status */
+	status: 'pending' | 'running' | 'completed' | 'failed' | 'budget_exceeded';
+	/** Individual sessions per variant */
+	sessions: Map<VariantType, PlanningSession>;
+	/** Cost tracking */
+	totalCost: number;
+	/** Created timestamp */
+	createdAt: Date;
+	/** Started timestamp */
+	startedAt: Date | null;
+	/** Completed timestamp */
+	completedAt: Date | null;
+	/** Error message if failed */
+	error: string | null;
+	/** User ID */
+	userId: string;
+	/** Workspace ID */
+	workspaceId: string;
+}
+
+/**
+ * Variant comparison result
+ */
+export interface VariantComparison {
+	/** Execution ID */
+	executionId: string;
+	/** Variant comparisons */
+	variants: Map<
+		VariantType,
+		{
+			session: PlanningSession;
+			deliverable: TwoFileDeliverable;
+			metrics: {
+				totalTokens: number;
+				totalCost: number;
+				durationMs: number;
+				qualityScore: number; // 0-100
+			};
+			strengths: string[];
+			weaknesses: string[];
+		}
+	>;
+	/** Winner (best overall) */
+	winner: VariantType | null;
+	/** Recommended approach */
+	recommendation: {
+		variant: VariantType;
+		reason: string;
+		confidence: number; // 0-1
+	} | null;
+	/** Created timestamp */
+	createdAt: Date;
+}
+
+/**
+ * Merged plan (combining best aspects)
+ */
+export interface MergedVariantPlan {
+	/** Merged deliverable */
+	deliverable: TwoFileDeliverable;
+	/** Source variants (which parts came from which variant) */
+	sources: {
+		section: string;
+		sourceVariant: VariantType;
+		reason: string;
+	}[];
+	/** Merge strategy used */
+	strategy: 'best_of_each' | 'weighted_average' | 'manual';
+	/** Quality score of merged plan */
+	qualityScore: number;
+	/** Created timestamp */
+	createdAt: Date;
+}
+
+// ==============================================================================
+// DEFAULT VARIANT CONFIGURATIONS
+// ==============================================================================
+
+/**
+ * Optimistic variant: Fast timeline, assumes best-case scenario
+ */
+export const OPTIMISTIC_VARIANT: VariantConfig = {
+	type: 'optimistic',
+	name: 'Optimistic Plan',
+	description:
+		'Fast timeline with best-case assumptions. Assumes smooth execution, minimal blockers, and ideal conditions.',
+	model: 'gpt-4-turbo-2024-04-09',
+	provider: 'openai',
+	temperature: 0.8, // Higher temperature for creative, ambitious solutions
+	maxTokens: 4000,
+	assumptions: [
+		'Team has all necessary expertise',
+		'No major blockers or dependencies',
+		'Requirements are clear and stable',
+		'Resources are readily available',
+		'Testing and deployment go smoothly'
+	],
+	riskLevel: 4 // Higher risk due to optimistic assumptions
+};
+
+/**
+ * Conservative variant: Realistic timeline, includes contingencies
+ */
+export const CONSERVATIVE_VARIANT: VariantConfig = {
+	type: 'conservative',
+	name: 'Conservative Plan',
+	description:
+		'Realistic timeline with buffer time. Includes contingency plans, assumes moderate complexity and potential blockers.',
+	model: 'claude-3-5-sonnet-20241022',
+	provider: 'anthropic',
+	temperature: 0.5, // Lower temperature for careful, thorough planning
+	maxTokens: 5000,
+	assumptions: [
+		'Some requirements may change',
+		'Technical challenges will arise',
+		'Dependencies may cause delays',
+		'Testing will uncover issues',
+		'Buffer time needed for unknowns'
+	],
+	riskLevel: 2 // Lower risk, more realistic
+};
+
+/**
+ * Experimental variant: Novel approaches, higher risk/reward
+ */
+export const EXPERIMENTAL_VARIANT: VariantConfig = {
+	type: 'experimental',
+	name: 'Experimental Plan',
+	description:
+		'Explores novel approaches and cutting-edge solutions. May involve unproven technologies or innovative architectures.',
+	model: 'gpt-4-turbo-2024-04-09',
+	provider: 'openai',
+	temperature: 0.9, // Highest temperature for maximum creativity
+	maxTokens: 4500,
+	assumptions: [
+		'Team willing to experiment',
+		'Time for R&D and exploration',
+		'Acceptable risk of failure',
+		'Learning is a primary goal',
+		'Innovation is valued over safety'
+	],
+	riskLevel: 5 // Highest risk, most innovative
+};
+
+/**
+ * All default variants
+ */
+export const DEFAULT_VARIANTS: Record<VariantType, VariantConfig> = {
+	optimistic: OPTIMISTIC_VARIANT,
+	conservative: CONSERVATIVE_VARIANT,
+	experimental: EXPERIMENTAL_VARIANT
+};
+
+// ==============================================================================
+// HELPER FUNCTIONS
+// ==============================================================================
+
+/**
+ * Create a multi-path execution
+ */
+export function createMultiPathExecution(
+	title: string,
+	description: string,
+	requestType: RequestType,
+	variants: VariantType[] = ['optimistic', 'conservative', 'experimental'],
+	parallel: boolean = true,
+	maxCostUSD?: number,
+	userId: string = 'anonymous',
+	workspaceId: string = 'default'
+): MultiPathExecution {
+	const timestamp = Date.now();
+	const randomStr = Math.random().toString(36).substr(2, 9);
+	const executionId = `multipath_${timestamp}_${randomStr}`;
+
+	// Create sessions for each variant
+	const sessions = new Map<VariantType, PlanningSession>();
+	for (const variantType of variants) {
+		const variantConfig = DEFAULT_VARIANTS[variantType];
+		const session = createPlanningSession(
+			`${title} (${variantConfig.name})`,
+			description,
+			requestType,
+			'default', // Use default pipeline
+			userId,
+			workspaceId
+		);
+		sessions.set(variantType, session);
+	}
+
+	const variantConfigs = variants.map((v) => DEFAULT_VARIANTS[v]);
+
+	return {
+		id: executionId,
+		title,
+		description,
+		requestType,
+		variants: variantConfigs,
+		parallel,
+		maxCostUSD,
+		status: 'pending',
+		sessions,
+		totalCost: 0,
+		createdAt: new Date(),
+		startedAt: null,
+		completedAt: null,
+		error: null,
+		userId,
+		workspaceId
+	};
+}
+
+/**
+ * Get variant configuration
+ */
+export function getVariantConfig(type: VariantType): VariantConfig {
+	return DEFAULT_VARIANTS[type];
+}
+
+/**
+ * Calculate total estimated cost for multi-path execution
+ */
+export function estimateMultiPathCost(variants: VariantType[]): number {
+	// Rough estimate: ~$0.30 per variant (assumes full pipeline)
+	return variants.length * 0.3;
+}

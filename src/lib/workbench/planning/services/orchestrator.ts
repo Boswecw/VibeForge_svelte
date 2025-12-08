@@ -11,7 +11,10 @@ import type {
 	TwoFileDeliverable,
 	PlanningSessionWithVersions,
 	RefinementRequest,
-	PlanVersion
+	PlanVersion,
+	MultiPathExecution,
+	VariantType,
+	VariantConfig
 } from '$lib/workbench/planning/types';
 import { createPlanVersion, DEFAULT_STAGE_CONFIGS } from '$lib/workbench/planning/types';
 import { ModelRouter } from './modelRouter';
@@ -585,6 +588,161 @@ export class PlanningOrchestrator {
 		}
 
 		return session;
+	}
+
+	// ==============================================================================
+	// VF-322: MULTI-PATH PLANNING
+	// ==============================================================================
+
+	/**
+	 * Run multi-path planning execution
+	 * Executes multiple variants (optimistic, conservative, experimental) in parallel or sequential
+	 */
+	async runMultiPath(
+		execution: MultiPathExecution,
+		callbacks?: {
+			onVariantStart?: (variant: VariantType) => void;
+			onVariantProgress?: (variant: VariantType, stageIndex: number, token: string) => void;
+			onVariantComplete?: (variant: VariantType, session: PlanningSession) => void;
+			onExecutionComplete?: (execution: MultiPathExecution) => void;
+			onBudgetExceeded?: (totalCost: number, maxCost: number) => void;
+			onError?: (variant: VariantType, error: Error) => void;
+		}
+	): Promise<MultiPathExecution> {
+		execution.status = 'running';
+		execution.startedAt = new Date();
+
+		try {
+			if (execution.parallel) {
+				// Run all variants in parallel
+				await this.runVariantsParallel(execution, callbacks);
+			} else {
+				// Run variants sequentially
+				await this.runVariantsSequential(execution, callbacks);
+			}
+
+			execution.status = 'completed';
+			execution.completedAt = new Date();
+			callbacks?.onExecutionComplete?.(execution);
+		} catch (error) {
+			execution.status = 'failed';
+			execution.error = error instanceof Error ? error.message : 'Unknown error';
+			throw error;
+		}
+
+		return execution;
+	}
+
+	/**
+	 * Run variants in parallel
+	 */
+	private async runVariantsParallel(
+		execution: MultiPathExecution,
+		callbacks?: any
+	): Promise<void> {
+		const promises = Array.from(execution.sessions.entries()).map(([variant, session]) =>
+			this.runVariant(execution, variant, session, callbacks)
+		);
+
+		await Promise.all(promises);
+	}
+
+	/**
+	 * Run variants sequentially
+	 */
+	private async runVariantsSequential(
+		execution: MultiPathExecution,
+		callbacks?: any
+	): Promise<void> {
+		for (const [variant, session] of execution.sessions.entries()) {
+			await this.runVariant(execution, variant, session, callbacks);
+
+			// Check budget after each variant
+			if (execution.maxCostUSD && execution.totalCost >= execution.maxCostUSD) {
+				execution.status = 'budget_exceeded';
+				callbacks?.onBudgetExceeded?.(execution.totalCost, execution.maxCostUSD);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Run a single variant
+	 */
+	private async runVariant(
+		execution: MultiPathExecution,
+		variant: VariantType,
+		session: PlanningSession,
+		callbacks?: any
+	): Promise<void> {
+		// Find variant config
+		const variantConfig = execution.variants.find((v) => v.type === variant);
+		if (!variantConfig) {
+			throw new Error(`Variant config not found for ${variant}`);
+		}
+
+		callbacks?.onVariantStart?.(variant);
+
+		try {
+			// Apply variant-specific configuration to session stages
+			this.applyVariantConfig(session, variantConfig);
+
+			// Run the session
+			await this.runSession(session, {
+				onStageStart: (index) => {
+					// Update session state
+				},
+				onStageProgress: (index, token) => {
+					callbacks?.onVariantProgress?.(variant, index, token);
+				},
+				onStageComplete: (index, stage) => {
+					// Update cost tracking
+					if (stage.result) {
+						execution.totalCost += stage.result.cost;
+					}
+				},
+				onSessionComplete: (completedSession) => {
+					// Update session in execution
+					execution.sessions.set(variant, completedSession);
+					callbacks?.onVariantComplete?.(variant, completedSession);
+				},
+				onError: (error) => {
+					callbacks?.onError?.(variant, error);
+				}
+			});
+		} catch (error) {
+			callbacks?.onError?.(variant, error as Error);
+			throw error;
+		}
+	}
+
+	/**
+	 * Apply variant-specific configuration to session stages
+	 */
+	private applyVariantConfig(session: PlanningSession, config: VariantConfig): void {
+		// Override model and provider for all stages
+		session.stages.forEach((stage) => {
+			stage.config.model = config.model;
+			stage.config.provider = config.provider;
+			stage.config.temperature = config.temperature;
+			stage.config.maxTokens = config.maxTokens;
+
+			// Override system prompt if provided
+			if (config.systemPromptOverride) {
+				stage.config.systemPrompt = config.systemPromptOverride;
+			}
+
+			// Override prompt template if provided
+			if (config.promptTemplateOverride) {
+				stage.config.promptTemplate = config.promptTemplateOverride;
+			}
+
+			// Inject variant assumptions into the first stage
+			if (stage.index === 0) {
+				const assumptionsText = `\n\n**Planning Assumptions (${config.name}):**\n${config.assumptions.map((a) => `- ${a}`).join('\n')}`;
+				stage.config.promptTemplate += assumptionsText;
+			}
+		});
 	}
 }
 

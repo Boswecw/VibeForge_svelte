@@ -25,7 +25,7 @@ export interface SyncMetadata {
   localVersion: number;
   serverVersion: number;
   isPending: boolean;
-  hasCon flict: boolean;
+  hasConflict: boolean;
 }
 
 export interface PendingOperation {
@@ -303,6 +303,9 @@ export const syncMetadataStore = {
   async delete(id: string): Promise<void> {
     await remove(STORES.syncMetadata, id);
   },
+  async clear(): Promise<void> {
+    await clear(STORES.syncMetadata);
+  },
 };
 
 // ============================================================================
@@ -336,11 +339,18 @@ export const conflictsStore = {
   async add(conflict: ConflictResolution): Promise<void> {
     await put(STORES.conflicts, conflict);
   },
+  async save(conflict: ConflictResolution): Promise<void> {
+    await put(STORES.conflicts, conflict);
+  },
   async get(id: string): Promise<ConflictResolution | null> {
     return get<ConflictResolution>(STORES.conflicts, id);
   },
   async getAll(): Promise<ConflictResolution[]> {
     return getAll<ConflictResolution>(STORES.conflicts);
+  },
+  async getUnresolved(): Promise<ConflictResolution[]> {
+    const all = await getAll<ConflictResolution>(STORES.conflicts);
+    return all.filter((c) => !c.resolvedAt);
   },
   async resolve(id: string, resolution: ConflictResolution): Promise<void> {
     await put(STORES.conflicts, {

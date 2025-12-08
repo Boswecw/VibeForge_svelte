@@ -348,6 +348,27 @@ export async function listRuns(workspaceId?: string): Promise<Run[]> {
   return runs;
 }
 
+export async function deleteRun(id: string): Promise<void> {
+  await indexedDb.runStore.delete(id);
+
+  if (isOnline) {
+    try {
+      await api.deleteRun(id);
+      await indexedDb.syncMetadataStore.delete(`run:${id}`);
+    } catch (error) {
+      console.error('[SyncManager] Failed to delete run:', error);
+      await indexedDb.pendingOperationsStore.add({
+        id: `pending_${Date.now()}`,
+        resourceType: 'run',
+        resourceId: id,
+        operation: 'delete',
+        data: null,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+}
+
 // ============================================================================
 // PROMPT TEMPLATE SYNC
 // ============================================================================

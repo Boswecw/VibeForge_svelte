@@ -11,10 +11,10 @@ import type {
   LLMCompletionRequest,
   LLMCompletionResponse,
   LLMStreamOptions,
-  LLMError,
   LLMStreamChunk,
   LLMUsage,
 } from './types';
+import { LLMError } from './types';
 import { calculateCost } from './utils';
 
 // ============================================================================

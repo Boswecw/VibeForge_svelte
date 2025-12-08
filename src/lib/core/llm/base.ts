@@ -10,13 +10,13 @@ import type {
   LLMCompletionRequest,
   LLMCompletionResponse,
   LLMStreamOptions,
-  LLMError,
   LLMErrorCode,
   RetryConfig,
   RetryState,
   RateLimitConfig,
   RateLimitState,
 } from './types';
+import { LLMError } from './types';
 
 export abstract class BaseLLMProvider {
   protected config: LLMProviderConfig;

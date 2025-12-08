@@ -103,10 +103,24 @@ class DataForgeHttpClient {
   }
 
   private getHeaders(customHeaders?: HeadersInit): HeadersInit {
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      ...customHeaders,
     };
+
+    // Merge custom headers
+    if (customHeaders) {
+      if (customHeaders instanceof Headers) {
+        customHeaders.forEach((value, key) => {
+          headers[key] = value;
+        });
+      } else if (Array.isArray(customHeaders)) {
+        customHeaders.forEach(([key, value]) => {
+          headers[key] = value;
+        });
+      } else {
+        Object.assign(headers, customHeaders);
+      }
+    }
 
     // Add auth token if available
     if (typeof window !== 'undefined') {

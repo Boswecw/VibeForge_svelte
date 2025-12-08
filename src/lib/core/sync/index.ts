@@ -36,10 +36,14 @@ export {
   getWorkspace,
   listWorkspaces,
   saveContextBlock,
+  saveContextBlock as saveContext, // Alias for backward compatibility
   deleteContextBlock,
+  deleteContextBlock as deleteContext, // Alias for backward compatibility
   listContextBlocks,
+  listContextBlocks as listContexts, // Alias for backward compatibility
   saveRun,
   listRuns,
+  deleteRun,
   savePromptTemplate,
   syncAll,
   isOnline,
