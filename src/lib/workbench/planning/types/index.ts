@@ -723,3 +723,29 @@ export function isComparisonComplete(run: ComparisonRun): boolean {
 
 	return allComplete;
 }
+
+// ==============================================================================
+// VF-320: PLAN COMPARISON (re-export from planComparison.ts)
+// ==============================================================================
+
+export type {
+	QualityCriterion,
+	CriterionScore,
+	QualityAssessment,
+	DiffType,
+	PlanSection,
+	SectionDiff,
+	PlanComparison,
+	MultiPlanComparison,
+	MergedSection,
+	MergedPlan,
+	ExportFormat,
+	ComparisonReport
+} from './planComparison';
+
+export {
+	calculateSimilarity,
+	extractSections,
+	compareSections,
+	calculateCombinedScore
+} from './planComparison';
