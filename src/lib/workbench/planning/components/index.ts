@@ -16,3 +16,7 @@ export { default as PlanComparisonView } from './PlanComparisonView.svelte';
 export { default as QualityScoreCard } from './QualityScoreCard.svelte';
 export { default as SectionDiffView } from './SectionDiffView.svelte';
 export { default as MetricsComparison } from './MetricsComparison.svelte';
+
+// VF-321: Plan Refinement Components
+export { default as RefinementRequestForm } from './RefinementRequestForm.svelte';
+export { default as VersionSelector } from './VersionSelector.svelte';
