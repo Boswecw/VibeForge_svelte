@@ -10,3 +10,9 @@ export { default as ProgressTracker } from './ProgressTracker.svelte';
 export { default as OutputDisplay } from './OutputDisplay.svelte';
 export { default as SettingsPanel } from './SettingsPanel.svelte';
 export { default as OfflineBanner } from './OfflineBanner.svelte';
+
+// VF-320: Plan Comparison Components
+export { default as PlanComparisonView } from './PlanComparisonView.svelte';
+export { default as QualityScoreCard } from './QualityScoreCard.svelte';
+export { default as SectionDiffView } from './SectionDiffView.svelte';
+export { default as MetricsComparison } from './MetricsComparison.svelte';
