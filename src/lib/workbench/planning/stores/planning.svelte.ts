@@ -8,13 +8,22 @@ import type {
 	PlanningSession,
 	PlanningStage,
 	RequestType,
-	PipelineType
+	PipelineType,
+	PlanningSessionWithVersions,
+	RefinementRequest,
+	PlanVersion,
+	PlanDiff
 } from '$lib/workbench/planning/types';
 import {
 	createPlanningSession,
 	getCurrentStage,
 	isSessionComplete,
-	getSessionProgress
+	getSessionProgress,
+	createVersionedPlanningSession,
+	createRefinementRequest,
+	getPlanVersion,
+	getLatestVersion,
+	comparePlanVersions
 } from '$lib/workbench/planning/types';
 import { planningOrchestrator } from '$lib/workbench/planning/services/orchestrator';
 import { licenseStore } from '$lib/core/stores/license.svelte';
@@ -31,19 +40,21 @@ const MAX_STORED_SESSIONS = 50; // Limit stored sessions
 // ==============================================================================
 
 const state = $state<{
-	sessions: PlanningSession[];
-	currentSession: PlanningSession | null;
+	sessions: (PlanningSession | PlanningSessionWithVersions)[];
+	currentSession: PlanningSession | PlanningSessionWithVersions | null;
 	isRunning: boolean;
 	isPaused: boolean;
 	streamingOutput: string;
 	error: string | null;
+	selectedVersion: number | null; // For version comparison/viewing
 }>({
 	sessions: browser ? loadSessionsFromStorage() : [],
 	currentSession: null,
 	isRunning: false,
 	isPaused: false,
 	streamingOutput: '',
-	error: null
+	error: null,
+	selectedVersion: null
 });
 
 // ==============================================================================
@@ -79,11 +90,49 @@ const completedSessions = $derived(
 );
 const failedSessions = $derived(state.sessions.filter((s) => s.status === 'failed').length);
 
+// VF-321: Version tracking derived state
+const isVersionedSession = $derived.by(() => {
+	if (!state.currentSession) return false;
+	return 'versionHistory' in state.currentSession;
+});
+
+const currentVersion = $derived.by(() => {
+	if (!state.currentSession || !isVersionedSession) return null;
+	return (state.currentSession as PlanningSessionWithVersions).currentVersion;
+});
+
+const versionHistory = $derived.by(() => {
+	if (!state.currentSession || !isVersionedSession) return [];
+	return (state.currentSession as PlanningSessionWithVersions).versionHistory;
+});
+
+const hasVersions = $derived(versionHistory.length > 0);
+
+const canRefine = $derived.by(() => {
+	// Must have a completed versioned session
+	if (!state.currentSession || !isVersionedSession) return false;
+	if (state.currentSession.status !== 'completed') return false;
+	if (!state.currentSession.deliverable) return false;
+
+	// Must not be currently running
+	if (state.isRunning) return false;
+
+	// Must have orchestrator permission
+	if (!licenseStore.canUseOrchestrator) return false;
+
+	return true;
+});
+
+const latestVersion = $derived.by(() => {
+	if (!state.currentSession || !isVersionedSession) return null;
+	return getLatestVersion(state.currentSession as PlanningSessionWithVersions);
+});
+
 // ==============================================================================
 // STORAGE HELPERS
 // ==============================================================================
 
-function loadSessionsFromStorage(): PlanningSession[] {
+function loadSessionsFromStorage(): (PlanningSession | PlanningSessionWithVersions)[] {
 	if (!browser) return [];
 
 	try {
@@ -93,43 +142,103 @@ function loadSessionsFromStorage(): PlanningSession[] {
 		const parsed = JSON.parse(stored);
 
 		// Convert date strings back to Date objects
-		return parsed.map((session: any) => ({
-			...session,
-			createdAt: new Date(session.createdAt),
-			startedAt: session.startedAt ? new Date(session.startedAt) : null,
-			pausedAt: session.pausedAt ? new Date(session.pausedAt) : null,
-			completedAt: session.completedAt ? new Date(session.completedAt) : null,
-			stages: session.stages.map((stage: any) => ({
-				...stage,
-				startedAt: stage.startedAt ? new Date(stage.startedAt) : null,
-				completedAt: stage.completedAt ? new Date(stage.completedAt) : null
-			}))
-		}));
+		return parsed.map((session: any) => {
+			const baseSession = {
+				...session,
+				createdAt: new Date(session.createdAt),
+				startedAt: session.startedAt ? new Date(session.startedAt) : null,
+				pausedAt: session.pausedAt ? new Date(session.pausedAt) : null,
+				completedAt: session.completedAt ? new Date(session.completedAt) : null,
+				stages: session.stages.map((stage: any) => ({
+					...stage,
+					startedAt: stage.startedAt ? new Date(stage.startedAt) : null,
+					completedAt: stage.completedAt ? new Date(stage.completedAt) : null
+				}))
+			};
+
+			// If session has version history, deserialize it
+			if (session.versionHistory && Array.isArray(session.versionHistory)) {
+				return {
+					...baseSession,
+					versionHistory: session.versionHistory.map((version: any) => ({
+						...version,
+						createdAt: new Date(version.createdAt),
+						refinementRequest: version.refinementRequest
+							? {
+									...version.refinementRequest,
+									requestedAt: new Date(version.refinementRequest.requestedAt)
+								}
+							: null,
+						stages: version.stages.map((stage: any) => ({
+							...stage,
+							startedAt: stage.startedAt ? new Date(stage.startedAt) : null,
+							completedAt: stage.completedAt ? new Date(stage.completedAt) : null
+						}))
+					})),
+					currentVersion: session.currentVersion || 0,
+					parentSessionId: session.parentSessionId || null,
+					isRefinement: session.isRefinement || false
+				} as PlanningSessionWithVersions;
+			}
+
+			return baseSession as PlanningSession;
+		});
 	} catch (error) {
 		console.error('Failed to load sessions from storage:', error);
 		return [];
 	}
 }
 
-function saveSessionsToStorage(sessions: PlanningSession[]) {
+function saveSessionsToStorage(
+	sessions: (PlanningSession | PlanningSessionWithVersions)[]
+) {
 	if (!browser) return;
 
 	try {
 		// Only keep the most recent sessions
 		const sessionsToStore = sessions.slice(0, MAX_STORED_SESSIONS);
 
-		const serialized = sessionsToStore.map((session) => ({
-			...session,
-			createdAt: session.createdAt.toISOString(),
-			startedAt: session.startedAt?.toISOString() || null,
-			pausedAt: session.pausedAt?.toISOString() || null,
-			completedAt: session.completedAt?.toISOString() || null,
-			stages: session.stages.map((stage) => ({
-				...stage,
-				startedAt: stage.startedAt?.toISOString() || null,
-				completedAt: stage.completedAt?.toISOString() || null
-			}))
-		}));
+		const serialized = sessionsToStore.map((session) => {
+			const baseSerialize = {
+				...session,
+				createdAt: session.createdAt.toISOString(),
+				startedAt: session.startedAt?.toISOString() || null,
+				pausedAt: session.pausedAt?.toISOString() || null,
+				completedAt: session.completedAt?.toISOString() || null,
+				stages: session.stages.map((stage) => ({
+					...stage,
+					startedAt: stage.startedAt?.toISOString() || null,
+					completedAt: stage.completedAt?.toISOString() || null
+				}))
+			};
+
+			// If session has version history, serialize it
+			if ('versionHistory' in session && session.versionHistory) {
+				return {
+					...baseSerialize,
+					versionHistory: session.versionHistory.map((version) => ({
+						...version,
+						createdAt: version.createdAt.toISOString(),
+						refinementRequest: version.refinementRequest
+							? {
+									...version.refinementRequest,
+									requestedAt: version.refinementRequest.requestedAt.toISOString()
+								}
+							: null,
+						stages: version.stages.map((stage) => ({
+							...stage,
+							startedAt: stage.startedAt?.toISOString() || null,
+							completedAt: stage.completedAt?.toISOString() || null
+						}))
+					})),
+					currentVersion: session.currentVersion,
+					parentSessionId: session.parentSessionId,
+					isRefinement: session.isRefinement
+				};
+			}
+
+			return baseSerialize;
+		});
 
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(serialized));
 	} catch (error) {
@@ -346,6 +455,191 @@ function setApiKeys(keys: {
 }
 
 // ==============================================================================
+// VF-321: REFINEMENT ACTIONS
+// ==============================================================================
+
+/**
+ * Refine the current completed session with new requirements
+ */
+async function refineCurrentSession(
+	requirements: string[],
+	additionalContext?: string,
+	focusSections?: string[]
+): Promise<void> {
+	// Validate current session
+	if (!state.currentSession || !isVersionedSession) {
+		state.error = 'Cannot refine: current session is not versioned';
+		return;
+	}
+
+	if (!canRefine) {
+		state.error = 'Cannot refine: session not ready or no permission';
+		return;
+	}
+
+	// Record usage
+	licenseStore.recordOrchestratorRun();
+
+	// Create refinement request
+	const refinementRequest = createRefinementRequest(
+		requirements,
+		'user', // TODO: Get actual user ID
+		additionalContext,
+		focusSections
+	);
+
+	// Cast to PlanningSessionWithVersions
+	const versionedSession = state.currentSession as PlanningSessionWithVersions;
+
+	// Set running state
+	state.isRunning = true;
+	state.isPaused = false;
+	state.streamingOutput = '';
+	state.error = null;
+
+	try {
+		// Refine the session
+		await planningOrchestrator.refineSession(versionedSession, refinementRequest, {
+			onStageStart: (index) => {
+				if (state.currentSession) {
+					state.currentSession.currentStageIndex = index;
+				}
+			},
+			onStageProgress: (index, token) => {
+				state.streamingOutput += token;
+			},
+			onStageComplete: (index, stage) => {
+				if (state.currentSession) {
+					state.currentSession.stages[index] = stage;
+					state.streamingOutput = ''; // Clear streaming output
+				}
+			},
+			onSessionComplete: (completedSession) => {
+				state.currentSession = completedSession;
+				state.isRunning = false;
+
+				// Update session in list
+				const index = state.sessions.findIndex((s) => s.id === completedSession.id);
+				if (index !== -1) {
+					state.sessions[index] = completedSession;
+				}
+				saveSessionsToStorage(state.sessions);
+			},
+			onError: (error) => {
+				state.error = error.message;
+				state.isRunning = false;
+			}
+		});
+	} catch (error) {
+		state.error = error instanceof Error ? error.message : 'Unknown error';
+		state.isRunning = false;
+
+		// Still save the session with failed refinement stages
+		if (state.currentSession) {
+			const index = state.sessions.findIndex((s) => s.id === state.currentSession!.id);
+			if (index !== -1) {
+				state.sessions[index] = state.currentSession;
+			}
+			saveSessionsToStorage(state.sessions);
+		}
+	}
+}
+
+/**
+ * Load a specific version for viewing
+ */
+function loadVersion(versionNumber: number) {
+	if (!state.currentSession || !isVersionedSession) return;
+
+	const version = getPlanVersion(
+		state.currentSession as PlanningSessionWithVersions,
+		versionNumber
+	);
+
+	if (version) {
+		state.selectedVersion = versionNumber;
+		// Update current deliverable to show selected version
+		if (state.currentSession) {
+			state.currentSession.deliverable = version.deliverable;
+		}
+	}
+}
+
+/**
+ * Compare two versions and return diff
+ */
+function compareVersions(versionA: number, versionB: number): PlanDiff | null {
+	if (!state.currentSession || !isVersionedSession) return null;
+
+	const versionedSession = state.currentSession as PlanningSessionWithVersions;
+	const planVersionA = getPlanVersion(versionedSession, versionA);
+	const planVersionB = getPlanVersion(versionedSession, versionB);
+
+	if (!planVersionA || !planVersionB) return null;
+
+	return comparePlanVersions(planVersionA, planVersionB);
+}
+
+/**
+ * Rollback to a previous version (create new version from old one)
+ */
+async function rollbackToVersion(versionNumber: number): Promise<void> {
+	if (!state.currentSession || !isVersionedSession) {
+		state.error = 'Cannot rollback: current session is not versioned';
+		return;
+	}
+
+	const targetVersion = getPlanVersion(
+		state.currentSession as PlanningSessionWithVersions,
+		versionNumber
+	);
+
+	if (!targetVersion) {
+		state.error = `Version ${versionNumber} not found`;
+		return;
+	}
+
+	// Create refinement request indicating rollback
+	const rollbackRequest = createRefinementRequest(
+		[`Rollback to version ${versionNumber}`],
+		'user',
+		`Rolling back to version ${versionNumber}. Restore the implementation plan and Claude Code prompt from that version.`
+	);
+
+	// The refinement will actually just restore the old deliverable
+	// We'll manually set the deliverable and create a new version
+	const versionedSession = state.currentSession as PlanningSessionWithVersions;
+
+	// Set deliverable to target version
+	versionedSession.deliverable = targetVersion.deliverable;
+	versionedSession.status = 'completed';
+
+	// Create new version snapshot (this will be vN+1)
+	const newVersion: PlanVersion = {
+		version: versionedSession.versionHistory.length + 1,
+		deliverable: targetVersion.deliverable,
+		totalTokens: targetVersion.totalTokens,
+		totalCost: targetVersion.totalCost,
+		stages: [...targetVersion.stages], // Copy stages
+		refinementRequest: rollbackRequest,
+		createdAt: new Date(),
+		status: 'completed'
+	};
+
+	versionedSession.versionHistory.push(newVersion);
+	versionedSession.currentVersion = newVersion.version;
+
+	// Update storage
+	const index = state.sessions.findIndex((s) => s.id === versionedSession.id);
+	if (index !== -1) {
+		state.sessions[index] = versionedSession;
+	}
+	saveSessionsToStorage(state.sessions);
+
+	state.selectedVersion = null; // Reset selected version
+}
+
+// ==============================================================================
 // EXPORTS
 // ==============================================================================
 
@@ -368,6 +662,9 @@ export const planningStore = {
 	},
 	get error() {
 		return state.error;
+	},
+	get selectedVersion() {
+		return state.selectedVersion;
 	},
 
 	// Derived (session state)
@@ -398,6 +695,26 @@ export const planningStore = {
 		return failedSessions;
 	},
 
+	// Derived (VF-321: version tracking)
+	get isVersionedSession() {
+		return isVersionedSession;
+	},
+	get currentVersion() {
+		return currentVersion;
+	},
+	get versionHistory() {
+		return versionHistory;
+	},
+	get hasVersions() {
+		return hasVersions;
+	},
+	get canRefine() {
+		return canRefine;
+	},
+	get latestVersion() {
+		return latestVersion;
+	},
+
 	// Actions
 	startSession,
 	pauseSession,
@@ -408,5 +725,11 @@ export const planningStore = {
 	deleteSession,
 	clearAllSessions,
 	downloadDeliverables,
-	setApiKeys
+	setApiKeys,
+
+	// VF-321: Refinement actions
+	refineCurrentSession,
+	loadVersion,
+	compareVersions,
+	rollbackToVersion
 };
