@@ -111,7 +111,7 @@ export type {
 
 export { FeatureFlag, TIER_CONFIGS } from "./license";
 
-// Pattern types (VF-310)
+// Pattern types (VF-310 + VF-313)
 export type {
   PatternCategory,
   TemplateVariable,
@@ -119,7 +119,12 @@ export type {
   PatternFilters,
   PatternRating,
   PatternExport,
-  PatternCollection
+  PatternCollection,
+  // VF-313: AI Pattern Suggestions
+  PatternIntent,
+  PatternSuggestion,
+  PatternUsageStats,
+  PatternMatchResult
 } from "./patterns";
 
 export {

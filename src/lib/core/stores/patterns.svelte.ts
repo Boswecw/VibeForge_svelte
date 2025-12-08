@@ -1,5 +1,5 @@
 /**
- * VF-310: Patterns Store
+ * VF-310 + VF-313: Patterns Store
  *
  * Svelte 5 runes store for managing prompt patterns with:
  * - Built-in patterns library integration
@@ -7,13 +7,16 @@
  * - Pattern filtering and search
  * - localStorage persistence
  * - Usage tracking and ratings
+ * - AI-powered pattern suggestions (VF-313)
  */
 
 import type {
 	PromptPattern,
 	PatternFilters,
 	PatternRating,
-	PatternCollection
+	PatternCollection,
+	PatternMatchResult,
+	PatternSuggestion
 } from '../types/patterns';
 import {
 	extractVariables,
@@ -28,6 +31,7 @@ import {
 	getPatternsByTag,
 	searchPatterns
 } from '../patterns/builtinPatterns';
+import { patternMatcher } from '../llm/patternMatcher';
 
 /**
  * Patterns Store State
@@ -49,6 +53,12 @@ interface PatternsState {
 	isLoading: boolean;
 	/** Error message */
 	error: string | null;
+	/** VF-313: Current pattern suggestions */
+	currentSuggestions: PatternSuggestion[];
+	/** VF-313: Last match result */
+	lastMatchResult: PatternMatchResult | null;
+	/** VF-313: Is analyzing prompt? */
+	isAnalyzing: boolean;
 }
 
 const STORAGE_KEY = 'vibeforge-patterns';
@@ -94,7 +104,11 @@ const state = $state<PatternsState>({
 	collections: storedCollections,
 	filters: {},
 	isLoading: false,
-	error: null
+	error: null,
+	// VF-313: AI Pattern Suggestions
+	currentSuggestions: [],
+	lastMatchResult: null,
+	isAnalyzing: false
 });
 
 /**
@@ -547,6 +561,111 @@ function deleteCollection(collectionId: string): void {
 }
 
 /**
+ * VF-313: Suggest patterns based on prompt text
+ * @param promptText User's prompt text to analyze
+ * @param limit Maximum number of suggestions (default: 5)
+ */
+function suggestPatterns(promptText: string, limit: number = 5): void {
+	if (!promptText || promptText.trim().length < 10) {
+		// Clear suggestions for very short prompts
+		state.currentSuggestions = [];
+		state.lastMatchResult = null;
+		return;
+	}
+
+	state.isAnalyzing = true;
+	state.error = null;
+
+	try {
+		// Analyze prompt and get suggestions
+		const result = patternMatcher.analyzePrompt(state.patterns, promptText, limit);
+
+		// Update state
+		state.lastMatchResult = result;
+		state.currentSuggestions = result.suggestions;
+
+		// Record suggestions in usage stats
+		for (const suggestion of result.suggestions) {
+			patternMatcher.recordSuggestion(suggestion.pattern.id);
+		}
+
+		state.isAnalyzing = false;
+	} catch (err) {
+		state.error = err instanceof Error ? err.message : 'Failed to analyze prompt';
+		state.isAnalyzing = false;
+		state.currentSuggestions = [];
+		state.lastMatchResult = null;
+	}
+}
+
+/**
+ * VF-313: Accept a suggested pattern (user clicked apply)
+ * @param patternId Pattern ID
+ */
+function acceptSuggestion(patternId: string): void {
+	// Record accept in pattern matcher
+	patternMatcher.recordAccept(patternId);
+
+	// Increment pattern usage count
+	recordPatternUsage(patternId);
+
+	// Select the pattern
+	const pattern = state.patterns.find((p) => p.id === patternId);
+	if (pattern) {
+		state.selectedPattern = pattern;
+	}
+
+	// Clear suggestions after accept
+	state.currentSuggestions = [];
+	state.lastMatchResult = null;
+}
+
+/**
+ * VF-313: Reject a suggested pattern (user dismissed)
+ * @param patternId Pattern ID
+ */
+function rejectSuggestion(patternId: string): void {
+	// Record reject in pattern matcher
+	patternMatcher.recordReject(patternId);
+
+	// Remove from current suggestions
+	state.currentSuggestions = state.currentSuggestions.filter(
+		(s) => s.pattern.id !== patternId
+	);
+}
+
+/**
+ * VF-313: Clear all current suggestions
+ */
+function clearSuggestions(): void {
+	state.currentSuggestions = [];
+	state.lastMatchResult = null;
+}
+
+/**
+ * VF-313: Get usage stats for a pattern
+ * @param patternId Pattern ID
+ */
+function getPatternStats(patternId: string) {
+	return patternMatcher.getStats(patternId);
+}
+
+/**
+ * VF-313: Reset usage stats for a pattern
+ * @param patternId Pattern ID
+ */
+function resetPatternStats(patternId: string): void {
+	patternMatcher.resetStats(patternId);
+}
+
+/**
+ * VF-313: Reset all pattern usage stats
+ */
+function resetAllPatternStats(): void {
+	patternMatcher.resetAllStats();
+}
+
+/**
  * Export the store
  */
 export const patternsStore = {
@@ -574,6 +693,16 @@ export const patternsStore = {
 	},
 	get error() {
 		return state.error;
+	},
+	// VF-313: AI Pattern Suggestions state
+	get currentSuggestions() {
+		return state.currentSuggestions;
+	},
+	get lastMatchResult() {
+		return state.lastMatchResult;
+	},
+	get isAnalyzing() {
+		return state.isAnalyzing;
 	},
 
 	// Derived
@@ -607,6 +736,14 @@ export const patternsStore = {
 	createCollection,
 	updateCollection,
 	deleteCollection,
+	// VF-313: AI Pattern Suggestions actions
+	suggestPatterns,
+	acceptSuggestion,
+	rejectSuggestion,
+	clearSuggestions,
+	getPatternStats,
+	resetPatternStats,
+	resetAllPatternStats,
 
 	// Utilities (re-export from types)
 	extractVariables,

@@ -164,6 +164,80 @@ export interface PatternCollection {
 }
 
 /**
+ * VF-313: AI Pattern Suggestions Types
+ */
+
+/**
+ * Pattern Intent - Detected intent from prompt text
+ */
+export type PatternIntent =
+	| 'code_review' // Review code quality, best practices
+	| 'bug_analysis' // Debug errors, find root causes
+	| 'documentation' // Generate docs, README, changelog
+	| 'testing' // Create tests, test scenarios
+	| 'refactoring' // Improve code structure
+	| 'api_design' // Design or review APIs
+	| 'performance' // Performance analysis, optimization
+	| 'security' // Security audit, vulnerability detection
+	| 'planning' // Feature planning, task estimation
+	| 'explanation' // Explain code, concepts
+	| 'generation' // Generate new code
+	| 'migration' // Migration planning
+	| 'general'; // General purpose, no specific intent
+
+/**
+ * Pattern Suggestion - Suggested pattern with relevance score
+ */
+export interface PatternSuggestion {
+	/** The suggested pattern */
+	pattern: PromptPattern;
+	/** Confidence score (0-100) */
+	confidence: number;
+	/** Detected intent that led to this suggestion */
+	intent: PatternIntent;
+	/** Reason for suggestion (for user transparency) */
+	reason: string;
+	/** Matching keywords that triggered this suggestion */
+	matchingKeywords: string[];
+}
+
+/**
+ * Pattern Usage Statistics - Track user behavior for learning
+ */
+export interface PatternUsageStats {
+	/** Pattern ID */
+	patternId: string;
+	/** Total times suggested */
+	suggestionCount: number;
+	/** Times user accepted (clicked apply) */
+	acceptCount: number;
+	/** Times user rejected (dismissed) */
+	rejectCount: number;
+	/** Accept rate (acceptCount / suggestionCount) */
+	acceptRate: number;
+	/** Last suggested timestamp */
+	lastSuggestedAt?: string;
+	/** Last accepted timestamp */
+	lastAcceptedAt?: string;
+}
+
+/**
+ * Pattern Match Result - Full matching analysis
+ */
+export interface PatternMatchResult {
+	/** Detected intent from prompt */
+	detectedIntent: PatternIntent;
+	/** Intent confidence (0-100) */
+	intentConfidence: number;
+	/** Extracted keywords from prompt */
+	keywords: string[];
+	/** All pattern suggestions (sorted by confidence) */
+	suggestions: PatternSuggestion[];
+	/** Analysis took this many milliseconds */
+	analysisDurationMs: number;
+}
+
+/**
  * Helper function to extract variables from template
  * @param template Template string with {{variable}} syntax
  * @returns Array of variable names
