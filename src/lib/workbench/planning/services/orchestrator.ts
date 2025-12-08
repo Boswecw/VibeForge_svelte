@@ -8,8 +8,12 @@ import type {
 	PlanningStage,
 	StageConfig,
 	ProgressEvent,
-	TwoFileDeliverable
+	TwoFileDeliverable,
+	PlanningSessionWithVersions,
+	RefinementRequest,
+	PlanVersion
 } from '$lib/workbench/planning/types';
+import { createPlanVersion, DEFAULT_STAGE_CONFIGS } from '$lib/workbench/planning/types';
 import { ModelRouter } from './modelRouter';
 
 // ==============================================================================
@@ -360,6 +364,227 @@ export class PlanningOrchestrator {
 	 */
 	setApiKey(provider: 'anthropic' | 'openai' | 'xai' | 'google', apiKey: string) {
 		this.router.setApiKey(provider, apiKey);
+	}
+
+	// ==============================================================================
+	// VF-321: ITERATIVE REFINEMENT METHODS
+	// ==============================================================================
+
+	/**
+	 * Create a version snapshot of the current session state
+	 * Called after deliverable completion to save a version
+	 */
+	private createVersionSnapshot(
+		session: PlanningSessionWithVersions,
+		refinementRequest: RefinementRequest | null
+	): PlanVersion {
+		const versionNumber = session.versionHistory.length + 1;
+		const version = createPlanVersion(session, versionNumber, refinementRequest);
+		session.versionHistory.push(version);
+		session.currentVersion = versionNumber;
+		return version;
+	}
+
+	/**
+	 * Resume a completed session for refinement
+	 * Prepares the session to accept new refinement stages
+	 */
+	resumeSession(session: PlanningSessionWithVersions): PlanningSessionWithVersions {
+		// Validate session can be resumed
+		if (session.status !== 'completed') {
+			throw new Error('Cannot resume session: session is not completed');
+		}
+
+		if (!session.deliverable) {
+			throw new Error('Cannot resume session: session has no deliverable');
+		}
+
+		// Create version snapshot of current state if not already versioned
+		if (session.versionHistory.length === 0) {
+			this.createVersionSnapshot(session, null); // v1 has no refinement request
+		}
+
+		// Reset session status for refinement
+		session.status = 'active';
+		session.completedAt = null;
+
+		return session;
+	}
+
+	/**
+	 * Refine an existing session by adding new requirements
+	 * Adds refinement stages (refinement → review → final) with the new context
+	 */
+	async refineSession(
+		session: PlanningSessionWithVersions,
+		refinementRequest: RefinementRequest,
+		callbacks?: {
+			onStageStart?: (stageIndex: number) => void;
+			onStageProgress?: (stageIndex: number, token: string) => void;
+			onStageComplete?: (stageIndex: number, stage: PlanningStage) => void;
+			onSessionComplete?: (session: PlanningSession) => void;
+			onError?: (error: Error) => void;
+		}
+	): Promise<PlanningSessionWithVersions> {
+		// Ensure session is ready for refinement
+		if (session.status === 'completed' || session.versionHistory.length === 0) {
+			this.resumeSession(session);
+		}
+
+		// Get current version number
+		const currentVersionNumber = session.currentVersion;
+
+		// Get the latest deliverable (from current version or session)
+		const latestVersion = session.versionHistory[session.versionHistory.length - 1];
+		const latestPlan = latestVersion?.deliverable?.implementationPlan?.content || '';
+
+		// Create new refinement stages
+		const refinementStageIndex = session.stages.length;
+
+		// Stage 1: Refinement (ChatGPT) - Update plan with new requirements
+		const refinementStage: PlanningStage = {
+			id: `stage_${refinementStageIndex}`,
+			index: refinementStageIndex,
+			config: {
+				type: 'refinement',
+				name: `Refinement v${currentVersionNumber + 1}`,
+				...DEFAULT_STAGE_CONFIGS.refinement,
+				promptTemplate: this.buildRefinementPrompt(latestPlan, refinementRequest)
+			},
+			status: 'pending',
+			input: '',
+			output: '',
+			streamingOutput: '',
+			previousContext: [],
+			userInjections: [],
+			result: null,
+			startedAt: null,
+			completedAt: null,
+			error: null
+		};
+
+		// Stage 2: Review (Claude) - Review the refined plan
+		const reviewStage: PlanningStage = {
+			id: `stage_${refinementStageIndex + 1}`,
+			index: refinementStageIndex + 1,
+			config: {
+				type: 'review',
+				name: `Review v${currentVersionNumber + 1}`,
+				...DEFAULT_STAGE_CONFIGS.review,
+				promptTemplate: `Review the following refined implementation plan and identify any gaps, concerns, or improvements needed:\n\n{refinedOutput}\n\nProvide your analysis.`
+			},
+			status: 'pending',
+			input: '',
+			output: '',
+			streamingOutput: '',
+			previousContext: [],
+			userInjections: [],
+			result: null,
+			startedAt: null,
+			completedAt: null,
+			error: null
+		};
+
+		// Stage 3: Final (Claude) - Generate updated two-file deliverable
+		const finalStage: PlanningStage = {
+			id: `stage_${refinementStageIndex + 2}`,
+			index: refinementStageIndex + 2,
+			config: {
+				type: 'final',
+				name: `Final Deliverable v${currentVersionNumber + 1}`,
+				...DEFAULT_STAGE_CONFIGS.final,
+				promptTemplate: `Based on the refined plan and review feedback, generate the final two-file deliverable:\n\nRefined Plan:\n{refinedOutput}\n\nReview Feedback:\n{reviewOutput}\n\nGenerate:\n1. Implementation Plan (markdown)\n2. Claude Code Prompt\n\nFormat:\n---BEGIN IMPLEMENTATION PLAN---\n[content]\n---END IMPLEMENTATION PLAN---\n\n---BEGIN CLAUDE CODE PROMPT---\n[content]\n---END CLAUDE CODE PROMPT---`
+			},
+			status: 'pending',
+			input: '',
+			output: '',
+			streamingOutput: '',
+			previousContext: [],
+			userInjections: [],
+			result: null,
+			startedAt: null,
+			completedAt: null,
+			error: null
+		};
+
+		// Add stages to session
+		session.stages.push(refinementStage, reviewStage, finalStage);
+
+		// Execute new stages
+		try {
+			await this.runSession(session, callbacks);
+
+			// Create version snapshot after successful refinement
+			if (session.status === 'completed' && session.deliverable) {
+				this.createVersionSnapshot(session, refinementRequest);
+			}
+
+			return session;
+		} catch (error) {
+			// Remove failed stages to allow retry
+			session.stages = session.stages.slice(0, refinementStageIndex);
+			throw error;
+		}
+	}
+
+	/**
+	 * Build refinement prompt with new requirements
+	 */
+	private buildRefinementPrompt(currentPlan: string, refinementRequest: RefinementRequest): string {
+		let prompt = `You are refining an existing implementation plan to incorporate new requirements.\n\n`;
+		prompt += `Current Implementation Plan:\n${currentPlan}\n\n`;
+		prompt += `New Requirements to Incorporate:\n`;
+
+		refinementRequest.requirements.forEach((req, index) => {
+			prompt += `${index + 1}. ${req}\n`;
+		});
+
+		if (refinementRequest.additionalContext) {
+			prompt += `\nAdditional Context:\n${refinementRequest.additionalContext}\n`;
+		}
+
+		if (refinementRequest.focusSections && refinementRequest.focusSections.length > 0) {
+			prompt += `\nFocus on updating these sections:\n`;
+			refinementRequest.focusSections.forEach((section) => {
+				prompt += `- ${section}\n`;
+			});
+		}
+
+		prompt += `\nInstructions:\n`;
+		prompt += `1. Review the current plan carefully\n`;
+		prompt += `2. Identify where each new requirement fits\n`;
+		prompt += `3. Update relevant sections to incorporate the requirements\n`;
+		prompt += `4. Maintain the overall structure and quality\n`;
+		prompt += `5. Add new sections if needed\n`;
+		prompt += `6. Update time estimates and success criteria accordingly\n\n`;
+		prompt += `Output the complete updated implementation plan.`;
+
+		return prompt;
+	}
+
+	/**
+	 * Run a versioned session (overload for PlanningSessionWithVersions)
+	 * Creates version snapshot after completion
+	 */
+	async runVersionedSession(
+		session: PlanningSessionWithVersions,
+		callbacks?: {
+			onStageStart?: (stageIndex: number) => void;
+			onStageProgress?: (stageIndex: number, token: string) => void;
+			onStageComplete?: (stageIndex: number, stage: PlanningStage) => void;
+			onSessionComplete?: (session: PlanningSession) => void;
+			onError?: (error: Error) => void;
+		}
+	): Promise<PlanningSessionWithVersions> {
+		// Run the session
+		await this.runSession(session, callbacks);
+
+		// Create version snapshot if completed and no versions exist yet (initial run)
+		if (session.status === 'completed' && session.deliverable && session.versionHistory.length === 0) {
+			this.createVersionSnapshot(session, null); // v1 has no refinement request
+		}
+
+		return session;
 	}
 }
 
