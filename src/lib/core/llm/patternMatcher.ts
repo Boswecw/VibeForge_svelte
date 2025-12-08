@@ -252,7 +252,7 @@ export class PatternMatcher {
 			limit
 		);
 
-		const analysisDurationMs = Math.round(performance.now() - startTime);
+		const analysisDurationMs = Math.max(1, Math.round(performance.now() - startTime));
 
 		return {
 			detectedIntent: intent,
@@ -330,6 +330,16 @@ export class PatternMatcher {
 			}
 		}
 
+		// Apply intent priority: domain-specific intents (docs, testing) should override generic "generation"
+		// If we have both a specific intent and generation, boost the specific one
+		const specificIntents = ['documentation', 'testing', 'refactoring', 'bug_analysis', 'code_review'];
+		for (const specificIntent of specificIntents) {
+			if (scores[specificIntent as PatternIntent] > 0 && scores.generation > 0) {
+				// Boost specific intent to ensure it wins over generic "generation"
+				scores[specificIntent as PatternIntent] += 3;
+			}
+		}
+
 		// Find intent with highest score
 		let maxScore = 0;
 		let detectedIntent: PatternIntent = 'general';
@@ -343,7 +353,8 @@ export class PatternMatcher {
 
 		// Calculate confidence (0-100)
 		// Higher scores = higher confidence, with diminishing returns
-		const confidence = maxScore > 0 ? Math.min(100, Math.round((maxScore / (maxScore + 5)) * 100)) : 50;
+		// Use a more generous formula that gives 67% confidence at score 4, 75% at score 6
+		const confidence = maxScore > 0 ? Math.min(100, Math.round((maxScore / (maxScore + 2)) * 100)) : 50;
 
 		return { intent: detectedIntent, confidence };
 	}
