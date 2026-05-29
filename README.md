@@ -11,6 +11,7 @@
   <img src="https://img.shields.io/badge/License-Freeware-purple" alt="Freeware">
   <img src="https://img.shields.io/badge/SvelteKit-5-orange" alt="SvelteKit 5">
   <img src="https://img.shields.io/badge/Phase%203-Complete-brightgreen" alt="Phase 3 Complete">
+  <img src="https://img.shields.io/badge/Forge--built-standard-1a1a2e" alt="Forge-built">
 </p>
 
 ---
@@ -576,4 +577,14 @@ VibeForge serves as the **entry product** to the Forge Ecosystem, introducing de
 
 ---
 
-**Built with ❤️ for AI Engineers**
+## Forge-built Standard
+
+<p align="center">
+  <img src="static/forge/assets/anvil-seal.svg" alt="Forge-built" width="32" height="32" />
+</p>
+
+VibeForge is built under [Forge standards](https://forge.boswelldigital.com/forge/charter/): durability, inspectability, and long-term trust. AI assists, proposes, and accelerates—but never silently overrides your intent. Defaults are conservative, and irreversible actions require explicit confirmation.
+
+---
+
+**Forge-built — designed to endure**

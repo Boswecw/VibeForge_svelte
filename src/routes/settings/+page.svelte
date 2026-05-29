@@ -7,6 +7,7 @@
   import LLMSettingsSection from "$lib/components/settings/LLMSettingsSection.svelte";
   import ModelRoutingSettingsSection from "$lib/components/settings/ModelRoutingSettingsSection.svelte";
   import DataSettingsSection from "$lib/components/settings/DataSettingsSection.svelte";
+  import AboutSettingsSection from "$lib/components/settings/AboutSettingsSection.svelte";
 </script>
 
 <!-- Settings: workspace defaults, appearance, model config, and data/privacy placeholders -->
@@ -32,6 +33,7 @@
       <AppearanceSettingsSection />
       <ModelSettingsSection />
       <DataSettingsSection />
+      <AboutSettingsSection />
     </div>
   </div>
 </main>

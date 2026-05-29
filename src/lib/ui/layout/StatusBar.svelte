@@ -1,10 +1,20 @@
 <script lang="ts">
 	/**
 	 * StatusBar component - Displays workspace metrics, tokens, latency, models, and run state
+	 * Includes Forge-built attribution
 	 */
 
 	import { modelsStore, runsStore, contextBlocksStore } from '$lib/core/stores';
 	import Tag from '$lib/ui/primitives/Tag.svelte';
+	import { browser } from '$app/environment';
+
+	const FORGE_CHARTER_URL = "https://forge.boswelldigital.com/forge/charter/";
+
+	function openForgeCharter() {
+		if (browser) {
+			window.open(FORGE_CHARTER_URL, "_blank", "noopener,noreferrer");
+		}
+	}
 
 	// Derived values from stores
 	const selectedModels = $derived(modelsStore.selectedModels);
@@ -91,7 +101,7 @@
 			{/if}
 		</div>
 
-		<!-- Right: Metrics -->
+		<!-- Right: Metrics + Forge Attribution -->
 		<div class="flex items-center gap-4 text-slate-400">
 			{#if latestRun}
 				<!-- Total Tokens -->
@@ -130,6 +140,29 @@
 				<div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
 				<span>Connected</span>
 			</div>
+
+			<!-- Forge Attribution -->
+			<button
+				type="button"
+				onclick={openForgeCharter}
+				class="flex items-center gap-1.5 text-slate-500 hover:text-slate-300 transition-colors"
+				title="Read the Forge Brand Charter"
+			>
+				<!-- 16px anvil-seal-decorative (aria-hidden, decorative) -->
+				<svg
+					width="16"
+					height="16"
+					viewBox="0 0 16 16"
+					fill="none"
+					aria-hidden="true"
+					class="text-current"
+				>
+					<path d="M2 12h12v2H2z" fill="currentColor"/>
+					<path d="M3 7h10v5H3z" fill="currentColor"/>
+					<path d="M4 4h8l1 3H3z" fill="currentColor"/>
+				</svg>
+				<span class="text-[10px]">Forge-built — designed to endure</span>
+			</button>
 		</div>
 	</div>
 </footer>
