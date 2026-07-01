@@ -1,6 +1,6 @@
 {
   "bundle_version": "stateforge.evidence.v1",
-  "fail_reason": null,
+  "fail_reason": "perf budget exceeded: runtime_ms (69244 > 4500)",
   "inputs": {
     "fixtures": {
       "negatives": [
@@ -26,7 +26,7 @@
   },
   "metrics": {
     "depth": 16,
-    "runtime_ms": 3746,
+    "runtime_ms": 69244,
     "states": 4572
   },
   "outputs": {
@@ -36,7 +36,7 @@
     "report_hash": "sha256:097c9e843d51d8103e2b6a857fd2d05356acbd0310db6e4baed38cde47d6c473"
   },
   "repo": "Vibeforge",
-  "result": "PASS",
+  "result": "FAIL",
   "tool": {
     "qc_runner_version": "stateforge-ecosystem-runner-v0.3",
     "stateforge_version": "0.2.1"
