@@ -22,7 +22,10 @@
     "test:e2e:firefox": "playwright test --project=firefox",
     "test:e2e:webkit": "playwright test --project=webkit",
     "test:e2e:report": "playwright show-report",
-    "qc:stateforge": "bun run tools/qc/stateforge.ts"
+    "qc:stateforge": "bun run tools/qc/stateforge.ts",
+    "generate:agent-instructions": "bun run tools/repo-context/generate-agent-instructions.ts",
+    "check:agent-instruction-drift": "bun run tools/repo-context/check-agent-instruction-drift.ts",
+    "verify:repo-context": "bun run tools/repo-context/verify-repo-context.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",

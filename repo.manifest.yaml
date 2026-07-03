@@ -1,0 +1,97 @@
+schema_version: "RepoManifest.v1"
+
+repo:
+  full_name: "Boswell-Digital-Solutions/VibeForge_svelte"
+  local_name: "Vibeforge"
+  package_name: "forge"
+  default_branch: "master"
+  repo_class: "internal_governance_platform"
+
+identity:
+  product_name: "VibeForge"
+  one_line: "Local-first by default, cloud-accelerated by approval, and developer-authoritative at every irreversible boundary."
+  authority_role: "ai_engineering_governance_workbench"
+
+owns:
+  - local repo scan and instruction governance
+  - board review orchestration and developer decision UI
+  - patch receipt generation and the local evidence vault
+  - agent workcell coordination surface (not agent execution internals)
+  - cloud escalation approval UX and the privacy-safe analytics boundary
+  - developer cockpit UX
+  - commercial packaging and licensing UX
+
+does_not_own:
+  - Forge ecosystem-wide governance authority
+  - raw coding-model capability (VibeForge governs models, it does not compete with them)
+  - credential brokerage and command-plane governance
+  - agent execution runtime internals
+  - company-side (BDS-internal) analytics authority
+  - global model provider routing authority
+
+upstream_authorities:
+  Forge_Command:
+    owns: "pattern donor and reference only (operator cockpit, authority boundaries, receipts, validation profiles, autonomy tiers) — not a runtime dependency"
+
+downstream_consumers:
+  - developers using the VibeForge developer cockpit
+  - teams enrolled in VibeForge Team/Enterprise mode
+
+canonical_files:
+  - repo.manifest.yaml
+  - README.md
+  - package.json
+  - doc/system/_index.md
+  - doc/system/00-overview.md
+  - doc/system/01-architecture.md
+  - doc/VBFSYSTEM.md
+
+generated_files:
+  - AGENTS.md
+  - CLAUDE.md
+  - CODEX.md
+  - GEMINI.md
+
+agent_edit_policy:
+  may_edit:
+    - src/**
+    - src-tauri/**
+    - tools/**
+    - tests/**
+    - doc/**
+    - docs/**
+  must_not_edit_directly:
+    - AGENTS.md
+    - CLAUDE.md
+    - CODEX.md
+    - GEMINI.md
+  must_regenerate:
+    - AGENTS.md
+    - CLAUDE.md
+    - CODEX.md
+    - GEMINI.md
+
+verification:
+  required_identity_checks:
+    - repository_full_name
+    - local_directory_name
+    - package_name
+    - README title
+    - default_branch
+    - canonical_files_exist
+    - generated_instruction_hashes_match
+  test_commands:
+    - pnpm test:run
+  build_commands:
+    - pnpm run check
+    - pnpm run build
+  safety_rules:
+    - "Local works without cloud; cloud is an opt-in escalation lane, never required for trust."
+    - "Before any cloud job: classify, estimate credits, preview payload, redact secrets, obtain approval, record a local receipt."
+    - "UI never owns authority. Agents propose. Boards recommend. SMITH gates. Developers decide. Receipts prove."
+    - "Nothing is trusted because it was generated; a claim is trusted only when it has evidence, a contract, validation, a receipt, and an authority decision."
+  llm_rules:
+    - "Never call the local Postgres/evidence store 'DataForge' or 'DataForge Local' in any commercial-facing or generated string. Use 'VibeForge Local Evidence Vault' (or 'VibeForge Vault'). 'Cloud DataForge' is reserved exclusively for BDS-internal, company-side analytics."
+    - "Known naming debt: src/lib/**/dataforge* (types, store, API clients) predates this doctrine and already uses the 'DataForge' name incorrectly. Do not copy that pattern into new code. Renaming is deferred to a later phase, not this one."
+    - "Do not implement Phase N+1 capabilities (agent fleets, cloud escalation, advanced board review) before Phase N's exit gate is met and independently verified."
+    - "Internal Forge component names (SMITH, YellowJacket, PCC, PACT, Rake, NeuronForge, NeuroForge, ForgeAgents) stay out of the commercial product UI — capability-level language only."
