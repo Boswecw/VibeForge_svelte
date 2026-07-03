@@ -8,7 +8,7 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: [path.resolve(__dirname, "./src/tests/setup.ts")],
-    include: ["src/**/*.{test,spec}.{js,ts}"],
+    include: ["src/**/*.{test,spec}.{js,ts}", "tools/**/*.{test,spec}.{js,ts}"],
     exclude: ["**/node_modules/**", "**/llm_old/**"],
     coverage: {
       provider: "v8",

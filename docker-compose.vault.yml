@@ -1,0 +1,14 @@
+services:
+  vault-db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: forge
+      POSTGRES_PASSWORD: forge
+      POSTGRES_DB: vibeforge
+    ports:
+      - "5434:5432"
+    volumes:
+      - vibeforge-vault-data:/var/lib/postgresql/data
+
+volumes:
+  vibeforge-vault-data:
