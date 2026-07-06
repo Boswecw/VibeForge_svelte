@@ -15,6 +15,7 @@
 
 pub mod doctor;
 pub mod ids;
+pub mod repo_truth;
 
 use chrono::{DateTime, Utc};
 use sqlx::postgres::{PgPool, PgPoolOptions};
@@ -108,6 +109,23 @@ pub async fn get_workspace(
     .await
 }
 
+/// Epic 3's `vibeforge_repo_truth scan` CLI find-or-creates a workspace by
+/// `--workspace-alias` (falling back to `create_workspace` when this
+/// returns `None`) rather than requiring an explicit `--workspace-id` on
+/// every run.
+pub async fn get_workspace_by_display_name(
+    pool: &PgPool,
+    display_name: &str,
+) -> Result<Option<Workspace>, sqlx::Error> {
+    sqlx::query_as::<_, Workspace>(
+        "SELECT workspace_id, display_name, vault_schema_version, privacy_mode, created_at, updated_at \
+         FROM workspace WHERE display_name = $1",
+    )
+    .bind(display_name)
+    .fetch_optional(pool)
+    .await
+}
+
 // --- repository ---
 
 #[derive(Debug, Clone, sqlx::FromRow, serde::Serialize)]
@@ -154,6 +172,44 @@ pub async fn get_repository(pool: &PgPool, repo_id: &str) -> Result<Option<Repos
     .bind(repo_id)
     .fetch_optional(pool)
     .await
+}
+
+/// The dedup lookup `vibeforge_repo_truth scan` calls before
+/// `create_repository` — `repo_root_hash` (never the raw absolute path,
+/// see `repo_truth::snapshot::hash_repo_root_path`) is unique per
+/// workspace (`UNIQUE(workspace_id, repo_root_hash)` in the schema), so a
+/// rescan of the same on-disk root under the same workspace finds the
+/// existing row instead of creating a duplicate.
+pub async fn get_repository_by_workspace_and_root_hash(
+    pool: &PgPool,
+    workspace_id: &str,
+    repo_root_hash: &str,
+) -> Result<Option<Repository>, sqlx::Error> {
+    sqlx::query_as::<_, Repository>(
+        "SELECT repo_id, workspace_id, repo_root_hash, vcs_type, default_branch_hash, current_head, \
+                repo_alias, is_private, created_at, updated_at \
+         FROM repository WHERE workspace_id = $1 AND repo_root_hash = $2",
+    )
+    .bind(workspace_id)
+    .bind(repo_root_hash)
+    .fetch_optional(pool)
+    .await
+}
+
+/// Called by `vibeforge_repo_truth scan` after resolving `head_commit`
+/// (either `--head-commit` or `git rev-parse HEAD`), so `repository`
+/// always reflects the commit the most recent scan actually ran against.
+pub async fn set_repository_current_head(
+    pool: &PgPool,
+    repo_id: &str,
+    current_head: &str,
+) -> Result<(), sqlx::Error> {
+    sqlx::query("UPDATE repository SET current_head = $2, updated_at = now() WHERE repo_id = $1")
+        .bind(repo_id)
+        .bind(current_head)
+        .execute(pool)
+        .await?;
+    Ok(())
 }
 
 // --- mission ---
