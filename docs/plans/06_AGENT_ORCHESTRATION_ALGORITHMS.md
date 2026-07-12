@@ -10,6 +10,22 @@
 - The board preserves disagreement.
 - The developer can override, but overrides are receipted.
 
+## Support-agent runner reference
+
+For internal planning, VibeForge points Yellowjacket workcell-runner references
+at the Forge public app support agent repo:
+
+```text
+git@github.com:Boswell-Digital-Solutions/forge-yellowjacket.git
+/home/charlie/Forge/apps/public-app-local-support/yellowjacket
+```
+
+VibeForge does not absorb this runner. VibeForge classifies missions, builds
+context packs, presents review packets, and records developer decisions. Forge
+Yellowjacket supplies the governed support-agent runner boundary for permission
+envelopes, receipts, review packets, replay proof, and candidate-only workcell
+execution.
+
 ## Permission envelope
 
 ```json
