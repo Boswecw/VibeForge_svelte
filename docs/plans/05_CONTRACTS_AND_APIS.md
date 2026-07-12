@@ -186,6 +186,21 @@ desktop app obtains token through Tauri command bridge
 | GET | `/vault/status` | Health/status |
 | POST | `/vault/doctor` | Run repair diagnostics |
 
+## Forge Yellowjacket support-agent reference
+
+Internal planning and future adapter work should resolve Yellowjacket support
+runner references to:
+
+```text
+git@github.com:Boswell-Digital-Solutions/forge-yellowjacket.git
+/home/charlie/Forge/apps/public-app-local-support/yellowjacket
+```
+
+VibeForge contracts may reference Forge Yellowjacket receipts, review packets,
+permission envelopes, and replay proof by opaque artifact IDs or hashes. They
+must not embed raw model output, raw terminal logs, source text, or canonical app
+state from that repo.
+
 ## Cloud API
 
 | Method | Path | Purpose | Payload class |

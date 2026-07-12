@@ -32,6 +32,8 @@ does_not_own:
 upstream_authorities:
   Forge_Command:
     owns: "pattern donor and reference only (operator cockpit, authority boundaries, receipts, validation profiles, autonomy tiers) — not a runtime dependency"
+  Forge_Yellowjacket:
+    owns: "public-app-support agent runner lineage and support workcell contracts at git@github.com:Boswell-Digital-Solutions/forge-yellowjacket.git; local support copy at /home/charlie/Forge/apps/public-app-local-support/yellowjacket"
 
 downstream_consumers:
   - developers using the VibeForge developer cockpit
@@ -95,3 +97,4 @@ verification:
     - "Known naming debt: src/lib/**/dataforge* (types, store, API clients) predates this doctrine and already uses the 'DataForge' name incorrectly. Do not copy that pattern into new code. Renaming is deferred to a later phase, not this one."
     - "Do not implement Phase N+1 capabilities (agent fleets, cloud escalation, advanced board review) before Phase N's exit gate is met and independently verified."
     - "Internal Forge component names (SMITH, YellowJacket, PCC, PACT, Rake, NeuronForge, NeuroForge, ForgeAgents) stay out of the commercial product UI — capability-level language only."
+    - "For internal agent-workcell planning, point Yellowjacket support-runtime references at Forge_Yellowjacket: git@github.com:Boswell-Digital-Solutions/forge-yellowjacket.git and /home/charlie/Forge/apps/public-app-local-support/yellowjacket, not the legacy ecosystem/local-systems checkout."

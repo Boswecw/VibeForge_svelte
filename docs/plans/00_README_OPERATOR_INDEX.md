@@ -43,6 +43,7 @@ It makes every agentic coding action reviewable, reversible, attributable, and d
 | `10_CONTRACTOR_HANDOFF.md` | Contractor-ready epics and first tickets |
 | `11_PREMIUM_COMMERCIAL_POSITIONING.md` | Commercial story, tiers, demo, differentiation |
 | `12_RISK_REGISTER_PREMIUM.md` | Enhanced risk register |
+| `13_FORGE_YELLOWJACKET_SUPPORT_AGENT.md` | Internal pointer to the Forge Yellowjacket support-agent repo and workcell boundary |
 | `sources/REFERENCE_NOTES.md` | Current context sources consulted |
 | `v1_original/` | Untouched original uploaded Markdown plan set |
 
