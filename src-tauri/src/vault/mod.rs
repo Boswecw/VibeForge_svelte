@@ -13,6 +13,7 @@
 //! receipts, etc.) rather than building speculative CRUD for all 19 tables
 //! up front.
 
+pub mod context_control;
 pub mod doctor;
 pub mod ids;
 pub mod repo_truth;
