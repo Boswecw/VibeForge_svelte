@@ -1,0 +1,12 @@
+[
+  {
+    "label": "session module",
+    "source_ref": "src/auth/session.ts",
+    "content": "export function currentUser(req) { return req.session?.user ?? null; }"
+  },
+  {
+    "label": "session test",
+    "source_ref": "src/auth/session.test.ts",
+    "content": "test('anonymous request has no user', () => { expect(currentUser({})).toBeNull(); });"
+  }
+]
