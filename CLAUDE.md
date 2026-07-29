@@ -93,12 +93,6 @@ Regenerate these files after manifest changes:
 
 ## Verification Commands
 
-Context and drift:
-
-- bun run generate:agent-instructions
-- bun run check:agent-instruction-drift
-- bun run verify:repo-context
-
 Tests:
 
 - pnpm test:run
@@ -123,10 +117,9 @@ Builds:
 - Internal Forge component names (SMITH, YellowJacket, PCC, PACT, Rake, NeuronForge, NeuroForge, ForgeAgents) stay out of the commercial product UI — capability-level language only.
 - For internal agent-workcell planning, point Yellowjacket support-runtime references at Forge_Yellowjacket: git@github.com:Boswell-Digital-Solutions/forge-yellowjacket.git and /home/charlie/Forge/apps/public-app-local-support/yellowjacket, not the legacy ecosystem/local-systems checkout.
 
-## Required Preflight Before Cross-Repo Work
+## Cross-Repo Boundary
 
-- Confirm the target repo path and git remote before reading architectural meaning from files.
-- Confirm the repo class and authority role from repo.manifest.yaml.
-- List the files you plan to read and edit.
+- Confirm the target repo path and git remote before reading architectural meaning from a file. Several Forge systems share a brand name across two families, and the path is what tells them apart.
 - Do not mutate upstream authority repos unless the work order explicitly allows it.
-- Run bun run verify:repo-context before claiming this repo is agent-governed.
+
+This file is generated from repo.manifest.yaml. After editing the manifest, run `bun run generate:agent-instructions`.

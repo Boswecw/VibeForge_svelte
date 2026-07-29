@@ -348,12 +348,6 @@ Regenerate these files after manifest changes:
 ${listSection(manifest.agent_edit_policy.must_regenerate)}
 ## Verification Commands
 
-Context and drift:
-
-- bun run generate:agent-instructions
-- bun run check:agent-instruction-drift
-- bun run verify:repo-context
-
 Tests:
 
 ${listSection(tests)}
@@ -366,13 +360,12 @@ ${listSection(safetyRules)}
 ## Repo-Specific LLM Rules
 
 ${listSection(llmRules)}
-## Required Preflight Before Cross-Repo Work
+## Cross-Repo Boundary
 
-- Confirm the target repo path and git remote before reading architectural meaning from files.
-- Confirm the repo class and authority role from repo.manifest.yaml.
-- List the files you plan to read and edit.
+- Confirm the target repo path and git remote before reading architectural meaning from a file. Several Forge systems share a brand name across two families, and the path is what tells them apart.
 - Do not mutate upstream authority repos unless the work order explicitly allows it.
-- Run bun run verify:repo-context before claiming this repo is agent-governed.
+
+This file is generated from repo.manifest.yaml. After editing the manifest, run \`bun run generate:agent-instructions\`.
 `;
 }
 
