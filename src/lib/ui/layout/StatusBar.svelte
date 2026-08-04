@@ -148,19 +148,12 @@
 				class="flex items-center gap-1.5 text-slate-500 hover:text-slate-300 transition-colors"
 				title="Read the Forge Brand Charter"
 			>
-				<!-- 16px anvil-seal-decorative (aria-hidden, decorative) -->
-				<svg
-					width="16"
-					height="16"
-					viewBox="0 0 16 16"
-					fill="none"
+				<img
+					src="/vibeforge-symbolic.png"
+					alt=""
+					class="h-4 w-4 object-contain opacity-80"
 					aria-hidden="true"
-					class="text-current"
-				>
-					<path d="M2 12h12v2H2z" fill="currentColor"/>
-					<path d="M3 7h10v5H3z" fill="currentColor"/>
-					<path d="M4 4h8l1 3H3z" fill="currentColor"/>
-				</svg>
+				/>
 				<span class="text-[10px]">Forge-built — designed to endure</span>
 			</button>
 		</div>

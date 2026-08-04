@@ -146,6 +146,22 @@
 <nav
 	class="leftrail bg-forge-blacksteel border-r border-slate-800 w-20 flex flex-col items-center py-4 gap-2"
 >
+	<a
+		href="/"
+		class="mb-1 flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-400/20 bg-slate-900/70 transition-colors hover:border-cyan-300/40 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+		aria-label="VibeForge home"
+		title="VibeForge"
+		data-sveltekit-preload-data="hover"
+	>
+		<img
+			src="/vibeforge-symbolic.png"
+			alt=""
+			class="h-8 w-8 object-contain"
+			aria-hidden="true"
+		/>
+	</a>
+	<div class="mb-1 h-px w-10 bg-slate-800" aria-hidden="true"></div>
+
 	{#each navItems as item}
 		<a
 			href={item.href}
