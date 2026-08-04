@@ -46,9 +46,9 @@
       <!-- App Logo/Brand -->
       <div class="flex items-center gap-2">
         <img
-          src="/VibeForge_logo_icon.avif"
+          src="/vibeforge-icon.png"
           alt="VibeForge"
-          class="w-8 h-8 rounded-lg"
+          class="w-8 h-8 object-contain"
         />
         <div>
           <h1 class="text-lg font-bold text-slate-100">VibeForge</h1>
